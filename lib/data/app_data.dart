@@ -1,0 +1,51 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+final List<Map<String, dynamic>> quickAccessItems = [
+  {'label': 'Appointments', 'icon': FontAwesomeIcons.calendar},
+  {'label': 'Doctor', 'icon': FontAwesomeIcons.userDoctor},
+  {'label': 'Prescription Management', 'icon': FontAwesomeIcons.prescription},
+  {
+    'label': 'Emergency Protocols',
+    'icon': FontAwesomeIcons.triangleExclamation,
+  },
+  {'label': 'Health Analytics', 'icon': FontAwesomeIcons.chartLine},
+  {'label': 'Billing & Payments', 'icon': FontAwesomeIcons.moneyBillWave},
+  {'label': 'Health Facilities', 'icon': FontAwesomeIcons.hospital},
+  {'label': 'Patient Records', 'icon': FontAwesomeIcons.fileMedical},
+  {'label': 'Medical Equipment', 'icon': FontAwesomeIcons.stethoscope},
+  {'label': 'Feedback & Reviews', 'icon': FontAwesomeIcons.commentDots},
+  {'label': 'Patient Monitoring', 'icon': FontAwesomeIcons.heartPulse},
+  {'label': 'Staff Directory', 'icon': FontAwesomeIcons.usersGear},
+  {'label': 'Shift Schedule', 'icon': FontAwesomeIcons.userClock},
+  {'label': 'Lab Results', 'icon': FontAwesomeIcons.vials},
+  {'label': 'Medication Management', 'icon': FontAwesomeIcons.pills},
+  {'label': 'Consultations', 'icon': FontAwesomeIcons.comments},
+  {'label': 'Emergency Cases', 'icon': FontAwesomeIcons.triangleExclamation},
+  {'label': 'Telemedicine', 'icon': FontAwesomeIcons.video},
+  {'label': 'Vaccination Records', 'icon': FontAwesomeIcons.syringe},
+  {'label': 'Insurance Management', 'icon': FontAwesomeIcons.shieldHalved},
+  {'label': 'Appointment History', 'icon': FontAwesomeIcons.clockRotateLeft},
+  {'label': 'Symptom Checker', 'icon': FontAwesomeIcons.stethoscope},
+  {'label': 'Medical Reports', 'icon': FontAwesomeIcons.fileInvoiceDollar},
+  {'label': 'Health Alerts', 'icon': FontAwesomeIcons.bell},
+  {'label': 'Wellness Programs', 'icon': FontAwesomeIcons.spa},
+  {'label': 'Health Tips', 'icon': FontAwesomeIcons.lightbulb},
+  {'label': 'Emergency Contacts', 'icon': FontAwesomeIcons.phoneFlip},
+  {'label': 'Medical News', 'icon': FontAwesomeIcons.newspaper},
+  {'label': 'Community Support', 'icon': FontAwesomeIcons.peopleArrows},
+  {'label': 'Mental Health Resources', 'icon': FontAwesomeIcons.brain},
+  {'label': 'Inventory Management', 'icon': FontAwesomeIcons.boxesStacked},
+  {'label': 'Hospital Reports', 'icon': FontAwesomeIcons.fileLines},
+
+  {
+    'label': 'Training & Certifications',
+    'icon': FontAwesomeIcons.graduationCap,
+  },
+  {'label': 'Internal Messaging', 'icon': FontAwesomeIcons.envelope},
+  {'label': 'Task Management', 'icon': FontAwesomeIcons.tasks},
+  {'label': 'Resource Allocation', 'icon': FontAwesomeIcons.chartBar},
+  {'label': 'Patient Education', 'icon': FontAwesomeIcons.bookOpen},
+  {'label': 'Data Security', 'icon': FontAwesomeIcons.lock},
+  {'label': 'Research & Publications', 'icon': FontAwesomeIcons.flask}
+  
+];
