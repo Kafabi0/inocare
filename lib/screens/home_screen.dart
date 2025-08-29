@@ -84,6 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     alignment: Alignment.topCenter,
                     child: QuickAccessCard(
                       icon: item['icon'],
+                      color: item['color'],
                       label: item['label'],
                       onTap: () {
                         switch (item['label']) {

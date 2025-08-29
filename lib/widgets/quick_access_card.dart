@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class QuickAccessCard extends StatelessWidget {
   final IconData icon;
   final String label;
+  final Color color;   // <- ganti jadi Color, bukan int?
   final VoidCallback? onTap;
 
   const QuickAccessCard({
     super.key,
     required this.icon,
+    required this.color,
     required this.label,
     this.onTap,
   });
@@ -26,7 +28,7 @@ class QuickAccessCard extends StatelessWidget {
               color: const Color(0xFFE8E5FF),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: const Color(0xFF0D6EFD), size: 28),
+            child: Icon(icon, color: color, size: 28),
           ),
           const SizedBox(height: 8),
           Text(
