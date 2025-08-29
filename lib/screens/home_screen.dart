@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inocare/screens/billingpayment_screen.dart';
 import 'package:inocare/screens/emergency_protocols_screen.dart';
+import 'package:inocare/screens/ermdoctor_screen.dart';
 import 'package:inocare/screens/feedback_screen.dart';
 import 'package:inocare/screens/healthanalytics_screen.dart';
 import 'package:inocare/screens/healthfacilities_screen.dart';
@@ -195,6 +196,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (_) => const StaffDirectory(),
+                              ),
+                            );
+                            break;
+                            case 'ERM Doctor':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const ErmDoctorPage(),
                               ),
                             );
                             break;
