@@ -18,9 +18,13 @@ Future<void> initializeNotifications() async {
   final DarwinInitializationSettings iosSettings =
       DarwinInitializationSettings();
 
+  // final WindowsInitializationSettings windowsSettings =
+  //     WindowsInitializationSettings();
+
   final InitializationSettings settings = InitializationSettings(
     android: androidSettings,
     iOS: iosSettings,
+    // windows: windowsSettings,
   );
 
   await flutterLocalNotificationsPlugin.initialize(

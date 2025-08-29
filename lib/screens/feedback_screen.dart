@@ -64,7 +64,6 @@ class _FeedbackListState extends State<FeedbackList> {
             loading = false;
           });
         } else {
-          // Handle cases where the data structure is not as expected
           setState(() {
             hasError = true;
             loading = false;
