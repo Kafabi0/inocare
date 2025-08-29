@@ -25,6 +25,7 @@ final List<Map<String, dynamic>> quickAccessItems = [
   {'label': 'ERM Bidan', 'icon': MdiIcons.motherNurse, 'color': Colors.orange},
   {'label': 'ERM Obsgyn', 'icon': MdiIcons.humanPregnant, 'color': Colors.orange},
   {'label': 'ERM Penyakit Dalam', 'icon': MdiIcons.stomach, 'color': Colors.orange},
+  {'label': 'ERM Doctor', 'icon': MdiIcons.doctor, 'color': Colors.orange},
   {'label': 'ERM Anak', 'icon': MdiIcons.babyFaceOutline, 'color': Colors.orange},
   {'label': 'ERM Anastesti', 'icon': MdiIcons.needle, 'color': Colors.orange},
   {'label': 'ERM Bedah Sentral', 'icon': MdiIcons.setLeftCenter, 'color': Colors.orange},
