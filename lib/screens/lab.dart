@@ -220,7 +220,7 @@ class _LabPageState extends State<LabPage> {
           scrollDirection: Axis.vertical,
           child: Theme(
             data: Theme.of(context).copyWith(
-              cardTheme: CardTheme(
+              cardTheme: CardThemeData(
                 elevation: 0,
                 margin: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
