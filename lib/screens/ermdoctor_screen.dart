@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inocare/screens/ermdoctor_form_triase_screen.dart';
 // import 'package:inocare/models/pasien_selesai.dart';
 import 'package:inocare/screens/pasienselesai_screen.dart';
 
@@ -483,10 +484,9 @@ class _ErmDoctorPageState extends State<ErmDoctorPage> {
                     subtitle: "Form Triase Baru",
                     color: const Color(0xFF1E40AF),
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Menu Admin belum tersedia"),
-                        ),
+                      Navigator.push(
+                        context, 
+                        MaterialPageRoute(builder: (context) => const ErmDoctorFormTriaseScreen())
                       );
                     },
                   ),
