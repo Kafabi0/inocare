@@ -24,27 +24,64 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   bool _showAllQuickAccess = false;
+  late ScrollController _scrollController;
+  late AnimationController _fadeController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController()
+      ..addListener(() {
+        if (_scrollController.offset >= 300) {
+          if (!_fadeController.isAnimating && _fadeController.status != AnimationStatus.forward) {
+            _fadeController.forward();
+          }
+        } else {
+          if (!_fadeController.isAnimating && _fadeController.status != AnimationStatus.reverse) {
+            _fadeController.reverse();
+          }
+        }
+      });
+    _fadeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _fadeController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToTop() {
+    _scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor =
-        isDark ? const Color(0xFF1E1E2C) : const Color(0xFFF3F4F6);
+    final backgroundColor = isDark ? const Color(0xFF1E1E2C) : const Color(0xFFF3F4F6);
     final cardColor = isDark ? const Color(0xFF2D2D44) : Colors.white;
     final primaryColor = Theme.of(context).primaryColor;
 
     return Scaffold(
       backgroundColor: backgroundColor,
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: Column(
           children: [
             const MedicalTopHeaderSection(),
-            // Quick Access dengan posisi overlap tapi ada space dari slider
             Transform.translate(
               offset: const Offset(0, -50),
               child: _buildQuickAccessGrid(cardColor, primaryColor),
@@ -52,15 +89,51 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+      floatingActionButton: ScaleTransition(
+        scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+          parent: _fadeController,
+          curve: Curves.easeOutCubic,
+        )),
+        child: FadeTransition(
+          opacity: _fadeController,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [primaryColor, primaryColor.withOpacity(0.7)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(100),
+              boxShadow: [
+                BoxShadow(
+                  color: primaryColor.withOpacity(0.3),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: FloatingActionButton(
+              onPressed: _scrollToTop,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              highlightElevation: 0,
+              shape: const CircleBorder(),
+              splashColor: Colors.white.withOpacity(0.3),
+              child: const Icon(
+                Icons.arrow_upward_rounded,
+                color: Colors.white,
+                size: 28,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildQuickAccessGrid(Color cardColor, Color primaryColor) {
-    final displayedItems =
-        _showAllQuickAccess
-            ? quickAccessItems
-            : quickAccessItems.take(9).toList();
-
+    final displayedItems = _showAllQuickAccess ? quickAccessItems : quickAccessItems.take(9).toList();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Card(
@@ -103,8 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder:
-                                    (_) => const AppointmentCalendarScreen(),
+                                builder: (_) => const AppointmentCalendarScreen(),
                               ),
                             );
                             break;
@@ -112,8 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder:
-                                    (_) => const PrescriptionManagementScreen(),
+                                builder: (_) => const PrescriptionManagementScreen(),
                               ),
                             );
                             break;
@@ -121,8 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder:
-                                    (_) => const EmergencyProtocolsScreen(),
+                                builder: (_) => const EmergencyProtocolsScreen(),
                               ),
                             );
                             break;
@@ -146,10 +216,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder:
-                                    (_) => PatientRecordsScreen(
-                                      appointments: appointmentsData,
-                                    ),
+                                builder: (_) => PatientRecordsScreen(
+                                  appointments: appointmentsData,
+                                ),
                               ),
                             );
                             break;
@@ -161,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                             break;
-                            case 'Health Analytics':
+                          case 'Health Analytics':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -169,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                             break;
-                            case 'Patient Monitoring':
+                          case 'Patient Monitoring':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -177,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                             break;
-                            case 'Feedback & Reviews':
+                          case 'Feedback & Reviews':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -185,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                             break;
-                            case 'Shift Schedule':
+                          case 'Shift Schedule':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -193,7 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                             break;
-                            case 'Staff Directory':
+                          case 'Staff Directory':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -201,7 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                             break;
-                            case 'ERM Doctor':
+                          case 'ERM Doctor':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -209,7 +278,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                             break;
-                            case 'ERM Perawat':
+                          case 'ERM Perawat':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -217,7 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                             break;
-                            case 'Dashboard & Reporting':
+                          case 'Dashboard & Reporting':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
