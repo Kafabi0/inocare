@@ -65,7 +65,7 @@ class _ErmDoctorFormTriaseScreenState extends State<ErmDoctorFormTriaseScreen> {
           'Form Triase',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
-        backgroundColor: const Color(0xFF4F46E5),
+        backgroundColor: Color(0xFF1E40AF),
         elevation: 0,
         centerTitle: false,
         leading: IconButton(
@@ -104,7 +104,7 @@ class _ErmDoctorFormTriaseScreenState extends State<ErmDoctorFormTriaseScreen> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: const BoxDecoration(
-            color: Color(0xFF4F46E5),
+            color: Color(0xFF1E40AF),
           ),
           child: Text(
             title,
@@ -767,7 +767,7 @@ class _ErmDoctorFormTriaseScreenState extends State<ErmDoctorFormTriaseScreen> {
           }
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF4F46E5),
+          backgroundColor: Color(0xFF1E40AF),
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
