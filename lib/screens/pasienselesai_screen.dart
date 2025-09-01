@@ -33,7 +33,7 @@ class PasienSelesai {
 
 // 2. Halaman Pasien Selesai Layanan
 class PasienSelesaiPage extends StatefulWidget {
-  const PasienSelesaiPage({Key? key}) : super(key: key);
+  const PasienSelesaiPage({super.key});
 
   @override
   State<PasienSelesaiPage> createState() => _PasienSelesaiPageState();
@@ -426,7 +426,7 @@ class _PasienSelesaiPageState extends State<PasienSelesaiPage> {
       child: SingleChildScrollView(
         child: DataTable(
           columnSpacing: 20,
-          headingRowColor: MaterialStateProperty.all(Colors.grey[100]),
+          headingRowColor: WidgetStateProperty.all(Colors.grey[100]),
           border: TableBorder.all(color: Colors.grey[300]!),
           columns: const [
             DataColumn(
@@ -783,100 +783,308 @@ class _PasienSelesaiPageState extends State<PasienSelesaiPage> {
   }
 
   void _showDetailDialog(PasienSelesai pasien) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.8,
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Detail Pasien Selesai',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.close),
-                    ),
-                  ],
-                ),
-                const Divider(),
-                const SizedBox(height: 16),
-                _buildDetailRow('No. Registrasi', pasien.noRegistrasi),
-                _buildDetailRow('No. Triase', pasien.noTriase),
-                _buildDetailRow('Tanggal Registrasi', pasien.tglRegistrasi),
-                _buildDetailRow('No. RM', pasien.noRM),
-                _buildDetailRow('Nama Pasien', pasien.namaPasien),
-                _buildDetailRow('Jenis Kelamin', pasien.jenisKelamin),
-                _buildDetailRow('Tanggal Lahir', pasien.tanggalLahir),
-                _buildDetailRow('Unit Layanan', pasien.unitLayanan),
-                _buildDetailRow('DPJP', pasien.dpjp),
-                _buildDetailRow('Tipe Pasien', pasien.tipePasien),
-                _buildDetailRow('Waktu Selesai Layanan', pasien.waktuSelesaiLayanan),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[300],
-                        foregroundColor: Colors.black87,
-                      ),
-                      child: const Text('Tutup'),
-                    ),
-                    const SizedBox(width: 12),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Fitur export akan segera tersedia'),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF7C3AED),
-                        foregroundColor: Colors.white,
-                      ),
-                      child: const Text('Export'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        opaque: false,
+        barrierDismissible: true,
+        barrierColor: Colors.black54,
+        pageBuilder: (BuildContext context, _, __) {
+          return PasienDetailModal(pasien: pasien);
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(0.0, -1.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOut;
+
+          var tween = Tween(begin: begin, end: end).chain(
+            CurveTween(curve: curve),
+          );
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+      ),
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
+}
+
+// 4. Modal Detail Pasien yang muncul dari atas
+class PasienDetailModal extends StatefulWidget {
+  final PasienSelesai pasien;
+
+  const PasienDetailModal({super.key, required this.pasien});
+
+  @override
+  State<PasienDetailModal> createState() => _PasienDetailModalState();
+}
+
+class _PasienDetailModalState extends State<PasienDetailModal> 
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 12, vsync: this);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Container(
+        margin: const EdgeInsets.only(top: 50),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          children: [
+            // Header dengan info pasien
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+                border: Border(
+                  bottom: BorderSide(color: Colors.grey[200]!),
+                ),
+              ),
+              child: Column(
+                children: [
+                  // Header dengan tombol close
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Data Registrasi Pasien',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.close),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.grey[200],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  // Info pasien dalam grid 2 kolom
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            _buildInfoItem('No. Registrasi', widget.pasien.noRegistrasi),
+                            _buildInfoItem('No. RM', widget.pasien.noRM),
+                            _buildInfoItem('Nama', widget.pasien.namaPasien),
+                            _buildInfoItem('Tanggal Registrasi', widget.pasien.tglRegistrasi),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            _buildInfoItem('Jenis Kelamin', widget.pasien.jenisKelamin),
+                            _buildInfoItem('Tanggal Lahir', widget.pasien.tanggalLahir.split('\n')[0]),
+                            _buildInfoItem('Tipe Pasien', widget.pasien.tipePasien),
+                            _buildInfoItem('Tanggal Selesai Layanan', widget.pasien.waktuSelesaiLayanan.split('\n')[0]),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  // Info tambahan
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            const Text(
+                              'Instalasi',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.blue[100],
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                widget.pasien.unitLayanan,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue[700],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            const Text(
+                              'DPJP: ',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                widget.pasien.dpjp.isNotEmpty ? widget.pasien.dpjp : 'Dr. Emiluth',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            // Tab Navigation
+            Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: Colors.grey[200]!),
+                ),
+              ),
+              child: TabBar(
+                controller: _tabController,
+                isScrollable: true,
+                tabAlignment: TabAlignment.start,
+                indicatorColor: Colors.teal,
+                indicatorWeight: 3,
+                labelColor: Colors.teal,
+                unselectedLabelColor: Colors.grey[600],
+                labelStyle: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+                unselectedLabelStyle: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.normal,
+                ),
+                tabs: const [
+                  Tab(
+                    icon: Icon(Icons.assessment, size: 16),
+                    text: 'Triase',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.assignment, size: 16),
+                    text: 'Asesmen',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.note_alt, size: 16),
+                    text: 'CPPT',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.medical_services, size: 16),
+                    text: 'Diagnosa & Tindakan',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.build, size: 16),
+                    text: 'Jasa Tindakan',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.medication, size: 16),
+                    text: 'Farmasi',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.receipt, size: 16),
+                    text: 'TDRS',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.radio_button_checked, size: 16),
+                    text: 'Radiologi',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.science, size: 16),
+                    text: 'Lab',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.chat, size: 16),
+                    text: 'Konsul',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.local_hospital, size: 16),
+                    text: 'Operasi',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.folder, size: 16),
+                    text: 'Resume Medis',
+                  ),
+                ],
+              ),
+            ),
+            // Tab Content
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildTriaseContent(),
+                  _buildAsesmenContent(),
+                  _buildCPPTContent(),
+                  _buildDiagnosaContent(),
+                  _buildJasaTindakanContent(),
+                  _buildFarmasiContent(),
+                  _buildTDRSContent(),
+                  _buildRadiologiContent(),
+                  _buildLabContent(),
+                  _buildKonsulContent(),
+                  _buildOperasiContent(),
+                  _buildResumeMedisContent(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoItem(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 140,
+            width: 120,
             child: Text(
               '$label:',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: Colors.grey[700],
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),
@@ -884,7 +1092,9 @@ class _PasienSelesaiPageState extends State<PasienSelesaiPage> {
             child: Text(
               value.isNotEmpty ? value : '-',
               style: const TextStyle(
-                fontWeight: FontWeight.w400,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
               ),
             ),
           ),
@@ -893,10 +1103,154 @@ class _PasienSelesaiPageState extends State<PasienSelesaiPage> {
     );
   }
 
+  // Content untuk tab Triase
+  Widget _buildTriaseContent() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.all(40),
+          decoration: BoxDecoration(
+            color: Colors.red[50],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.red[200]!),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.info_outline,
+                size: 48,
+                color: Colors.red[400],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Data Triase belum diinput',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.red[700],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Silahkan hubungi perawat untuk melengkapi data triase',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.red[600],
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Content untuk tab lainnya
+  Widget _buildAsesmenContent() {
+    return _buildEmptyTabContent('Asesmen', Icons.assignment);
+  }
+
+  Widget _buildCPPTContent() {
+    return _buildEmptyTabContent('CPPT', Icons.note_alt);
+  }
+
+  Widget _buildDiagnosaContent() {
+    return _buildEmptyTabContent('Diagnosa & Tindakan', Icons.medical_services);
+  }
+
+  Widget _buildJasaTindakanContent() {
+    return _buildEmptyTabContent('Jasa Tindakan', Icons.build);
+  }
+
+  Widget _buildFarmasiContent() {
+    return _buildEmptyTabContent('Farmasi', Icons.medication);
+  }
+
+  Widget _buildTDRSContent() {
+    return _buildEmptyTabContent('TDRS', Icons.receipt);
+  }
+
+  Widget _buildRadiologiContent() {
+    return _buildEmptyTabContent('Radiologi', Icons.radio_button_checked);
+  }
+
+  Widget _buildLabContent() {
+    return _buildEmptyTabContent('Lab', Icons.science);
+  }
+
+  Widget _buildKonsulContent() {
+    return _buildEmptyTabContent('Konsul', Icons.chat);
+  }
+
+  Widget _buildOperasiContent() {
+    return _buildEmptyTabContent('Operasi', Icons.local_hospital);
+  }
+
+  Widget _buildResumeMedisContent() {
+    return _buildEmptyTabContent('Resume Medis', Icons.folder);
+  }
+
+  Widget _buildEmptyTabContent(String tabName, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 64,
+              color: Colors.grey[400],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Data $tabName',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Belum ada data tersedia',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[500],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
-    _searchController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 }
 
+// 3. Update kode menu untuk navigasi (gunakan ini di halaman utama)
+/*
+Expanded(
+  child: _buildMenuOption(
+    icon: Icons.history,
+    title: "Selesai",
+    subtitle: "Pasien Selesai Layanan",
+    color: const Color(0xFF7C3AED),
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const PasienSelesaiPage(),
+        ),
+      );
+    },
+  ),
+),
+*/

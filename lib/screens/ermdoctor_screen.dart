@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:inocare/models/pasien_selesai.dart';
+// import 'package:inocare/models/pasien_selesai.dart';
 import 'package:inocare/screens/pasienselesai_screen.dart';
 
 class ErmDoctorPage extends StatefulWidget {
@@ -10,7 +10,7 @@ class ErmDoctorPage extends StatefulWidget {
 }
 
 class _ErmDoctorPageState extends State<ErmDoctorPage> {
-  bool showMenuSelection = true; // Flag untuk menampilkan menu pilihan
+  bool showMenuSelection = true;
   String selectedDoctor = "Pilih Dokter Operator";
   String searchQuery = "";
   String selectedFilter = "Operasi";
@@ -160,6 +160,187 @@ class _ErmDoctorPageState extends State<ErmDoctorPage> {
     },
   ];
 
+  // Method untuk menampilkan alert dialog
+  void _showPatientDialog(Map<String, dynamic> patientData) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          contentPadding: EdgeInsets.zero,
+          content: Container(
+            width: 320,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Colors.white,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF59E0B),
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: const Icon(
+                          Icons.warning_amber,
+                          color: Colors.white,
+                          size: 28,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        "Pasien dengan nomor registrasi",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        patientData["reg"],
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        "Akan dikenakan billing atas nama user :",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.white,
+                          ),
+                        ),
+                        child: const Text(
+                          "Super Admin",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        "Lanjutkan proses ?",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+                
+                // Action buttons
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            // TODO: Implement lanjutkan logic
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  "Melanjutkan proses untuk ${patientData["name"]}",
+                                ),
+                                backgroundColor: const Color(0xFF059669),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF3B82F6),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: const Text(
+                            "Lanjutkan",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFDC2626),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: const Text(
+                            "Tidak",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   List<Map<String, dynamic>> get filteredPatients {
     return patients.where((patient) {
       final nameMatch = patient["name"].toString().toLowerCase().contains(
@@ -235,7 +416,6 @@ class _ErmDoctorPageState extends State<ErmDoctorPage> {
     });
   }
 
-  // Method untuk menampilkan menu pilihan
   Widget _buildMenuSelection() {
     return SingleChildScrollView(
       child: Padding(
@@ -243,7 +423,6 @@ class _ErmDoctorPageState extends State<ErmDoctorPage> {
         child: Column(
           children: [
             const SizedBox(height: 40),
-            // Welcome Header
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(32),
@@ -294,9 +473,7 @@ class _ErmDoctorPageState extends State<ErmDoctorPage> {
                 ],
               ),
             ),
-
             const SizedBox(height: 40),
-
             Row(
               children: [
                 Expanded(
@@ -334,7 +511,7 @@ class _ErmDoctorPageState extends State<ErmDoctorPage> {
                     icon: Icons.history,
                     title: "Selesai",
                     subtitle: "Pasien Selesai Layanan",
-                    color: const Color(0xFF7C3AED),
+                    color: const Color(0xFF0D6EFD),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -443,7 +620,6 @@ class _ErmDoctorPageState extends State<ErmDoctorPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Header Section with modern design
                           Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -460,7 +636,6 @@ class _ErmDoctorPageState extends State<ErmDoctorPage> {
                               padding: const EdgeInsets.all(20),
                               child: Column(
                                 children: [
-                                  // Doctor Selection
                                   DropdownButtonFormField<String>(
                                     decoration: InputDecoration(
                                       labelText: "Pilih Dokter Operator",
@@ -528,8 +703,6 @@ class _ErmDoctorPageState extends State<ErmDoctorPage> {
                                     },
                                   ),
                                   const SizedBox(height: 16),
-
-                                  // Search and Date Filter Row
                                   Row(
                                     children: [
                                       Expanded(
@@ -657,8 +830,6 @@ class _ErmDoctorPageState extends State<ErmDoctorPage> {
                             ),
                           ),
                           const SizedBox(height: 20),
-
-                          // Patient Section Header
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -705,8 +876,6 @@ class _ErmDoctorPageState extends State<ErmDoctorPage> {
                             ],
                           ),
                           const SizedBox(height: 20),
-
-                          // Enhanced Filter Chips
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
@@ -741,7 +910,6 @@ class _ErmDoctorPageState extends State<ErmDoctorPage> {
                                     Icons.medical_services,
                                   ),
                                   const SizedBox(width: 16),
-                                  // Reset button
                                   InkWell(
                                     onTap: () {
                                       setState(() {
@@ -792,7 +960,6 @@ class _ErmDoctorPageState extends State<ErmDoctorPage> {
                           ),
                           const SizedBox(height: 20),
 
-                          // Active Filters Display
                           if (selectedDoctor != "Pilih Dokter Operator" ||
                               searchQuery.isNotEmpty ||
                               selectedDate != null)
@@ -869,7 +1036,6 @@ class _ErmDoctorPageState extends State<ErmDoctorPage> {
                               selectedDate != null)
                             const SizedBox(height: 20),
 
-                          // No Data Message
                           if (filteredPatients.isEmpty)
                             Container(
                               width: double.infinity,
@@ -921,7 +1087,6 @@ class _ErmDoctorPageState extends State<ErmDoctorPage> {
                               ),
                             ),
 
-                          // Patient Grid - Enhanced and Responsive
                           if (filteredPatients.isNotEmpty)
                             LayoutBuilder(
                               builder: (context, constraints) {
@@ -948,6 +1113,7 @@ class _ErmDoctorPageState extends State<ErmDoctorPage> {
                                     return EnhancedPatientCard(
                                       data: p,
                                       isCompact: constraints.maxWidth < 700,
+                                      onTap: () => _showPatientDialog(p), // Add this line
                                     );
                                   },
                                 );
@@ -957,7 +1123,6 @@ class _ErmDoctorPageState extends State<ErmDoctorPage> {
                           if (filteredPatients.isNotEmpty)
                             const SizedBox(height: 24),
 
-                          // Enhanced Pagination
                           if (filteredPatients.isNotEmpty)
                             Container(
                               padding: const EdgeInsets.all(16),
@@ -1176,325 +1341,310 @@ class _ErmDoctorPageState extends State<ErmDoctorPage> {
 class EnhancedPatientCard extends StatelessWidget {
   final Map<String, dynamic> data;
   final bool isCompact;
+  final VoidCallback? onTap; // Add this parameter
 
   const EnhancedPatientCard({
     super.key,
     required this.data,
     this.isCompact = false,
+    this.onTap, // Add this parameter
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Column(
-          children: [
-            // Header dengan gradient dan nomor antrian
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [const Color(0xFF1E40AF), const Color(0xFF3B82F6)],
-                ),
-              ),
-              child: Row(
-                children: [
-                  // Avatar dengan gradient
-                  Container(
-                    width: isCompact ? 40 : 45,
-                    height: isCompact ? 40 : 45,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF60A5FA), Color(0xFF93C5FD)],
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.person,
-                      color: Colors.white,
-                      size: 22,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-
-                  // Info pasien
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          data["name"],
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: isCompact ? 13 : 15,
-                            color: Colors.white,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          "NIK: ${data["nik"]}",
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
-                            fontSize: isCompact ? 10 : 11,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          "RM: ${data["reg"]}",
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
-                            fontSize: isCompact ? 10 : 11,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Nomor antrian dengan design yang lebih menarik
-                  Container(
-                    width: isCompact ? 40 : 45,
-                    height: isCompact ? 40 : 45,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: Text(
-                        "${data["queue"]}",
-                        style: TextStyle(
-                          fontSize: isCompact ? 20 : 24,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF1E40AF),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+    return GestureDetector( // Wrap with GestureDetector
+      onTap: onTap, // Add onTap callback
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
-
-            // Patient Details Section
-            Expanded(
-              child: Padding(
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Column(
+            children: [
+              Container(
                 padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [const Color(0xFF1E40AF), const Color(0xFF3B82F6)],
+                  ),
+                ),
+                child: Row(
                   children: [
-                    // Age and DOB
-                    Row(
-                      children: [
-                        Icon(Icons.cake, size: 14, color: Colors.grey[600]),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            "${data["dob"]} (${data["age"]} tahun)",
+                    Container(
+                      width: isCompact ? 40 : 45,
+                      height: isCompact ? 40 : 45,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF60A5FA), Color(0xFF93C5FD)],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.person,
+                        color: Colors.white,
+                        size: 22,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            data["name"],
                             style: TextStyle(
-                              color: const Color(0xFF64748B),
-                              fontSize: isCompact ? 11 : 12,
+                              fontWeight: FontWeight.bold,
+                              fontSize: isCompact ? 13 : 15,
+                              color: Colors.white,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-
-                    // Status Operasi dengan warna yang lebih menarik
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors:
-                              data["operation"] == "Proses Operasi"
-                                  ? [
-                                    const Color(0xFFEA580C),
-                                    const Color(0xFFF97316),
-                                  ]
-                                  : [
-                                    const Color(0xFF059669),
-                                    const Color(0xFF10B981),
-                                  ],
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            data["operation"] == "Proses Operasi"
-                                ? Icons.medical_services
-                                : Icons.check_circle,
-                            size: 14,
-                            color: Colors.white,
-                          ),
-                          const SizedBox(width: 6),
+                          const SizedBox(height: 2),
                           Text(
-                            data["operation"],
+                            "NIK: ${data["nik"]}",
                             style: TextStyle(
-                              color: Colors.white,
-                              fontSize: isCompact ? 11 : 12,
-                              fontWeight: FontWeight.w600,
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: isCompact ? 10 : 11,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            "RM: ${data["reg"]}",
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: isCompact ? 10 : 11,
                             ),
                           ),
                         ],
                       ),
                     ),
-
-                    const Spacer(),
-
-                    // Tags Row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Tag operasi/post
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
+                    Container(
+                      width: isCompact ? 40 : 45,
+                      height: isCompact ? 40 : 45,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
                           ),
-                          decoration: BoxDecoration(
-                            color:
-                                data["tag"] == "Operasi"
-                                    ? const Color(0xFF1E40AF)
-                                    : const Color(0xFF059669),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            data["tag"],
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: isCompact ? 9 : 10,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          "${data["queue"]}",
+                          style: TextStyle(
+                            fontSize: isCompact ? 20 : 24,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF1E40AF),
                           ),
                         ),
-                        // Status BPJS/Umum
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color:
-                                data["status"] == "bpjs"
-                                    ? const Color(0xFF059669)
-                                    : const Color(0xFF7C3AED),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            data["status"].toUpperCase(),
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: isCompact ? 9 : 10,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-
-                    // Quick Action Buttons
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildActionButton(
-                            "CPPT",
-                            Icons.description,
-                            const Color(0xFF6366F1),
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: _buildActionButton(
-                            "Diagnosa",
-                            Icons.medical_information,
-                            const Color(0xFF8B5CF6),
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: _buildActionButton(
-                            "Detail",
-                            Icons.visibility,
-                            const Color(0xFF06B6D4),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
               ),
-            ),
-
-            // Doctor info di bottom dengan design yang lebih elegan
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              decoration: const BoxDecoration(
-                color: Color(0xFF0F172A),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(16),
-                  bottomRight: Radius.circular(16),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.cake, size: 14, color: Colors.grey[600]),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              "${data["dob"]} (${data["age"]} tahun)",
+                              style: TextStyle(
+                                color: const Color(0xFF64748B),
+                                fontSize: isCompact ? 11 : 12,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors:
+                                data["operation"] == "Proses Operasi"
+                                    ? [
+                                      const Color(0xFFEA580C),
+                                      const Color(0xFFF97316),
+                                    ]
+                                    : [
+                                      const Color(0xFF059669),
+                                      const Color(0xFF10B981),
+                                    ],
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              data["operation"] == "Proses Operasi"
+                                  ? Icons.medical_services
+                                  : Icons.check_circle,
+                              size: 14,
+                              color: Colors.white,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              data["operation"],
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: isCompact ? 11 : 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Spacer(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color:
+                                  data["tag"] == "Operasi"
+                                      ? const Color(0xFF1E40AF)
+                                      : const Color(0xFF059669),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              data["tag"],
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: isCompact ? 9 : 10,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color:
+                                  data["status"] == "bpjs"
+                                      ? const Color(0xFF059669)
+                                      : const Color(0xFF7C3AED),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              data["status"].toUpperCase(),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: isCompact ? 9 : 10,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildActionButton(
+                              "CPPT",
+                              Icons.description,
+                              const Color(0xFF6366F1),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: _buildActionButton(
+                              "Diagnosa",
+                              Icons.medical_information,
+                              const Color(0xFF8B5CF6),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: _buildActionButton(
+                              "Detail",
+                              Icons.visibility,
+                              const Color(0xFF06B6D4),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.medical_services,
-                    size: 14,
-                    color: Colors.white.withOpacity(0.8),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF0F172A),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(16),
+                    bottomRight: Radius.circular(16),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      data["doctor"],
-                      style: TextStyle(
-                        fontSize: isCompact ? 10 : 11,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.medical_services,
+                      size: 14,
+                      color: Colors.white.withOpacity(0.8),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        data["doctor"],
+                        style: TextStyle(
+                          fontSize: isCompact ? 10 : 11,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
