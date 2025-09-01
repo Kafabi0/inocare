@@ -30,12 +30,7 @@ class DashboardReporting extends StatelessWidget {
         "color": Colors.redAccent,
         "page": const LabPage()
       },
-      {
-        "title": "Keuangan",
-        "icon": Icons.attach_money,
-        "color": Colors.green,
-        "page": const DummyPage(title: "Keuangan")
-      },
+      
     ];
 
     return Scaffold(

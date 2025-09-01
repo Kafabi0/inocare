@@ -214,13 +214,12 @@ class _LabPageState extends State<LabPage> {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: SizedBox(
-        // Ensure minimum width for horizontal scrolling on small devices
         width: screenWidth < 1000 ? 1000 : screenWidth,
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Theme(
             data: Theme.of(context).copyWith(
-              cardTheme: CardTheme(
+              cardTheme: CardThemeData(
                 elevation: 0,
                 margin: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
@@ -233,7 +232,7 @@ class _LabPageState extends State<LabPage> {
               ),
             ),
             child: PaginatedDataTable(
-              header: null, // We're using custom header
+              header: null, 
               rowsPerPage: _rowsPerPage,
               onRowsPerPageChanged: (value) {
                 if (value != null) {
@@ -657,7 +656,7 @@ class _LabPageState extends State<LabPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 21), // Align with dropdowns
+                      const SizedBox(height: 21),// Align with dropdowns
                       _buildSearchButton(),
                     ],
                   ),
