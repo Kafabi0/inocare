@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:inocare/screens/billingpayment_screen.dart';
 import 'package:inocare/screens/dashboard.dart';
 import 'package:inocare/screens/emergency_protocols_screen.dart';
-// import 'package:inocare/screens/erm_perawat.dart';
+import 'package:inocare/screens/ermperawat_screen.dart';
 import 'package:inocare/screens/ermdoctor_screen.dart';
 import 'package:inocare/screens/feedback_screen.dart';
 import 'package:inocare/screens/healthanalytics_screen.dart';
@@ -209,14 +209,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                             break;
-                            // case 'ERM Perawat':
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (_) => const ErmPerawatPage(),
-                            //   ),
-                            // );
-                            // break;
+                            case 'ERM Perawat':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const ErmPerawatScreen(),
+                              ),
+                            );
+                            break;
                             case 'Dashboard & Reporting':
                             Navigator.push(
                               context,
