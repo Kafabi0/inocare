@@ -1235,22 +1235,3 @@ class _PasienDetailModalState extends State<PasienDetailModal>
   }
 }
 
-// 3. Update kode menu untuk navigasi (gunakan ini di halaman utama)
-/*
-Expanded(
-  child: _buildMenuOption(
-    icon: Icons.history,
-    title: "Selesai",
-    subtitle: "Pasien Selesai Layanan",
-    color: const Color(0xFF7C3AED),
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const PasienSelesaiPage(),
-        ),
-      );
-    },
-  ),
-),
-*/
