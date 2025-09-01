@@ -114,7 +114,6 @@ class _StaffDirectoryState extends State<StaffDirectory> {
     );
   }
 
-  // Helper to get icon based on role
   IconData _getRoleIcon(String role) {
     if (role.toLowerCase().contains('dokter')) {
       return FontAwesomeIcons.userDoctor;

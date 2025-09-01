@@ -669,8 +669,7 @@ class _LabPageState extends State<LabPage> {
     );
   }
 
-  Widget _buildSummaryCards(bool isSmallScreen) {
-    // Calculate summary data
+    Widget _buildSummaryCards(bool isSmallScreen) {
     int totalExaminations = data.fold(
         0,
         (sum, item) =>
@@ -687,71 +686,36 @@ class _LabPageState extends State<LabPage> {
         data.fold(0, (sum, item) => sum + (item['jknNonPbi'] as int) + (item['jknPbi'] as int));
     int totalAsuransi = data.fold(0, (sum, item) => sum + (item['asuransi'] as int));
 
-    if (isSmallScreen) {
-      // Stacked cards for small screens
-      return Column(
-        children: [
-          _buildSummaryCard(
+    return Row(
+      children: [
+        Expanded(
+          child: _buildSummaryCard(
             icon: Icons.science,
             title: 'Total Pemeriksaan',
             value: totalExaminations.toString(),
             color: const Color(0xFF0369A1),
-            isFullWidth: true,
           ),
-          const SizedBox(height: 16),
-          _buildSummaryCard(
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: _buildSummaryCard(
             icon: Icons.health_and_safety,
             title: 'Total JKN',
             value: totalJKN.toString(),
             color: const Color(0xFF0891B2),
-            isFullWidth: true,
           ),
-          const SizedBox(height: 16),
-          _buildSummaryCard(
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: _buildSummaryCard(
             icon: Icons.shield,
             title: 'Total Asuransi',
             value: totalAsuransi.toString(),
             color: const Color(0xFF059669),
-            isFullWidth: true,
           ),
-        ],
-      );
-    } else {
-      // Row layout for larger screens
-      return Row(
-        children: [
-          Expanded(
-            child: _buildSummaryCard(
-              icon: Icons.science,
-              title: 'Total Pemeriksaan',
-              value: totalExaminations.toString(),
-              color: const Color(0xFF0369A1),
-              isFullWidth: false,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: _buildSummaryCard(
-              icon: Icons.health_and_safety,
-              title: 'Total JKN',
-              value: totalJKN.toString(),
-              color: const Color(0xFF0891B2),
-              isFullWidth: false,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: _buildSummaryCard(
-              icon: Icons.shield,
-              title: 'Total Asuransi',
-              value: totalAsuransi.toString(),
-              color: const Color(0xFF059669),
-              isFullWidth: false,
-            ),
-          ),
-        ],
-      );
-    }
+        ),
+      ],
+    );
   }
 
   Widget _buildSummaryCard({
@@ -759,10 +723,8 @@ class _LabPageState extends State<LabPage> {
     required String title,
     required String value,
     required Color color,
-    required bool isFullWidth,
   }) {
     return Container(
-      width: isFullWidth ? double.infinity : null,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -784,7 +746,7 @@ class _LabPageState extends State<LabPage> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
+              color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -801,7 +763,7 @@ class _LabPageState extends State<LabPage> {
                 Text(
                   title,
                   style: GoogleFonts.inter(
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: FontWeight.w500,
                     color: const Color(0xFF64748B),
                   ),
@@ -822,6 +784,7 @@ class _LabPageState extends State<LabPage> {
       ),
     );
   }
+
 
   Widget _buildDropdown<T>({
     required T value,
