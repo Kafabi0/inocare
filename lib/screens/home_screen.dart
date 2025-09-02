@@ -306,17 +306,23 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             );
                             break;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                             case 'Manajemen Bed':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => const ManajemenBed(),
 =======
+=======
+>>>>>>> Stashed changes
                             case 'Rekam Medik':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => const RekamMedisPage(),
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
                               ),
                             );
