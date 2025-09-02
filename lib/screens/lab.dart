@@ -23,7 +23,7 @@ class _LabPageState extends State<LabPage> {
   int selectedMonth = 7;
   bool isLoading = false;
 
-  // Dummy data for demonstration purposes
+
   final List<Map<String, dynamic>> data = [
     {
       "no": 1,
@@ -209,7 +209,6 @@ class _LabPageState extends State<LabPage> {
     );
   }
 
-  // Horizontally scrollable data table
   Widget _buildDataTable(DataTableSource dataSource, double screenWidth) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,

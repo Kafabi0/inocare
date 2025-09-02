@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:table_calendar/table_calendar.dart';
-import 'package:month_picker_dialog/month_picker_dialog.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../screens/ManageAppointmentScreen.dart';
 
@@ -14,7 +13,7 @@ class AppointmentCalendarScreen extends StatefulWidget {
 
 class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
   DateTime _selectedDay = DateTime.now();
-  DateTime _focusedDay = DateTime.now();
+  DateTime _focusedMonth = DateTime.now();
   final Color primaryColor = const Color(0xFF0D6EFD);
 
   final Map<String, List<Map<String, String>>> appointments = {
@@ -54,7 +53,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
         'doctor': 'Dr. Adi Januar Akbar',
       },
     ],
-    '2025-08-30': [
+    '2025-09-02': [
       {
         'patient': 'Charlie Puth',
         'time': '12:00 PM',
@@ -71,6 +70,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
   };
 
   late Map<String, List<Map<String, String>>> _appointmentsDisplay;
+  late CalendarController _calendarController;
 
   @override
   void initState() {
@@ -78,27 +78,14 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
     _appointmentsDisplay = Map<String, List<Map<String, String>>>.from(
       appointments,
     );
+    _calendarController = CalendarController();
+    _calendarController.displayDate = _focusedMonth;
   }
 
   List<Map<String, String>> _getAppointmentsForDay(DateTime day) {
     final key =
         '${day.year}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
     return _appointmentsDisplay[key] ?? [];
-  }
-
-  void _pickMonth() async {
-    final picked = await showMonthPicker(
-      context: context,
-      initialDate: _focusedDay,
-      firstDate: DateTime(2024),
-      lastDate: DateTime(2030),
-    );
-    if (picked != null) {
-      setState(() {
-        _focusedDay = picked;
-        _selectedDay = picked;
-      });
-    }
   }
 
   void _addAppointment() {
@@ -200,24 +187,23 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
   void _confirmCancelAppointment(DateTime day, Map<String, String> appt) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text("Confirm Cancellation"),
-            content: Text(
-              "Are you sure you want to cancel the appointment with ${appt['patient']}?",
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text("No"),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context, true),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                child: const Text("Yes, Cancel"),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: const Text("Confirm Cancellation"),
+        content: Text(
+          "Are you sure you want to cancel the appointment with ${appt['patient']}?",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("No"),
           ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text("Yes, Cancel"),
+          ),
+        ],
+      ),
     );
 
     if (confirmed == true) {
@@ -288,8 +274,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
             children: [
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed:
-                      () => _confirmCancelAppointment(_selectedDay, appt),
+                  onPressed: () => _confirmCancelAppointment(_selectedDay, appt),
                   icon: const Icon(Icons.cancel, size: 18),
                   label: const Text("Cancel"),
                   style: OutlinedButton.styleFrom(
@@ -305,13 +290,12 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder:
-                            (_) => ManageAppointmentScreen(
-                              patient: appt['patient']!,
-                              time: appt['time']!,
-                              avatar: appt['avatar']!,
-                              doctor: appt['doctor']!,
-                            ),
+                        builder: (_) => ManageAppointmentScreen(
+                          patient: appt['patient']!,
+                          time: appt['time']!,
+                          avatar: appt['avatar']!,
+                          doctor: appt['doctor']!,
+                        ),
                       ),
                     );
                   },
@@ -335,6 +319,8 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final appointmentsToday = _getAppointmentsForDay(_selectedDay);
 
+    final months = List.generate(12, (i) => i + 1);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Appointments"),
@@ -342,36 +328,90 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
       ),
       body: Column(
         children: [
-          Container(
-            margin: const EdgeInsets.all(12),
-            child: TableCalendar(
-              firstDay: DateTime.utc(2024, 1, 1),
-              lastDay: DateTime.utc(2030, 12, 31),
-              focusedDay: _focusedDay,
-              calendarFormat: CalendarFormat.week,
-              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                });
+          // Dropdown pilih bulan & tahun
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: DropdownButton<int>(
+                    value: _focusedMonth.month,
+                    isExpanded: true,
+                    items: months
+                        .map(
+                          (m) => DropdownMenuItem<int>(
+                            value: m,
+                            child: Text(
+                              "${m.toString().padLeft(2, '0')} - ${_focusedMonth.year}",
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (m) {
+                      if (m != null) {
+                        setState(() {
+                          _focusedMonth = DateTime(_focusedMonth.year, m, 1);
+                          _calendarController.displayDate = _focusedMonth;
+                        });
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(width: 10),
+                IconButton(
+                  icon: const Icon(Icons.chevron_left),
+                  onPressed: () {
+                    setState(() {
+                      _focusedMonth = DateTime(
+                        _focusedMonth.year,
+                        _focusedMonth.month - 1,
+                      );
+                      _calendarController.displayDate = _focusedMonth;
+                    });
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.chevron_right),
+                  onPressed: () {
+                    setState(() {
+                      _focusedMonth = DateTime(
+                        _focusedMonth.year,
+                        _focusedMonth.month + 1,
+                      );
+                      _calendarController.displayDate = _focusedMonth;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 300,
+            child: SfCalendar(
+              controller: _calendarController,
+              view: CalendarView.month,
+              initialSelectedDate: _selectedDay,
+              onTap: (calendarTapDetails) {
+                if (calendarTapDetails.date != null) {
+                  setState(() {
+                    _selectedDay = calendarTapDetails.date!;
+                  });
+                }
               },
-              headerStyle: const HeaderStyle(formatButtonVisible: false),
+              monthViewSettings: const MonthViewSettings(
+                showAgenda: false,
+              ),
             ),
           ),
           Expanded(
-            child:
-                appointmentsToday.isEmpty
-                    ? const Center(child: Text("No appointments today"))
-                    : ListView.builder(
-                      itemCount: appointmentsToday.length,
-                      padding: const EdgeInsets.all(12),
-                      itemBuilder:
-                          (_, i) => _buildAppointmentCard(
-                            appointmentsToday[i],
-                            isDark,
-                          ),
-                    ),
+            child: appointmentsToday.isEmpty
+                ? const Center(child: Text("No appointments today"))
+                : ListView.builder(
+                    itemCount: appointmentsToday.length,
+                    padding: const EdgeInsets.all(12),
+                    itemBuilder: (_, i) =>
+                        _buildAppointmentCard(appointmentsToday[i], isDark),
+                  ),
           ),
         ],
       ),

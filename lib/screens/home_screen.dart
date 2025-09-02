@@ -7,6 +7,7 @@ import 'package:inocare/screens/ermdoctor_screen.dart';
 import 'package:inocare/screens/feedback_screen.dart';
 import 'package:inocare/screens/healthanalytics_screen.dart';
 import 'package:inocare/screens/healthfacilities_screen.dart';
+import 'package:inocare/screens/manajemen_bed.dart';
 import 'package:inocare/screens/medical_equipment.dart';
 import 'package:inocare/screens/patient_records_screen.dart';
 import 'package:inocare/screens/patientmonitoring_screen.dart';
@@ -300,6 +301,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               context,
                               MaterialPageRoute(
                                 builder: (_) => const PegawaiScreen(),
+                              ),
+                            );
+                            break;
+                            case 'Manajemen Bed':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const ManajemenBed(),
                               ),
                             );
                             break;

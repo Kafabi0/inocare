@@ -38,16 +38,17 @@ class _HealthFacilitiesScreenState extends State<HealthFacilitiesScreen> {
     final subtitleColor = isDark ? Colors.white70 : Colors.white70;
     final searchBgColor = isDark ? const Color(0xFF2D2D2D) : Colors.white;
     final hintColor = isDark ? Colors.white54 : Colors.black54;
-    
-    final filtered = facilities.where((f) {
-      final matchName = f.name.toLowerCase().contains(
-        searchQuery.toLowerCase(),
-      );
-      final matchProvince =
-          selectedProvince == 'All' || f.province == selectedProvince;
-      final matchType = selectedType == 'All' || f.type == selectedType;
-      return matchName && matchProvince && matchType;
-    }).toList();
+
+    final filtered =
+        facilities.where((f) {
+          final matchName = f.name.toLowerCase().contains(
+            searchQuery.toLowerCase(),
+          );
+          final matchProvince =
+              selectedProvince == 'All' || f.province == selectedProvince;
+          final matchType = selectedType == 'All' || f.type == selectedType;
+          return matchName && matchProvince && matchType;
+        }).toList();
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -56,11 +57,11 @@ class _HealthFacilitiesScreenState extends State<HealthFacilitiesScreen> {
           _buildSliverAppBar(isDark, subtitleColor),
           SliverToBoxAdapter(
             child: _buildSearchAndFilters(
-              isDark, 
-              searchBgColor, 
-              hintColor, 
-              textColor
-            )
+              isDark,
+              searchBgColor,
+              hintColor,
+              textColor,
+            ),
           ),
           SliverPadding(
             padding: const EdgeInsets.all(16),
@@ -74,20 +75,23 @@ class _HealthFacilitiesScreenState extends State<HealthFacilitiesScreen> {
                     isDark: isDark,
                     cardColor: cardColor,
                     textColor: textColor,
-                    onTap: () => Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => HealthFacilityDetail(
-                          facility: item,
-                          primaryColor: primaryColor,
+                    onTap:
+                        () => Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder:
+                                (_, __, ___) => HealthFacilityDetail(
+                                  facility: item,
+                                  primaryColor: primaryColor,
+                                ),
+                            transitionsBuilder:
+                                (_, anim, __, child) =>
+                                    FadeTransition(opacity: anim, child: child),
+                            transitionDuration: const Duration(
+                              milliseconds: 600,
+                            ),
+                          ),
                         ),
-                        transitionsBuilder: (_, anim, __, child) =>
-                            FadeTransition(opacity: anim, child: child),
-                        transitionDuration: const Duration(
-                          milliseconds: 600,
-                        ),
-                      ),
-                    ),
                   ),
                 );
               }, childCount: filtered.length),
@@ -150,10 +154,10 @@ class _HealthFacilitiesScreenState extends State<HealthFacilitiesScreen> {
   }
 
   Widget _buildSearchAndFilters(
-    bool isDark, 
-    Color searchBgColor, 
-    Color hintColor, 
-    Color textColor
+    bool isDark,
+    Color searchBgColor,
+    Color hintColor,
+    Color textColor,
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -169,7 +173,7 @@ class _HealthFacilitiesScreenState extends State<HealthFacilitiesScreen> {
               boxShadow: [
                 BoxShadow(
                   color: (isDark ? Colors.black : Colors.black).withOpacity(
-                    isDark ? 0.3 : 0.05
+                    isDark ? 0.3 : 0.05,
                   ),
                   blurRadius: 10,
                   offset: const Offset(0, 3),
@@ -205,25 +209,28 @@ class _HealthFacilitiesScreenState extends State<HealthFacilitiesScreen> {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: provinces.map((p) {
-                final isSelected = selectedProvince == p;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    label: Text(p),
-                    selected: isSelected,
-                    selectedColor: primaryColor,
-                    backgroundColor: isDark ? const Color(0xFF2D2D2D) : Colors.grey[200],
-                    labelStyle: TextStyle(
-                      color: isSelected 
-                        ? Colors.white 
-                        : (isDark ? Colors.white70 : Colors.black87),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    onSelected: (_) => setState(() => selectedProvince = p),
-                  ),
-                );
-              }).toList(),
+              children:
+                  provinces.map((p) {
+                    final isSelected = selectedProvince == p;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ChoiceChip(
+                        label: Text(p),
+                        selected: isSelected,
+                        selectedColor: primaryColor,
+                        backgroundColor:
+                            isDark ? const Color(0xFF2D2D2D) : Colors.grey[200],
+                        labelStyle: TextStyle(
+                          color:
+                              isSelected
+                                  ? Colors.white
+                                  : (isDark ? Colors.white70 : Colors.black87),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        onSelected: (_) => setState(() => selectedProvince = p),
+                      ),
+                    );
+                  }).toList(),
             ),
           ),
           const SizedBox(height: 16),
@@ -241,25 +248,28 @@ class _HealthFacilitiesScreenState extends State<HealthFacilitiesScreen> {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: types.map((t) {
-                final isSelected = selectedType == t;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    label: Text(t),
-                    selected: isSelected,
-                    selectedColor: Colors.green,
-                    backgroundColor: isDark ? const Color(0xFF2D2D2D) : Colors.grey[200],
-                    labelStyle: TextStyle(
-                      color: isSelected 
-                        ? Colors.white 
-                        : (isDark ? Colors.white70 : Colors.black87),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    onSelected: (_) => setState(() => selectedType = t),
-                  ),
-                );
-              }).toList(),
+              children:
+                  types.map((t) {
+                    final isSelected = selectedType == t;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ChoiceChip(
+                        label: Text(t),
+                        selected: isSelected,
+                        selectedColor: Colors.green,
+                        backgroundColor:
+                            isDark ? const Color(0xFF2D2D2D) : Colors.grey[200],
+                        labelStyle: TextStyle(
+                          color:
+                              isSelected
+                                  ? Colors.white
+                                  : (isDark ? Colors.white70 : Colors.black87),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        onSelected: (_) => setState(() => selectedType = t),
+                      ),
+                    );
+                  }).toList(),
             ),
           ),
         ],
@@ -302,7 +312,7 @@ class HealthFacilityCard extends StatelessWidget {
   final bool isDark;
   final Color cardColor;
   final Color textColor;
-  
+
   const HealthFacilityCard({
     super.key,
     required this.facility,
@@ -317,7 +327,7 @@ class HealthFacilityCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final subtextColor = isDark ? Colors.white60 : Colors.grey[700];
     final reviewColor = isDark ? Colors.white54 : Colors.grey[600];
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
@@ -326,7 +336,7 @@ class HealthFacilityCard extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: (isDark ? Colors.black : Colors.black).withOpacity(
-              isDark ? 0.4 : 0.08
+              isDark ? 0.4 : 0.08,
             ),
             blurRadius: 10,
             offset: const Offset(0, 4),
@@ -360,7 +370,8 @@ class HealthFacilityCard extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.black : Colors.white).withOpacity(0.9),
+                        color: (isDark ? Colors.black : Colors.white)
+                            .withOpacity(0.9),
                         borderRadius: BorderRadius.circular(30),
                       ),
                       child: Row(
