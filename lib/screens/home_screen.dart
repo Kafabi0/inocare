@@ -10,6 +10,7 @@ import 'package:inocare/screens/healthfacilities_screen.dart';
 import 'package:inocare/screens/medical_equipment.dart';
 import 'package:inocare/screens/patient_records_screen.dart';
 import 'package:inocare/screens/patientmonitoring_screen.dart';
+import 'package:inocare/screens/pegawai_screen.dart';
 import 'package:inocare/screens/shift_screen.dart';
 import 'package:inocare/screens/staff_screen.dart';
 import '../data/app_data.dart';
@@ -291,6 +292,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               context,
                               MaterialPageRoute(
                                 builder: (_) => const DashboardReporting(),
+                              ),
+                            );
+                            break;
+                            case 'Kepegawaian':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const PegawaiScreen(),
                               ),
                             );
                             break;
