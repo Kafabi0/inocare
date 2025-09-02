@@ -3,7 +3,7 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class PegawaiScreen extends StatefulWidget {
   const PegawaiScreen({super.key});
-
+  
   @override
   State<PegawaiScreen> createState() => _PegawaiScreenState();
 }
@@ -11,6 +11,14 @@ class PegawaiScreen extends StatefulWidget {
 class _PegawaiScreenState extends State<PegawaiScreen> {
   late CalendarController _medicalCalendarController;
   late CalendarController _nonMedicalCalendarController;
+  
+  // Filter states
+  String selectedMedicalFilter = 'All';
+  String selectedNonMedicalFilter = 'All';
+  
+  // Calendar view states
+  CalendarView _medicalCalendarView = CalendarView.month;
+  CalendarView _nonMedicalCalendarView = CalendarView.month;
   
   // Data statistik pegawai
   final Map<String, int> employeeStats = {
@@ -22,133 +30,183 @@ class _PegawaiScreenState extends State<PegawaiScreen> {
     'Staff': 688,
   };
   
-  // Data jadwal petugas medis dengan detail dokter
-  final Map<DateTime, List<DoctorSchedule>> medicalScheduleDetails = {
-    DateTime(2025, 8, 1): [
-      DoctorSchedule(name: 'dr. Yusmaldi, Sp.B-KBD', specialty: 'BEDAH DIGESTIF', startTime: '07:30', endTime: '14:00'),
-      DoctorSchedule(name: 'dr. Alfita Hilranti, Sp.KJ, M.MR', specialty: 'JIWA', startTime: '07:30', endTime: '12:00'),
-      DoctorSchedule(name: 'dr. M. TAUFIK PERWIRA W, Sp.A', specialty: 'ANAK', startTime: '07:30', endTime: '12:00'),
-    ],
-    DateTime(2025, 8, 2): [
-      DoctorSchedule(name: 'dr. Yusmaldi, Sp.B-KBD', specialty: 'BEDAH DIGESTIF', startTime: '07:30', endTime: '14:00'),
-      DoctorSchedule(name: 'dr. Alfita Hilranti, Sp.KJ, M.MR', specialty: 'JIWA', startTime: '07:30', endTime: '12:00'),
-    ],
-    DateTime(2025, 8, 3): [
-      DoctorSchedule(name: 'dr. YULISMA, Sp.OVG, FINSDV, FAADV', specialty: 'KULIT KELAMIN', startTime: '07:30', endTime: '12:00'),
-      DoctorSchedule(name: 'dr. Mizar Erlanto, Sp.B(K)Onk', specialty: 'BEDAH ONKOLOGI', startTime: '07:30', endTime: '15:00'),
-      DoctorSchedule(name: 'dr. Irsan Kurniawan, drg, Sp.BM', specialty: 'GIGI BEDAH MULUT', startTime: '07:30', endTime: '12:00'),
-    ],
-    // Tambah data untuk tanggal lainnya...
+  // Warna untuk setiap kategori
+  final Map<String, Color> categoryColors = {
+    'Dokter Spesialis': Color(0xFF1E40AF), // Biru tua
+    'Dokter Umum': Color(0xFF3B82F6),      // Biru
+    'Perawat': Color(0xFF10B981),          // Hijau
+    'Bidan': Color(0xFF8B5CF6),           // Ungu
+    'Apoteker': Color(0xFFF59E0B),        // Kuning/Orange
+    'Staff': Color(0xFF64748B),           // Abu-abu
   };
   
-  // Data jadwal petugas medis
-  final List<Meeting> medicalAppointments = [
-    Meeting(
-      eventName: '3 Jadwal',
-      from: DateTime(2025, 8, 1),
-      to: DateTime(2025, 8, 1),
-      background: const Color(0xFF1E40AF),
-    ),
-    Meeting(
-      eventName: '2 Jadwal',
-      from: DateTime(2025, 8, 2),
-      to: DateTime(2025, 8, 2),
-      background: const Color(0xFF1E40AF),
-    ),
-    Meeting(
-      eventName: '3 Jadwal',
-      from: DateTime(2025, 8, 3),
-      to: DateTime(2025, 8, 3),
-      background: const Color(0xFF1E40AF),
-    ),
-    Meeting(
-      eventName: '5 Jadwal',
-      from: DateTime(2025, 8, 5),
-      to: DateTime(2025, 8, 5),
-      background: const Color(0xFF1E40AF),
-    ),
-    Meeting(
-      eventName: '8 Jadwal',
-      from: DateTime(2025, 8, 8),
-      to: DateTime(2025, 8, 8),
-      background: const Color(0xFF1E40AF),
-    ),
-    Meeting(
-      eventName: '12 Jadwal',
-      from: DateTime(2025, 8, 12),
-      to: DateTime(2025, 8, 12),
-      background: const Color(0xFF1E40AF),
-    ),
-    Meeting(
-      eventName: '15 Jadwal',
-      from: DateTime(2025, 8, 15),
-      to: DateTime(2025, 8, 15),
-      background: const Color(0xFF1E40AF),
-    ),
-    Meeting(
-      eventName: '20 Jadwal',
-      from: DateTime(2025, 8, 20),
-      to: DateTime(2025, 8, 20),
-      background: const Color(0xFF1E40AF),
-    ),
-  ];
-  
-  // Data jadwal petugas non medis dengan detail staff
-  final Map<DateTime, List<StaffSchedule>> nonMedicalScheduleDetails = {
-    DateTime(2025, 8, 31): [
-      StaffSchedule(name: 'Ahmad Suryadi', position: 'Apoteker', startTime: '08:00', endTime: '16:00'),
-      StaffSchedule(name: 'Siti Nurhaliza', position: 'Admin', startTime: '07:30', endTime: '15:30'),
-      StaffSchedule(name: 'Budi Santoso', position: 'Teknisi', startTime: '08:00', endTime: '16:00'),
-    ],
-    DateTime(2025, 8, 1): [
-      StaffSchedule(name: 'Maria Gonzales', position: 'Apoteker', startTime: '08:00', endTime: '16:00'),
-      StaffSchedule(name: 'Indra Wijaya', position: 'Admin', startTime: '07:30', endTime: '15:30'),
-    ],
+  // Data lengkap jadwal petugas medis berdasarkan kategori
+  final Map<String, Map<DateTime, List<DoctorSchedule>>> medicalScheduleByCategory = {
+    'Dokter Spesialis': {
+      DateTime(2025, 9, 1): [
+        DoctorSchedule(name: 'dr. Yusmaldi, Sp.B-KBD', specialty: 'BEDAH DIGESTIF', startTime: '07:30', endTime: '14:00', photoAsset: 'assets/dokter/doctor1.png'),
+        DoctorSchedule(name: 'dr. Alfita Hilranti, Sp.KJ, M.MR', specialty: 'JIWA', startTime: '07:30', endTime: '12:00'),
+      ],
+      DateTime(2025, 9, 3): [
+        DoctorSchedule(name: 'dr. YULISMA, Sp.OVG, FINSDV, FAADV', specialty: 'KULIT KELAMIN', startTime: '07:30', endTime: '12:00'),
+        DoctorSchedule(name: 'dr. Mizar Erlanto, Sp.B(K)Onk', specialty: 'BEDAH ONKOLOGI', startTime: '07:30', endTime: '15:00'),
+      ],
+      DateTime(2025, 9, 5): [
+        DoctorSchedule(name: 'dr. Ahmad Rahman, Sp.JP', specialty: 'JANTUNG', startTime: '08:00', endTime: '15:00'),
+        DoctorSchedule(name: 'dr. Siti Aminah, Sp.M', specialty: 'MATA', startTime: '08:00', endTime: '13:00'),
+      ],
+      DateTime(2025, 9, 9): [
+        DoctorSchedule(name: 'dr. Fitri Handayani, Sp.Rad', specialty: 'RADIOLOGI', startTime: '08:00', endTime: '15:00'),
+      ],
+      DateTime(2025, 9, 15): [
+        DoctorSchedule(name: 'dr. Hendra Wijaya, Sp.PD', specialty: 'DALAM', startTime: '07:30', endTime: '12:00'),
+        DoctorSchedule(name: 'dr. Maya Indira, Sp.S', specialty: 'SARAF', startTime: '08:00', endTime: '14:00', photoAsset: 'assets/dokter/doctor1.png'),
+      ],
+    },
+    'Dokter Umum': {
+      DateTime(2025, 9, 2): [
+        DoctorSchedule(name: 'dr. Budi Santoso', specialty: 'UMUM', startTime: '08:00', endTime: '16:00'),
+        DoctorSchedule(name: 'dr. Lisa Permata', specialty: 'UMUM', startTime: '07:30', endTime: '15:30'),
+      ],
+      DateTime(2025, 9, 4): [
+        DoctorSchedule(name: 'dr. Eko Purnomo', specialty: 'UMUM', startTime: '08:00', endTime: '16:00'),
+      ],
+      DateTime(2025, 9, 6): [
+        DoctorSchedule(name: 'dr. Ratna Dewi', specialty: 'UMUM', startTime: '07:30', endTime: '15:30'),
+        DoctorSchedule(name: 'dr. Agus Santoso', specialty: 'UMUM', startTime: '08:00', endTime: '16:00'),
+      ],
+      DateTime(2025, 9, 10): [
+        DoctorSchedule(name: 'dr. Nanda Pratama', specialty: 'UMUM', startTime: '08:00', endTime: '16:00'),
+      ],
+      DateTime(2025, 9, 18): [
+        DoctorSchedule(name: 'dr. Indah Sari', specialty: 'UMUM', startTime: '07:30', endTime: '15:30'),
+        DoctorSchedule(name: 'dr. Yudi Pranata', specialty: 'UMUM', startTime: '08:00', endTime: '16:00'),
+      ],
+    },
+    'Perawat': {
+      DateTime(2025, 9, 1): [
+        DoctorSchedule(name: 'Ns. Maria Gonzales', specialty: 'PERAWAT IGD', startTime: '07:00', endTime: '19:00'),
+        DoctorSchedule(name: 'Ns. Siti Nurhaliza', specialty: 'PERAWAT RAWAT INAP', startTime: '19:00', endTime: '07:00'),
+      ],
+      DateTime(2025, 9, 7): [
+        DoctorSchedule(name: 'Ns. Dewi Lestari', specialty: 'PERAWAT ICU', startTime: '07:00', endTime: '19:00'),
+        DoctorSchedule(name: 'Ns. Rudi Hermawan', specialty: 'PERAWAT OK', startTime: '08:00', endTime: '16:00'),
+      ],
+      DateTime(2025, 9, 12): [
+        DoctorSchedule(name: 'Ns. Fitri Handayani', specialty: 'PERAWAT ANAK', startTime: '07:00', endTime: '19:00'),
+        DoctorSchedule(name: 'Ns. Bambang Susilo', specialty: 'PERAWAT JIWA', startTime: '19:00', endTime: '07:00'),
+      ],
+      DateTime(2025, 9, 20): [
+        DoctorSchedule(name: 'Ns. Rina Marlina', specialty: 'PERAWAT BEDAH', startTime: '07:00', endTime: '19:00'),
+        DoctorSchedule(name: 'Ns. Hendra Kusuma', specialty: 'PERAWAT POLI', startTime: '08:00', endTime: '16:00'),
+      ],
+    },
+    'Bidan': {
+      DateTime(2025, 9, 4): [
+        DoctorSchedule(name: 'Bd. Lina Kartini', specialty: 'BIDAN VK', startTime: '07:00', endTime: '19:00'),
+      ],
+      DateTime(2025, 9, 6): [
+        DoctorSchedule(name: 'Bd. Maya Sari', specialty: 'BIDAN POLI KIA', startTime: '08:00', endTime: '16:00'),
+        DoctorSchedule(name: 'Bd. Dian Permata', specialty: 'BIDAN NIFAS', startTime: '19:00', endTime: '07:00'),
+      ],
+      DateTime(2025, 9, 10): [
+        DoctorSchedule(name: 'Bd. Agung Nugroho', specialty: 'BIDAN KB', startTime: '08:00', endTime: '16:00'),
+      ],
+      DateTime(2025, 9, 15): [
+        DoctorSchedule(name: 'Bd. Yanto Pratama', specialty: 'BIDAN PERSALINAN', startTime: '07:00', endTime: '19:00'),
+      ],
+    },
   };
   
-  // Data jadwal petugas non medis
-  final List<Meeting> nonMedicalAppointments = [
-    Meeting(
-      eventName: '3 Jadwal',
-      from: DateTime(2025, 8, 31),
-      to: DateTime(2025, 8, 31),
-      background: const Color(0xFF059669),
-    ),
-    Meeting(
-      eventName: '2 Jadwal',
-      from: DateTime(2025, 8, 1),
-      to: DateTime(2025, 8, 1),
-      background: const Color(0xFF059669),
-    ),
-    Meeting(
-      eventName: '5 Jadwal',
-      from: DateTime(2025, 8, 5),
-      to: DateTime(2025, 8, 5),
-      background: const Color(0xFF059669),
-    ),
-    Meeting(
-      eventName: '8 Jadwal',
-      from: DateTime(2025, 8, 10),
-      to: DateTime(2025, 8, 10),
-      background: const Color(0xFF059669),
-    ),
-    Meeting(
-      eventName: '12 Jadwal',
-      from: DateTime(2025, 8, 15),
-      to: DateTime(2025, 8, 15),
-      background: const Color(0xFF059669),
-    ),
-  ];
-
+  // Data jadwal petugas non medis berdasarkan kategori
+  final Map<String, Map<DateTime, List<StaffSchedule>>> nonMedicalScheduleByCategory = {
+    'Apoteker': {
+      DateTime(2025, 9, 1): [
+        StaffSchedule(name: 'Ahmad Suryadi', position: 'Apoteker', startTime: '08:00', endTime: '16:00'),
+      ],
+      DateTime(2025, 9, 3): [
+        StaffSchedule(name: 'Maria Gonzales', position: 'Apoteker', startTime: '08:00', endTime: '16:00'),
+        StaffSchedule(name: 'Dewi Lestari', position: 'Apoteker', startTime: '16:00', endTime: '24:00'),
+      ],
+      DateTime(2025, 9, 7): [
+        StaffSchedule(name: 'Rina Marlina', position: 'Apoteker', startTime: '08:00', endTime: '16:00'),
+      ],
+      DateTime(2025, 9, 12): [
+        StaffSchedule(name: 'Agung Nugroho', position: 'Apoteker', startTime: '08:00', endTime: '16:00'),
+        StaffSchedule(name: 'Fitri Handayani', position: 'Apoteker', startTime: '16:00', endTime: '24:00'),
+      ],
+      DateTime(2025, 9, 18): [
+        StaffSchedule(name: 'Hendra Kusuma', position: 'Apoteker', startTime: '08:00', endTime: '16:00'),
+      ],
+    },
+    'Staff': {
+      DateTime(2025, 9, 2): [
+        StaffSchedule(name: 'Siti Nurhaliza', position: 'Admin', startTime: '07:30', endTime: '15:30'),
+        StaffSchedule(name: 'Indra Wijaya', position: 'Teknisi', startTime: '08:00', endTime: '16:00'),
+      ],
+      DateTime(2025, 9, 5): [
+        StaffSchedule(name: 'Budi Santoso', position: 'Security', startTime: '06:00', endTime: '18:00'),
+        StaffSchedule(name: 'Anita Sari', position: 'Cleaning Service', startTime: '06:00', endTime: '14:00'),
+      ],
+      DateTime(2025, 9, 10): [
+        StaffSchedule(name: 'Yanto Pratama', position: 'IT Support', startTime: '08:00', endTime: '17:00'),
+        StaffSchedule(name: 'Lina Kartini', position: 'Admin', startTime: '07:30', endTime: '15:30'),
+      ],
+      DateTime(2025, 9, 15): [
+        StaffSchedule(name: 'Maya Sari', position: 'Nutritionist', startTime: '08:00', endTime: '15:00'),
+        StaffSchedule(name: 'Dian Permata', position: 'Admin', startTime: '07:30', endTime: '15:30'),
+      ],
+      DateTime(2025, 9, 20): [
+        StaffSchedule(name: 'Bambang Susilo', position: 'Maintenance', startTime: '08:00', endTime: '16:00'),
+        StaffSchedule(name: 'Rudi Hermawan', position: 'Driver', startTime: '07:00', endTime: '15:00'),
+      ],
+    },
+  };
+  
   @override
   void initState() {
     super.initState();
     _medicalCalendarController = CalendarController();
     _nonMedicalCalendarController = CalendarController();
-    _medicalCalendarController.displayDate = DateTime(2025, 8);
-    _nonMedicalCalendarController.displayDate = DateTime(2025, 8);
+    _medicalCalendarController.displayDate = DateTime(2025, 9);
+    _nonMedicalCalendarController.displayDate = DateTime(2025, 9);
   }
-
+  
+  // Generate appointments berdasarkan filter
+  List<Meeting> _generateFilteredAppointments(Map<String, Map<DateTime, List<dynamic>>> scheduleByCategory, String selectedFilter) {
+    List<Meeting> appointments = [];
+    
+    if (selectedFilter == 'All') {
+      // Gabungkan semua kategori
+      scheduleByCategory.forEach((category, scheduleMap) {
+        scheduleMap.forEach((date, schedules) {
+          appointments.add(Meeting(
+            eventName: '${schedules.length} Jadwal',
+            from: date,
+            to: date,
+            background: categoryColors[category]!,
+            category: category,
+          ));
+        });
+      });
+    } else {
+      // Hanya kategori yang dipilih
+      if (scheduleByCategory.containsKey(selectedFilter)) {
+        scheduleByCategory[selectedFilter]!.forEach((date, schedules) {
+          appointments.add(Meeting(
+            eventName: '${schedules.length} Jadwal',
+            from: date,
+            to: date,
+            background: categoryColors[selectedFilter]!,
+            category: selectedFilter,
+          ));
+        });
+      }
+    }
+    
+    return appointments;
+  }
+  
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -191,7 +249,7 @@ class _PegawaiScreenState extends State<PegawaiScreen> {
       ),
     );
   }
-
+  
   Widget _buildKepegawaianTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(12),
@@ -241,12 +299,24 @@ class _PegawaiScreenState extends State<PegawaiScreen> {
           
           _buildScheduleCard(
             title: 'Jadwal Petugas Medis',
-            appointments: medicalAppointments,
+            appointments: _generateFilteredAppointments(medicalScheduleByCategory, selectedMedicalFilter),
             accentColor: const Color(0xFF1E40AF),
             staffTypes: const ['Dokter Spesialis', 'Dokter Umum', 'Perawat', 'Bidan'],
             controller: _medicalCalendarController,
-            scheduleDetails: medicalScheduleDetails,
+            scheduleDetails: _getFilteredScheduleDetails(medicalScheduleByCategory, selectedMedicalFilter),
             isMedical: true,
+            selectedFilter: selectedMedicalFilter,
+            onFilterChanged: (filter) {
+              setState(() {
+                selectedMedicalFilter = filter;
+              });
+            },
+            calendarView: _medicalCalendarView,
+            onViewChanged: (view) {
+              setState(() {
+                _medicalCalendarView = view;
+              });
+            },
           ),
           
           const SizedBox(height: 16),
@@ -264,245 +334,500 @@ class _PegawaiScreenState extends State<PegawaiScreen> {
           
           _buildScheduleCard(
             title: 'Jadwal Petugas Non Medis',
-            appointments: nonMedicalAppointments,
+            appointments: _generateFilteredAppointments(nonMedicalScheduleByCategory, selectedNonMedicalFilter),
             accentColor: const Color(0xFF059669),
             staffTypes: const ['Apoteker', 'Staff'],
             controller: _nonMedicalCalendarController,
-            scheduleDetails: nonMedicalScheduleDetails,
+            scheduleDetails: _getFilteredScheduleDetails(nonMedicalScheduleByCategory, selectedNonMedicalFilter),
             isMedical: false,
+            selectedFilter: selectedNonMedicalFilter,
+            onFilterChanged: (filter) {
+              setState(() {
+                selectedNonMedicalFilter = filter;
+              });
+            },
+            calendarView: _nonMedicalCalendarView,
+            onViewChanged: (view) {
+              setState(() {
+                _nonMedicalCalendarView = view;
+              });
+            },
           ),
         ],
       ),
     );
   }
-
+  
+  Map<DateTime, List<dynamic>> _getFilteredScheduleDetails(Map<String, Map<DateTime, List<dynamic>>> scheduleByCategory, String selectedFilter) {
+  Map<DateTime, List<dynamic>> filteredDetails = {};
+  
+  if (selectedFilter == 'All') {
+    scheduleByCategory.forEach((category, scheduleMap) {
+      scheduleMap.forEach((date, schedules) {
+        if (filteredDetails.containsKey(date)) {
+          // Tambahkan informasi kategori ke setiap item jadwal
+          List<dynamic> categorizedSchedules = schedules.map((schedule) {
+            if (schedule is DoctorSchedule) {
+              return CategorizedDoctorSchedule(
+                name: schedule.name,
+                specialty: schedule.specialty,
+                startTime: schedule.startTime,
+                endTime: schedule.endTime,
+                category: category,
+                photoAsset: schedule.photoAsset, // Tambahkan ini
+              );
+            } else if (schedule is StaffSchedule) {
+              return CategorizedStaffSchedule(
+                name: schedule.name,
+                position: schedule.position,
+                startTime: schedule.startTime,
+                endTime: schedule.endTime,
+                category: category,
+                photoAsset: schedule.photoAsset, // Tambahkan ini
+              );
+            }
+            return schedule;
+          }).toList();
+          
+          filteredDetails[date]!.addAll(categorizedSchedules);
+        } else {
+          // Tambahkan informasi kategori ke setiap item jadwal
+          List<dynamic> categorizedSchedules = schedules.map((schedule) {
+            if (schedule is DoctorSchedule) {
+              return CategorizedDoctorSchedule(
+                name: schedule.name,
+                specialty: schedule.specialty,
+                startTime: schedule.startTime,
+                endTime: schedule.endTime,
+                category: category,
+                photoAsset: schedule.photoAsset, // Tambahkan ini
+              );
+            } else if (schedule is StaffSchedule) {
+              return CategorizedStaffSchedule(
+                name: schedule.name,
+                position: schedule.position,
+                startTime: schedule.startTime,
+                endTime: schedule.endTime,
+                category: category,
+                photoAsset: schedule.photoAsset, // Tambahkan ini
+              );
+            }
+            return schedule;
+          }).toList();
+          
+          filteredDetails[date] = categorizedSchedules;
+        }
+      });
+    });
+  } else {
+    if (scheduleByCategory.containsKey(selectedFilter)) {
+      // Tambahkan informasi kategori ke setiap item jadwal
+      Map<DateTime, List<dynamic>> categorizedMap = {};
+      scheduleByCategory[selectedFilter]!.forEach((date, schedules) {
+        List<dynamic> categorizedSchedules = schedules.map((schedule) {
+          if (schedule is DoctorSchedule) {
+            return CategorizedDoctorSchedule(
+              name: schedule.name,
+              specialty: schedule.specialty,
+              startTime: schedule.startTime,
+              endTime: schedule.endTime,
+              category: selectedFilter,
+              photoAsset: schedule.photoAsset, // Tambahkan ini
+            );
+          } else if (schedule is StaffSchedule) {
+            return CategorizedStaffSchedule(
+              name: schedule.name,
+              position: schedule.position,
+              startTime: schedule.startTime,
+              endTime: schedule.endTime,
+              category: selectedFilter,
+              photoAsset: schedule.photoAsset, // Tambahkan ini
+            );
+          }
+          return schedule;
+        }).toList();
+        
+        categorizedMap[date] = categorizedSchedules;
+      });
+      
+      filteredDetails = categorizedMap;
+    }
+  }
+  
+  return filteredDetails;
+}
+  
   void _showScheduleDetail(DateTime date, List<dynamic> schedules, bool isMedical) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.all(0),
-          content: Container(
-            width: MediaQuery.of(context).size.width * 0.9,
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.7,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Header
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: isMedical ? const Color(0xFF1E40AF) : const Color(0xFF059669),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(4),
-                      topRight: Radius.circular(4),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              isMedical ? 'Daftar Jadwal Spesialis' : 'Daftar Jadwal Staff',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Tanggal: ${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}',
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        icon: const Icon(Icons.close, color: Colors.white, size: 20),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      ),
-                    ],
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: MediaQuery.of(context).size.width * 0.95,
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.75,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: isMedical ? const Color(0xFF1E40AF) : const Color(0xFF059669),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(4),
+                    topRight: Radius.circular(4),
                   ),
                 ),
-                // Content
-                Flexible(
-                  child: Container(
-                    width: double.infinity,
-                    child: SingleChildScrollView(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Table Header
-                          Container(
-                            color: Colors.grey[100],
-                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                            child: Row(
-                              children: [
-                                const SizedBox(
-                                  width: 30,
-                                  child: Text(
-                                    'No',
-                                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                const SizedBox(
-                                  width: 20,
-                                  child: Text(
-                                    '#',
-                                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  flex: 3,
-                                  child: Text(
-                                    isMedical ? 'Nama Dokter' : 'Nama Staff',
-                                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    isMedical ? 'Spesialis Unit Layanan' : 'Posisi',
-                                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 40,
-                                  child: Text(
-                                    'Mulai',
-                                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                const SizedBox(
-                                  width: 40,
-                                  child: Text(
-                                    'Selesai',
-                                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
+                          Text(
+                            isMedical ? 'Daftar Jadwal Medis' : 'Daftar Jadwal Non Medis',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          // Table Content
-                          ...schedules.asMap().entries.map((entry) {
-                            int index = entry.key;
-                            dynamic schedule = entry.value;
-                            
-                            return Container(
-                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                              decoration: BoxDecoration(
-                                color: index % 2 == 0 ? Colors.white : Colors.grey[50],
-                                border: Border(
-                                  bottom: BorderSide(color: Colors.grey[200]!),
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    width: 30,
-                                    child: Text(
-                                      '${index + 1}',
-                                      style: const TextStyle(fontSize: 10),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  const SizedBox(
-                                    width: 20,
-                                    child: Text(
-                                      '',
-                                      style: TextStyle(fontSize: 10),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    flex: 3,
-                                    child: Text(
-                                      schedule.name,
-                                      style: const TextStyle(fontSize: 10),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      isMedical ? (schedule as DoctorSchedule).specialty : (schedule as StaffSchedule).position,
-                                      style: const TextStyle(fontSize: 10),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 40,
-                                    child: Text(
-                                      schedule.startTime,
-                                      style: const TextStyle(fontSize: 10),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  SizedBox(
-                                    width: 40,
-                                    child: Text(
-                                      schedule.endTime,
-                                      style: const TextStyle(fontSize: 10),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Tanggal: ${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}',
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 13,
+                            ),
+                          ),
                         ],
                       ),
                     ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close, color: Colors.white, size: 22),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // Content dengan horizontal scroll
+              Flexible(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal, // Horizontal scroll utama
+                  child: Container(
+                    width: 800, // Fixed width untuk table yang lebar
+                    child: Column(
+                      children: [
+                        // Table Header
+                        Container(
+                          color: Colors.grey[100],
+                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                          child: Row(
+                            children: [
+                              // No column
+                              Container(
+                                width: 50,
+                                alignment: Alignment.center,
+                                child: const Text(
+                                  'No',
+                                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              // Category indicator
+                              Container(
+                                width: 40,
+                                alignment: Alignment.center,
+                                child: const Text(
+                                  '#',
+                                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              // Photo column
+                              Container(
+                                width: 100,
+                                alignment: Alignment.center,
+                                child: const Text(
+                                  'Foto',
+                                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              // Name column - lebih lebar
+                              Container(
+                                width: 200,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  isMedical ? 'Nama Dokter' : 'Nama Staff',
+                                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              // Specialty/Position column - lebih lebar
+                              Container(
+                                width: 180,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  isMedical ? 'Spesialis/Unit Layanan' : 'Posisi',
+                                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              // Start time
+                              Container(
+                                width: 80,
+                                alignment: Alignment.center,
+                                child: const Text(
+                                  'Jam Mulai',
+                                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              // End time
+                              Container(
+                                width: 80,
+                                alignment: Alignment.center,
+                                child: const Text(
+                                  'Jam Selesai',
+                                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        
+                        // Scrollable content area
+                        Expanded(
+                          child: Container(
+                            color: Colors.white, // Ganti ke putih
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical, // Vertical scroll untuk rows
+                              child: Column(
+                              children: schedules.asMap().entries.map((entry) {
+                                int index = entry.key;
+                                dynamic schedule = entry.value;
+                                
+                                // Get category and color
+                                String category = '';
+                                Color categoryColor = Colors.grey;
+                                
+                                if (schedule is CategorizedDoctorSchedule) {
+                                  category = schedule.category;
+                                  categoryColor = categoryColors[category] ?? Colors.grey;
+                                } else if (schedule is CategorizedStaffSchedule) {
+                                  category = schedule.category;
+                                  categoryColor = categoryColors[category] ?? Colors.grey;
+                                }
+                                
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white, // Semua row putih
+                                    border: Border(
+                                      bottom: BorderSide(color: Colors.grey[300]!),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      // No
+                                      Container(
+                                        width: 50,
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          '${index + 1}',
+                                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                      // Category color indicator
+                                      Container(
+                                        width: 40,
+                                        alignment: Alignment.center,
+                                        child: Container(
+                                          width: 20,
+                                          height: 20,
+                                          decoration: BoxDecoration(
+                                            color: categoryColor,
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                      ),
+                                      // Photo
+                                      Container(
+                                        width: 100,
+                                        alignment: Alignment.center,
+                                        child: Container(
+                                          width: 70,
+                                          height: 70,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(8),
+                                            border: Border.all(color: categoryColor, width: 2),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(6),
+                                            child: schedule.photoAsset.isNotEmpty
+                                                ? Image.asset(
+                                                    schedule.photoAsset,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context, error, stackTrace) {
+                                                      return Container(
+                                                        color: categoryColor.withOpacity(0.1),
+                                                        child: Center(
+                                                          child: Text(
+                                                            schedule.name.isNotEmpty ? schedule.name[0].toUpperCase() : '?',
+                                                            style: TextStyle(
+                                                              color: categoryColor,
+                                                              fontWeight: FontWeight.bold,
+                                                              fontSize: 28,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  )
+                                                : Container(
+                                                    color: categoryColor.withOpacity(0.1),
+                                                    child: Center(
+                                                      child: Text(
+                                                        schedule.name.isNotEmpty ? schedule.name[0].toUpperCase() : '?',
+                                                        style: TextStyle(
+                                                          color: categoryColor,
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 28,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                          ),
+                                        ),
+                                      ),
+                                      // Name
+                                      Container(
+                                        width: 200,
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          schedule.name,
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      // Specialty/Position
+                                      Container(
+                                        width: 180,
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          isMedical ? (schedule as CategorizedDoctorSchedule).specialty : (schedule as CategorizedStaffSchedule).position,
+                                          style: const TextStyle(fontSize: 12),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      // Start time
+                                      Container(
+                                        width: 80,
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          schedule.startTime,
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xFF059669),
+                                          ),
+                                        ),
+                                      ),
+                                      // End time
+                                      Container(
+                                        width: 80,
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          schedule.endTime,
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xFFDC2626),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                          ), // Tutup Container
+                        ), // Tutup Expanded
+                      ],
+                    ),
                   ),
                 ),
-              ],
-            ),
+              ),
+              
+              // Footer hint
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white, // Ganti ke putih
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(4),
+                    bottomRight: Radius.circular(4),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.swap_horiz,
+                      size: 16,
+                      color: Colors.grey[600],
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Geser ke samping untuk melihat semua kolom',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey[600],
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        );
-      },
-    );
-  }
-
+        ),
+      );
+    },
+  );
+}
+  
   Widget _buildEmployeeCard(String role, int count) {
-    Color cardColor;
+    Color cardColor = categoryColors[role] ?? const Color(0xFF64748B);
     IconData icon;
     
     switch (role) {
       case 'Dokter Spesialis':
-        cardColor = const Color(0xFF1E40AF);
         icon = Icons.medical_services;
         break;
       case 'Dokter Umum':
-        cardColor = const Color(0xFF3B82F6);
         icon = Icons.person;
         break;
       case 'Perawat':
-        cardColor = const Color(0xFF10B981);
         icon = Icons.health_and_safety;
         break;
       case 'Bidan':
-        cardColor = const Color(0xFF8B5CF6);
         icon = Icons.pregnant_woman;
         break;
       case 'Apoteker':
-        cardColor = const Color(0xFFF59E0B);
         icon = Icons.medication;
         break;
       default:
-        cardColor = const Color(0xFF64748B);
         icon = Icons.groups;
     }
     
@@ -560,7 +885,7 @@ class _PegawaiScreenState extends State<PegawaiScreen> {
       ),
     );
   }
-
+  
   Widget _buildScheduleCard({
     required String title,
     required List<Meeting> appointments,
@@ -569,6 +894,10 @@ class _PegawaiScreenState extends State<PegawaiScreen> {
     required CalendarController controller,
     required Map<DateTime, List<dynamic>> scheduleDetails,
     required bool isMedical,
+    required String selectedFilter,
+    required Function(String) onFilterChanged,
+    required CalendarView calendarView,
+    required Function(CalendarView) onViewChanged,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -584,51 +913,58 @@ class _PegawaiScreenState extends State<PegawaiScreen> {
       ),
       child: Column(
         children: [
-          // Staff type chips
+          // Staff type filter chips
           Padding(
             padding: const EdgeInsets.all(12),
             child: Wrap(
               spacing: 6,
               runSpacing: 6,
-              children: staffTypes.map((type) {
-                Color chipColor;
-                
-                switch (type) {
-                  case 'Dokter Spesialis':
-                    chipColor = const Color(0xFF1E40AF);
-                    break;
-                  case 'Dokter Umum':
-                    chipColor = const Color(0xFF3B82F6);
-                    break;
-                  case 'Perawat':
-                    chipColor = const Color(0xFF10B981);
-                    break;
-                  case 'Bidan':
-                    chipColor = const Color(0xFF8B5CF6);
-                    break;
-                  case 'Apoteker':
-                    chipColor = const Color(0xFFF59E0B);
-                    break;
-                  default:
-                    chipColor = const Color(0xFF059669);
-                }
-                
-                return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: chipColor,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    type,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
+              children: [
+                // All filter
+                GestureDetector(
+                  onTap: () => onFilterChanged('All'),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: selectedFilter == 'All' ? accentColor : Colors.grey[300],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      'All',
+                      style: TextStyle(
+                        color: selectedFilter == 'All' ? Colors.white : Colors.grey[700],
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
-                );
-              }).toList(),
+                ),
+                // Individual category filters
+                ...staffTypes.map((type) {
+                  Color chipColor = categoryColors[type]!;
+                  bool isSelected = selectedFilter == type;
+                  
+                  return GestureDetector(
+                    onTap: () => onFilterChanged(type),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isSelected ? chipColor : chipColor.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                        border: isSelected ? null : Border.all(color: chipColor, width: 1),
+                      ),
+                      child: Text(
+                        type,
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : chipColor,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ].toList(),
             ),
           ),
           
@@ -681,34 +1017,40 @@ class _PegawaiScreenState extends State<PegawaiScreen> {
                 ),
                 Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: accentColor,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text(
-                        'Month',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
+                    GestureDetector(
+                      onTap: () => onViewChanged(CalendarView.month),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: calendarView == CalendarView.month ? accentColor : Colors.grey[200],
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'Month',
+                          style: TextStyle(
+                            color: calendarView == CalendarView.month ? Colors.white : Colors.grey[600],
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(width: 4),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        'Week',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
+                    GestureDetector(
+                      onTap: () => onViewChanged(CalendarView.week),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: calendarView == CalendarView.week ? accentColor : Colors.grey[200],
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'Week',
+                          style: TextStyle(
+                            color: calendarView == CalendarView.week ? Colors.white : Colors.grey[600],
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ),
@@ -739,11 +1081,11 @@ class _PegawaiScreenState extends State<PegawaiScreen> {
           
           // Calendar view
           SizedBox(
-            height: 240,
+            height: 550,
             child: SfCalendar(
               controller: controller,
-              view: CalendarView.month,
-              initialDisplayDate: DateTime(2025, 8),
+              view: calendarView,
+              initialDisplayDate: DateTime(2025, 9),
               dataSource: MeetingDataSource(appointments),
               showNavigationArrow: false,
               showDatePickerButton: false,
@@ -760,64 +1102,90 @@ class _PegawaiScreenState extends State<PegawaiScreen> {
                 appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
                 showAgenda: false,
                 dayFormat: 'EEE',
-                appointmentDisplayCount: 1,
+                appointmentDisplayCount: 4,
                 monthCellStyle: MonthCellStyle(
                   backgroundColor: Colors.transparent,
                   todayBackgroundColor: Colors.transparent,
                   todayTextStyle: TextStyle(
                     color: accentColor,
                     fontWeight: FontWeight.bold,
-                    fontSize: 12,
+                    fontSize: 16,
                   ),
                   textStyle: const TextStyle(
                     color: Colors.black87,
-                    fontSize: 12,
+                    fontSize: 16,
                   ),
                   trailingDatesTextStyle: TextStyle(
                     color: Colors.grey[400],
-                    fontSize: 12,
+                    fontSize: 16,
                   ),
                   leadingDatesTextStyle: TextStyle(
                     color: Colors.grey[400],
-                    fontSize: 12,
+                    fontSize: 16,
                   ),
+                ),
+              ),
+              // Pengaturan untuk tampilan minggu
+              timeSlotViewSettings: TimeSlotViewSettings(
+                startHour: 6,
+                endHour: 20,
+                timeInterval: Duration(minutes: 30),
+                timeFormat: 'HH:mm',
+                timeTextStyle: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[700],
                 ),
               ),
               headerStyle: const CalendarHeaderStyle(
                 textAlign: TextAlign.center,
                 backgroundColor: Colors.transparent,
                 textStyle: TextStyle(
-                  fontSize: 14,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF1E293B),
                 ),
               ),
+              // Pengaturan header untuk tampilan minggu
               viewHeaderStyle: ViewHeaderStyle(
                 backgroundColor: Colors.grey[100],
                 dayTextStyle: TextStyle(
                   color: Colors.grey[700],
                   fontWeight: FontWeight.w600,
-                  fontSize: 11,
+                  fontSize: 15,
+                ),
+                dateTextStyle: TextStyle(
+                  color: Colors.grey[700],
+                  fontWeight: FontWeight.w500,
+                  fontSize: 13,
                 ),
               ),
               appointmentBuilder: (context, calendarAppointmentDetails) {
                 final Meeting meeting = calendarAppointmentDetails.appointments.first;
                 return Container(
-                  margin: const EdgeInsets.all(1),
-                  padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                   decoration: BoxDecoration(
                     color: meeting.background,
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: BorderRadius.circular(6),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 2,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
                   ),
                   child: Text(
                     meeting.eventName,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 8,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
                     ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
+                    textAlign: TextAlign.center,
                   ),
                 );
               },
@@ -830,7 +1198,7 @@ class _PegawaiScreenState extends State<PegawaiScreen> {
       ),
     );
   }
-
+  
   Widget _buildRekapAbsensiTab() {
     return const Center(
       child: Text(
@@ -850,12 +1218,14 @@ class DoctorSchedule {
   final String specialty;
   final String startTime;
   final String endTime;
+  final String photoAsset;
   
   DoctorSchedule({
     required this.name,
     required this.specialty,
     required this.startTime,
     required this.endTime,
+    this.photoAsset = '',
   });
 }
 
@@ -865,13 +1235,55 @@ class StaffSchedule {
   final String position;
   final String startTime;
   final String endTime;
+  final String photoAsset;
   
   StaffSchedule({
     required this.name,
     required this.position,
     required this.startTime,
     required this.endTime,
+    this.photoAsset = '',
   });
+}
+
+// Categorized Doctor Schedule class
+class CategorizedDoctorSchedule extends DoctorSchedule {
+  final String category;
+  
+  CategorizedDoctorSchedule({
+    required String name,
+    required String specialty,
+    required String startTime,
+    required String endTime,
+    required this.category,
+    String photoAsset = '',
+  }) : super(
+    name: name,
+    specialty: specialty,
+    startTime: startTime,
+    endTime: endTime,
+    photoAsset: photoAsset,
+  );
+}
+
+// Categorized Staff Schedule class
+class CategorizedStaffSchedule extends StaffSchedule {
+  final String category;
+  
+  CategorizedStaffSchedule({
+    required String name,
+    required String position,
+    required String startTime,
+    required String endTime,
+    required this.category,
+    String photoAsset = ''
+  }) : super(
+    name: name,
+    position: position,
+    startTime: startTime,
+    endTime: endTime,
+    photoAsset: photoAsset,
+  );
 }
 
 // Meeting class for appointments
@@ -881,12 +1293,14 @@ class Meeting {
     required this.from,
     required this.to,
     required this.background,
+    this.category = '',
   });
   
   String eventName;
   DateTime from;
   DateTime to;
   Color background;
+  String category;
 }
 
 // Data source for Syncfusion Calendar
