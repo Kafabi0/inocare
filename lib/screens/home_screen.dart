@@ -5,6 +5,7 @@ import 'package:inocare/screens/diklat_penelitian.dart';
 import 'package:inocare/screens/emergency_protocols_screen.dart';
 import 'package:inocare/screens/ermperawat_screen.dart';
 import 'package:inocare/screens/ermdoctor_screen.dart';
+import 'package:inocare/screens/farmasi_screen.dart';
 import 'package:inocare/screens/feedback_screen.dart';
 import 'package:inocare/screens/healthanalytics_screen.dart';
 import 'package:inocare/screens/healthfacilities_screen.dart';
@@ -322,11 +323,19 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               ),
                             );
                             break;
+<<<<<<< Updated upstream
                             case 'Administrasi Layanan':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => const PreSurveyListScreen(),
+=======
+                            case 'Farmasi':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const FarmasiScreen(),
+>>>>>>> Stashed changes
                               ),
                             );
                             break;
