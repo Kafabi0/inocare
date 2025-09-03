@@ -150,19 +150,13 @@ class _RajalScreenState extends State<RajalScreen> {
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         backgroundColor: Colors.white,
-<<<<<<< Updated upstream
         elevation: 1, 
-        // title: const Text(
-        //   'Daftar Order
-=======
-        elevation: 1,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
->>>>>>> Stashed changes
         title: const Text(
           'Daftar Order Obat Rajal',
           style: TextStyle(
