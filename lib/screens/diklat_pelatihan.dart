@@ -1,112 +1,167 @@
 import 'package:flutter/material.dart';
 
-class DiklatPelatihanPage extends StatelessWidget {
+class DiklatPelatihanPage extends StatefulWidget {
   const DiklatPelatihanPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Dummy data
-    final List<Map<String, String>> kegiatan = [
-      {
-        "noSurat": "000.9.2/234/VII.01/II/2025ee",
-        "perihal": "prakepineraan",
-        "tgl": "2025-08-14",
-      },
-    ];
+  State<DiklatPelatihanPage> createState() => _DiklatPelatihanPageState();
+}
 
-    final List<Map<String, String>> petugas = [
-      {"nama": "Dr. Iskandar Muda, Sp.M"},
-    ];
+class _DiklatPelatihanPageState extends State<DiklatPelatihanPage> {
+  // 🔹 Data asli
+  final List<Map<String, String>> kegiatanAll = [
+    {
+      "noSurat": "000.9.2/234/VII.01/II/2025",
+      "perihal": "Praklinik Keperawatan",
+      "tgl": "2025-08-14",
+    },
+    {
+      "noSurat": "000.9.2/235/VII.01/II/2025",
+      "perihal": "Pelatihan BTCLS",
+      "tgl": "2025-08-20",
+    },
+    {
+      "noSurat": "000.9.2/236/VII.01/II/2025",
+      "perihal": "Workshop Manajemen ICU",
+      "tgl": "2025-09-01",
+    },
+    {
+      "noSurat": "000.9.2/237/VII.01/II/2025",
+      "perihal": "Simulasi Kebencanaan",
+      "tgl": "2025-09-10",
+    },
+  ];
+
+  final List<Map<String, String>> petugasAll = [
+    {"nama": "Dr. Iskandar Muda, Sp.M"},
+    {"nama": "Ns. Siti Aminah, M.Kep"},
+    {"nama": "drg. Rudi Hartono"},
+    {"nama": "Prof. Bambang Setiawan"},
+    {"nama": "Dr. Lestari Wulandari, Sp.An"},
+  ];
+
+  // 🔹 Data yang ditampilkan (hasil filter)
+  List<Map<String, String>> kegiatanFiltered = [];
+  List<Map<String, String>> petugasFiltered = [];
+
+  @override
+  void initState() {
+    super.initState();
+    kegiatanFiltered = List.from(kegiatanAll);
+    petugasFiltered = List.from(petugasAll);
+  }
+
+  void _searchKegiatan(String query) {
+    setState(() {
+      kegiatanFiltered = kegiatanAll
+          .where((item) =>
+              item["noSurat"]!.toLowerCase().contains(query.toLowerCase()) ||
+              item["perihal"]!.toLowerCase().contains(query.toLowerCase()) ||
+              item["tgl"]!.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
+  void _searchPetugas(String query) {
+    setState(() {
+      petugasFiltered = petugasAll
+          .where((item) =>
+              item["nama"]!.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    bool isWide = MediaQuery.of(context).size.width > 800;
 
     return Scaffold(
       appBar: AppBar(title: const Text("Kegiatan"), centerTitle: true),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          bool isWide = constraints.maxWidth > 800; // breakpoint responsif
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 🔹 Detail Header
-                Card(
-                  elevation: 2,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        InfoRow(
-                          label: "No. Registrasi",
-                          value: "2508161224502890",
-                        ),
-                        InfoRow(label: "Tipe Pelatihan", value: "Kerjasama"),
-                        InfoRow(
-                          label: "Pihak Kerjasama",
-                          value: "Universitas Indonesia",
-                        ),
-                        InfoRow(
-                          label: "Tempat Pelatihan",
-                          value: "Gedung Diklat",
-                        ),
-                      ],
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 🔹 Detail Header
+            Card(
+              elevation: 2,
+              margin: const EdgeInsets.only(bottom: 16),
+              child: const Padding(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    InfoRow(
+                      label: "No. Registrasi",
+                      value: "2508161224502890",
                     ),
-                  ),
-                ),
-
-                // 🔹 Judul
-                Row(
-                  children: const [
-                    Icon(Icons.people, color: Colors.blue),
-                    SizedBox(width: 8),
-                    Text(
-                      "Kegiatan Pelatihan",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    InfoRow(label: "Tipe Pelatihan", value: "Kerjasama"),
+                    InfoRow(
+                      label: "Pihak Kerjasama",
+                      value: "Universitas Indonesia",
+                    ),
+                    InfoRow(
+                      label: "Tempat Pelatihan",
+                      value: "Gedung Diklat",
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+              ),
+            ),
 
-                // 🔹 Layout responsif
-                isWide
-                    ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(child: _buildKegiatanCard(kegiatan)),
-                        const SizedBox(width: 16),
-                        Expanded(child: _buildPetugasCard(petugas)),
-                      ],
-                    )
-                    : Column(
-                      children: [
-                        _buildKegiatanCard(kegiatan),
-                        const SizedBox(height: 16),
-                        _buildPetugasCard(petugas),
-                      ],
-                    ),
+            // 🔹 Judul
+            const Row(
+              children: [
+                Icon(Icons.people, color: Colors.blue),
+                SizedBox(width: 8),
+                Text(
+                  "Kegiatan Pelatihan",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
-          );
-        },
+            const SizedBox(height: 12),
+
+            // 🔹 Layout responsif
+            isWide
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                          child: _buildKegiatanCard(
+                              kegiatanFiltered, _searchKegiatan)),
+                      const SizedBox(width: 16),
+                      Expanded(
+                          child:
+                              _buildPetugasCard(petugasFiltered, _searchPetugas)),
+                    ],
+                  )
+                : Column(
+                    children: [
+                      _buildKegiatanCard(kegiatanFiltered, _searchKegiatan),
+                      const SizedBox(height: 16),
+                      _buildPetugasCard(petugasFiltered, _searchPetugas),
+                    ],
+                  ),
+          ],
+        ),
       ),
     );
   }
 
   // 🔹 Card Kegiatan
-  // 🔹 Card Kegiatan
-  static Widget _buildKegiatanCard(List<Map<String, String>> kegiatan) {
+  Widget _buildKegiatanCard(
+      List<Map<String, String>> kegiatan, Function(String) onSearch) {
     return Card(
       elevation: 2,
       child: Column(
         children: [
           _buildHeader("Kegiatan", onAdd: () {}, onRefresh: () {}),
-          _buildSearchField(),
+          _buildSearchField(onSearch),
 
-          // ✅ Scroll horizontal biar tabel responsif
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
@@ -118,51 +173,40 @@ class DiklatPelatihanPage extends StatelessWidget {
                 DataColumn(label: Text("Tgl. Pelaksanaan")),
                 DataColumn(label: Text("Aksi")),
               ],
-              rows:
-                  kegiatan.map((item) {
-                    return DataRow(
-                      cells: [
-                        const DataCell(Text("1")),
-                        DataCell(Text(item["noSurat"]!)),
-                        DataCell(Text(item["perihal"]!)),
-                        DataCell(Text(item["tgl"]!)),
-                        DataCell(
-                          Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.picture_as_pdf,
-                                  color: Colors.blue,
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.people,
-                                  color: Colors.indigo,
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.edit,
-                                  color: Colors.green,
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                ),
-                              ),
-                            ],
+              rows: List.generate(kegiatan.length, (index) {
+                final item = kegiatan[index];
+                return DataRow(
+                  cells: [
+                    DataCell(Text((index + 1).toString())),
+                    DataCell(Text(item["noSurat"]!)),
+                    DataCell(Text(item["perihal"]!)),
+                    DataCell(Text(item["tgl"]!)),
+                    DataCell(
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.picture_as_pdf,
+                                color: Colors.blue),
                           ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.people, color: Colors.indigo),
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.edit, color: Colors.green),
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              }),
             ),
           ),
         ],
@@ -171,15 +215,15 @@ class DiklatPelatihanPage extends StatelessWidget {
   }
 
   // 🔹 Card Petugas
-  static Widget _buildPetugasCard(List<Map<String, String>> petugas) {
+  Widget _buildPetugasCard(
+      List<Map<String, String>> petugas, Function(String) onSearch) {
     return Card(
       elevation: 2,
       child: Column(
         children: [
           _buildHeader("Daftar Petugas", onAdd: () {}, onRefresh: () {}),
-          _buildSearchField(),
+          _buildSearchField(onSearch),
 
-          // ✅ Scroll horizontal juga untuk tabel petugas
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
@@ -189,25 +233,25 @@ class DiklatPelatihanPage extends StatelessWidget {
                 DataColumn(label: Text("Petugas")),
                 DataColumn(label: Text("Aksi")),
               ],
-              rows:
-                  petugas.map((item) {
-                    return DataRow(
-                      cells: [
-                        const DataCell(Text("1")),
-                        DataCell(Text(item["nama"]!)),
-                        DataCell(
-                          ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              foregroundColor: Colors.white,
-                            ),
-                            child: const Text("Hapus"),
-                          ),
+              rows: List.generate(petugas.length, (index) {
+                final item = petugas[index];
+                return DataRow(
+                  cells: [
+                    DataCell(Text((index + 1).toString())),
+                    DataCell(Text(item["nama"]!)),
+                    DataCell(
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
                         ),
-                      ],
-                    );
-                  }).toList(),
+                        child: const Text("Hapus"),
+                      ),
+                    ),
+                  ],
+                );
+              }),
             ),
           ),
         ],
@@ -216,7 +260,7 @@ class DiklatPelatihanPage extends StatelessWidget {
   }
 
   // 🔹 Header Reusable
-  static Widget _buildHeader(
+  Widget _buildHeader(
     String title, {
     required VoidCallback onAdd,
     required VoidCallback onRefresh,
@@ -241,14 +285,10 @@ class DiklatPelatihanPage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.blue,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
-                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   textStyle: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
+                      fontSize: 12, fontWeight: FontWeight.bold),
                 ),
                 child: const Text("+"),
               ),
@@ -265,10 +305,11 @@ class DiklatPelatihanPage extends StatelessWidget {
   }
 
   // 🔹 Search Field Reusable
-  static Widget _buildSearchField() {
+  Widget _buildSearchField(Function(String) onChanged) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
+        onChanged: onChanged,
         decoration: InputDecoration(
           prefixIcon: const Icon(Icons.search),
           hintText: "Cari...",

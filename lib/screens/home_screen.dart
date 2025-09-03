@@ -323,19 +323,18 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               ),
                             );
                             break;
-<<<<<<< Updated upstream
                             case 'Administrasi Layanan':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => const PreSurveyListScreen(),
-=======
+                              ),
+                            );
                             case 'Farmasi':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => const FarmasiScreen(),
->>>>>>> Stashed changes
                               ),
                             );
                             break;
