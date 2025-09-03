@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inocare/screens/order_rajal_screen.dart';
 
-
 class FarmasiScreen extends StatefulWidget {
   const FarmasiScreen({super.key});
   @override
@@ -16,39 +15,74 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
   bool isFilterExpanded = false;
   String? expandedMenu;
 
+  final Map<String, Widget> pageMap = {
+    "Proses Order": const FarmasiScreen(),
+    "Proses Amprah": const FarmasiScreen(),
+    "Proses Order Obat": const RajalScreen(),
+    "Master Barang": const FarmasiScreen(),
+    "Stok Barang Farmasi": const FarmasiScreen(),
+    "Penerimaan Barang": const FarmasiScreen(),
+    "Pengeluaran Barang": const FarmasiScreen(),
+    "Stok Opname": const FarmasiScreen(),
+    "Laporan": const FarmasiScreen(),
+    "Barang Produksi": const FarmasiScreen(),
+  };
+
   final List<Map<String, dynamic>> menuItems = [
     {
-      'title': 'Proses Order',
-      'children': ['Proses Order Amprah', 'Proses Order Obat'],
+      "title": "Proses Order",
+      "icon": Icons.shopping_cart,
+      "color": Colors.orange,
+      "page": const FarmasiScreen(),
+      "children": ["Proses Amprah", "Proses Order Obat"],
     },
     {
-        "title": "Rajal",
-        "icon": Icons.school,
-        "color": Colors.indigo,
-        "page": const RajalScreen()
-      },
-    {'title': 'Order Amprah'},
-    {'title': 'Master Barang'},
-    {'title': 'Stok Barang Farmasi'},
-    {
-      'title': 'Penerimaan Barang',
-      'children': ['Gudang', 'Farmasi'],
+      "title": "Master Barang",
+      "icon": Icons.inventory_2,
+      "color": Colors.teal,
+      "page": const FarmasiScreen(),
     },
     {
-      'title': 'Pengeluaran Barang',
-      'children': ['Gudang', 'Farmasi'],
+      "title": "Stok Barang Farmasi",
+      "icon": Icons.medical_services,
+      "color": Colors.purple,
+      "page": const FarmasiScreen(),
     },
-    {'title': 'Stok Opname'},
     {
-      'title': 'Laporan',
-      'children': ['Bulanan', 'Tahunan'],
+      "title": "Penerimaan Barang",
+      "icon": Icons.download,
+      "color": Colors.blue,
+      "page": const FarmasiScreen(),
     },
-    {'title': 'Barang Produksi'},
+    {
+      "title": "Pengeluaran Barang",
+      "icon": Icons.upload,
+      "color": Colors.red,
+      "page": const FarmasiScreen(),
+    },
+    {
+      "title": "Stok Opname",
+      "icon": Icons.fact_check,
+      "color": Colors.brown,
+      "page": const FarmasiScreen(),
+    },
+    {
+      "title": "Laporan",
+      "icon": Icons.bar_chart,
+      "color": Colors.deepOrange,
+      "page": const FarmasiScreen(),
+    },
+    {
+      "title": "Barang Produksi",
+      "icon": Icons.production_quantity_limits,
+      "color": Colors.cyan,
+      "page": const FarmasiScreen(),
+    },
   ];
 
   final List<String> tipeAmprahOptions = [
     'Dapo Executive',
-    'Ruang Internal Terpadu Non Infeksi'
+    'Ruang Internal Terpadu Non Infeksi',
   ];
 
   final List<Map<String, dynamic>> orderData = [
@@ -60,7 +94,7 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
       'tujuanOrder': 'Gudang',
       'tipeAmprah': 'Ship',
       'statusOrder': 'Dikirim',
-      'aksi': 'Detail'
+      'aksi': 'Detail',
     },
     {
       'no': 2,
@@ -70,7 +104,7 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
       'tujuanOrder': 'Gudang',
       'tipeAmprah': 'Ship',
       'statusOrder': 'Dikirim',
-      'aksi': 'Detail'
+      'aksi': 'Detail',
     },
   ];
 
@@ -82,10 +116,11 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
         backgroundColor: Colors.white,
         elevation: 1,
         leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: Colors.black87),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
+          builder:
+              (context) => IconButton(
+                icon: const Icon(Icons.menu, color: Colors.black87),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
         ),
         title: const Text(
           'Farmasi',
@@ -97,19 +132,18 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
         ),
         actions: [
           IconButton(
-            icon:
-                const Icon(Icons.notifications_outlined, color: Colors.black87),
+            icon: const Icon(
+              Icons.notifications_outlined,
+              color: Colors.black87,
+            ),
             onPressed: () {},
           ),
         ],
       ),
-
-      // Drawer Sidebar
       drawer: Drawer(
-        backgroundColor: Colors.white, // full putih
+        backgroundColor: Colors.white,
         child: Column(
           children: [
-            // Header putih clean
             const DrawerHeader(
               decoration: BoxDecoration(color: Colors.white),
               child: Center(
@@ -123,19 +157,19 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                 ),
               ),
             ),
-
-            // Menu list
             Expanded(
               child: ListView.separated(
                 itemCount: menuItems.length,
-                separatorBuilder: (_, __) => const Divider(
-                  height: 1,
-                  thickness: 0.5,
-                  color: Color(0xFFE0E0E0), // abu tipis
-                ),
+                separatorBuilder:
+                    (_, __) => const Divider(
+                      height: 1,
+                      thickness: 0.5,
+                      color: Color(0xFFE0E0E0),
+                    ),
                 itemBuilder: (context, index) {
                   final item = menuItems[index];
-                  bool hasChildren = item['children'] != null;
+                  bool hasChildren =
+                      item.containsKey('children') && item['children'] != null;
                   bool isExpanded = expandedMenu == item['title'];
 
                   return Column(
@@ -145,70 +179,63 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                           item['title'],
                           style: TextStyle(
                             fontSize: 14,
-                            fontWeight: selectedOrderType == item['title']
-                                ? FontWeight.w600
-                                : FontWeight.normal,
+                            fontWeight:
+                                selectedOrderType == item['title']
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
                             color: Colors.black87,
                           ),
                         ),
-                        trailing: hasChildren
-                            ? Icon(
-                                isExpanded
-                                    ? Icons.keyboard_arrow_up
-                                    : Icons.keyboard_arrow_down,
-                                color: Colors.grey,
-                              )
-                            : null,
+                        trailing:
+                            hasChildren
+                                ? Icon(
+                                  isExpanded
+                                      ? Icons.keyboard_arrow_up
+                                      : Icons.keyboard_arrow_down,
+                                  color: Colors.grey,
+                                )
+                                : null,
                         onTap: () {
                           setState(() {
                             if (hasChildren) {
                               expandedMenu = isExpanded ? null : item['title'];
                             } else {
-                              selectedOrderType = item['title'];
-                              expandedMenu = null;
-                              Navigator.pop(context);
+                              // Navigasi ke halaman baru
+                              navigateToPage(item['title']);
                             }
                           });
-                          // Hapus logika navigasi "Rajal" dari sini karena tidak akan pernah terpenuhi
                         },
                       ),
                       // Submenu
                       if (hasChildren && isExpanded)
                         Column(
-                          children: (item['children'] as List<String>)
-                              .map((sub) {
-                            return ListTile(
-                              contentPadding:
-                                  const EdgeInsets.only(left: 48, right: 16),
-                              title: Text(
-                                sub,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: selectedOrderType == sub
-                                      ? FontWeight.w600
-                                      : FontWeight.normal,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              onTap: () {
-                                setState(() {
-                                  selectedOrderType = sub;
-                                });
-                                
-                                // Pindahkan logika navigasi ke sini
-                                if (sub == "Rajal") {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const RajalScreen(),
+                          children:
+                              (item['children'] as List<String>).map((sub) {
+                                return ListTile(
+                                  contentPadding: const EdgeInsets.only(
+                                    left: 48,
+                                    right: 16,
+                                  ),
+                                  title: Text(
+                                    sub,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight:
+                                          selectedOrderType == sub
+                                              ? FontWeight.w600
+                                              : FontWeight.normal,
+                                      color: Colors.black87,
                                     ),
-                                  );
-                                } else {
-                                  Navigator.pop(context);
-                                }
-                              },
-                            );
-                          }).toList(),
+                                  ),
+                                  onTap: () {
+                                    setState(() {
+                                      selectedOrderType = sub;
+                                    });
+                                    // Navigasi ke halaman submenu
+                                    navigateToPage(sub);
+                                  },
+                                );
+                              }).toList(),
                         ),
                     ],
                   );
@@ -234,28 +261,45 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                     children: [
                       InkWell(
                         onTap: () {},
-                        child: Text('Home',
-                            style: TextStyle(
-                                color: Colors.blue.shade600, fontSize: 12)),
+                        child: Text(
+                          'Home',
+                          style: TextStyle(
+                            color: Colors.blue.shade600,
+                            fontSize: 12,
+                          ),
+                        ),
                       ),
-                      const Icon(Icons.chevron_right,
-                          size: 16, color: Colors.grey),
+                      const Icon(
+                        Icons.chevron_right,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
                       InkWell(
                         onTap: () {},
-                        child: Text('Proses Order Amprah',
-                            style: TextStyle(
-                                color: Colors.blue.shade600, fontSize: 12)),
-                      ),
-                      const Icon(Icons.chevron_right,
-                          size: 16, color: Colors.grey),
-                      Text('Gudang',
+                        child: Text(
+                          'Proses Order Amprah',
                           style: TextStyle(
-                              color: Colors.grey.shade600, fontSize: 12)),
+                            color: Colors.blue.shade600,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                      const Icon(
+                        Icons.chevron_right,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
+                      Text(
+                        'Gudang',
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 12,
+                        ),
+                      ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 16),
-
                 // Search Bar (always visible)
                 Container(
                   height: 40,
@@ -269,8 +313,14 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                         child: TextField(
                           decoration: InputDecoration(
                             hintText: 'Cari order...',
-                            hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
-                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            hintStyle: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
                             border: InputBorder.none,
                           ),
                         ),
@@ -285,13 +335,16 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                             bottomRight: Radius.circular(8),
                           ),
                         ),
-                        child: const Icon(Icons.search, color: Colors.white, size: 20),
+                        child: const Icon(
+                          Icons.search,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 12),
-
                 // Filter Toggle Button
                 InkWell(
                   onTap: () {
@@ -300,7 +353,10 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                     });
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 12,
+                    ),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey.shade300),
                       borderRadius: BorderRadius.circular(8),
@@ -310,21 +366,31 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.filter_list, size: 20, color: Colors.blue.shade600),
+                            Icon(
+                              Icons.filter_list,
+                              size: 20,
+                              color: Colors.blue.shade600,
+                            ),
                             const SizedBox(width: 8),
-                            Text('Filter Pencarian', 
-                              style: TextStyle(fontSize: 14, color: Colors.blue.shade600)),
+                            Text(
+                              'Filter Pencarian',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.blue.shade600,
+                              ),
+                            ),
                           ],
                         ),
                         Icon(
-                          isFilterExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                          isFilterExpanded
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
                           color: Colors.blue.shade600,
                         ),
                       ],
                     ),
                   ),
                 ),
-
                 // Expandable Filter Section
                 if (isFilterExpanded) ...[
                   const SizedBox(height: 12),
@@ -352,9 +418,16 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                             ),
                             decoration: const InputDecoration(
                               labelText: 'Tanggal',
-                              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
                               border: InputBorder.none,
-                              suffixIcon: Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                              suffixIcon: Icon(
+                                Icons.calendar_today,
+                                size: 16,
+                                color: Colors.grey,
+                              ),
                             ),
                             onTap: () async {
                               final DateTime? picked = await showDatePicker(
@@ -365,20 +438,19 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                                 builder: (BuildContext context, Widget? child) {
                                   return Theme(
                                     data: ThemeData.light().copyWith(
-                                      primaryColor: Colors.blue,              // warna header
-                                      colorScheme: const ColorScheme.light(   // ubah jadi putih
-                                        primary: Colors.blue,                 // tombol dan highlight
-                                        onPrimary: Colors.white,              // teks di atas primary
-                                        surface: Colors.white,                // background utama
-                                        onSurface: Colors.black,              // teks default
+                                      primaryColor: Colors.blue,
+                                      colorScheme: const ColorScheme.light(
+                                        primary: Colors.blue,
+                                        onPrimary: Colors.white,
+                                        surface: Colors.white,
+                                        onSurface: Colors.black,
                                       ),
-                                      dialogBackgroundColor: Colors.white,    // background dialog putih
+                                      dialogBackgroundColor: Colors.white,
                                     ),
                                     child: child!,
                                   );
                                 },
                               );
-
                               if (picked != null && picked != selectedDate) {
                                 setState(() {
                                   selectedDate = picked;
@@ -387,7 +459,6 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                             },
                           ),
                         ),
-
                         // Tipe Amprah Dropdown
                         Container(
                           margin: const EdgeInsets.only(bottom: 12),
@@ -400,16 +471,23 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                             value: selectedTipeAmprah,
                             decoration: const InputDecoration(
                               labelText: 'Tipe Amprah',
-                              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
                               border: InputBorder.none,
                             ),
                             dropdownColor: Colors.white,
-                            items: tipeAmprahOptions.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value, style: const TextStyle(fontSize: 14)),
-                              );
-                            }).toList(),
+                            items:
+                                tipeAmprahOptions.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(
+                                      value,
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  );
+                                }).toList(),
                             onChanged: (String? newValue) {
                               setState(() {
                                 selectedTipeAmprah = newValue!;
@@ -417,7 +495,6 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                             },
                           ),
                         ),
-
                         // Status Dropdown
                         Container(
                           decoration: BoxDecoration(
@@ -428,21 +505,29 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                           child: DropdownButtonFormField<String>(
                             decoration: const InputDecoration(
                               labelText: 'Status',
-                              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
                               border: InputBorder.none,
                             ),
                             dropdownColor: Colors.white,
                             value: 'Dikirim',
-                            items: ['Dikirim', 'Diproses', 'Selesai', 'Batal']
-                                .map((status) => DropdownMenuItem(
-                                      value: status,
-                                      child: Text(status, style: const TextStyle(fontSize: 14)),
-                                    ))
-                                .toList(),
+                            items:
+                                ['Dikirim', 'Diproses', 'Selesai', 'Batal']
+                                    .map(
+                                      (status) => DropdownMenuItem(
+                                        value: status,
+                                        child: Text(
+                                          status,
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
                             onChanged: (String? newValue) {
                               setState(() {
                                 // simpan status yang dipilih
-                                // misalnya tambahkan variabel selectedStatus
                               });
                             },
                           ),
@@ -450,11 +535,10 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                       ],
                     ),
                   ),
-                ]
+                ],
               ],
             ),
           ),
-
           // Data Cards (Mobile Responsive)
           Expanded(
             child: Container(
@@ -499,11 +583,14 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Center(
-                                  child: Text('${order['no']}',
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14)),
+                                  child: Text(
+                                    '${order['no']}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -511,43 +598,53 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Order #${order['noOrder']}',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                            color: Colors.grey.shade800)),
-                                    Text(order['tanggalOrder'],
-                                        style: TextStyle(
-                                            color: Colors.grey.shade600,
-                                            fontSize: 12)),
+                                    Text(
+                                      'Order #${order['noOrder']}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                        color: Colors.grey.shade800,
+                                      ),
+                                    ),
+                                    Text(
+                                      order['tanggalOrder'],
+                                      style: TextStyle(
+                                        color: Colors.grey.shade600,
+                                        fontSize: 12,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.green.shade100,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: Text(order['statusOrder'], 
+                                child: Text(
+                                  order['statusOrder'],
                                   style: TextStyle(
                                     fontSize: 11,
                                     color: Colors.green.shade800,
                                     fontWeight: FontWeight.w600,
-                                  )),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
                         ),
-
                         // Detail Information
                         Padding(
                           padding: const EdgeInsets.all(16),
                           child: Column(
                             children: [
                               _buildMobileDetailRow(
-                                Icons.business, 
-                                'Pihak Order', 
+                                Icons.business,
+                                'Pihak Order',
                                 order['pihasOrder'],
                                 Colors.orange,
                               ),
@@ -556,8 +653,8 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                                 children: [
                                   Expanded(
                                     child: _buildMobileDetailRow(
-                                      Icons.location_on, 
-                                      'Tujuan', 
+                                      Icons.location_on,
+                                      'Tujuan',
                                       order['tujuanOrder'],
                                       Colors.blue,
                                     ),
@@ -565,8 +662,8 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                                   const SizedBox(width: 16),
                                   Expanded(
                                     child: _buildMobileDetailRow(
-                                      Icons.local_shipping, 
-                                      'Tipe', 
+                                      Icons.local_shipping,
+                                      'Tipe',
                                       order['tipeAmprah'],
                                       Colors.purple,
                                     ),
@@ -583,7 +680,9 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.blue.shade600,
                                     foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
@@ -600,7 +699,6 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
               ),
             ),
           ),
-
           // Pagination Footer (Mobile Optimized)
           Container(
             color: Colors.white,
@@ -610,29 +708,43 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Menampilkan ${orderData.length} data', 
-                      style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                    Text(
+                      'Menampilkan ${orderData.length} data',
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
                     Row(
                       children: [
                         IconButton(
                           onPressed: null,
                           icon: const Icon(Icons.chevron_left, size: 20),
                           padding: const EdgeInsets.all(4),
-                          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                          constraints: const BoxConstraints(
+                            minWidth: 32,
+                            minHeight: 32,
+                          ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.blue.shade600,
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: const Text('1', style: TextStyle(color: Colors.white, fontSize: 12)),
+                          child: const Text(
+                            '1',
+                            style: TextStyle(color: Colors.white, fontSize: 12),
+                          ),
                         ),
                         IconButton(
                           onPressed: null,
                           icon: const Icon(Icons.chevron_right, size: 20),
                           padding: const EdgeInsets.all(4),
-                          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                          constraints: const BoxConstraints(
+                            minWidth: 32,
+                            minHeight: 32,
+                          ),
                         ),
                       ],
                     ),
@@ -646,102 +758,37 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
     );
   }
 
-  Widget _buildMenuButton(String title, List<String> dropdownItems, bool isActive) {
-    bool hasDropdown = dropdownItems.isNotEmpty;
-    
-    if (hasDropdown) {
-      return PopupMenuButton<String>(
-        offset: const Offset(0, 40),
-        child: Container(
-          height: 34,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(
-              color: Colors.grey.shade300,
-              width: 1,
-            ),
-          ),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade800,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Icon(
-                  Icons.keyboard_arrow_down,
-                  size: 16,
-                  color: Colors.grey.shade600,
-                ),
-              ],
-            ),
-          ),
-        ),
-        itemBuilder: (BuildContext context) {
-          return dropdownItems.map((String item) {
-            return PopupMenuItem<String>(
-              value: item,
-              child: Text(
-                item,
-                style: const TextStyle(fontSize: 13),
-              ),
-            );
-          }).toList();
-        },
-        onSelected: (String value) {
-          // Handle dropdown selection
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Dipilih: $value'),
-              duration: const Duration(seconds: 1),
-            ),
-          );
-        },
+  // Fungsi untuk navigasi ke halaman
+  void navigateToPage(String pageTitle) {
+    // Cek apakah halaman ada dalam map
+    if (pageMap.containsKey(pageTitle)) {
+      // Jika sedang di halaman yang sama, tidak perlu navigasi
+      if (ModalRoute.of(context)?.settings.name == pageTitle) {
+        return;
+      }
+
+      // Navigasi ke halaman baru
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => pageMap[pageTitle]!),
       );
     } else {
-      return Container(
-        height: 34,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(4),
-          border: Border.all(
-            color: Colors.grey.shade300,
-            width: 1,
-          ),
-        ),
-        child: InkWell(
-          onTap: () {
-            // Handle menu tap for non-dropdown items
-            setState(() {
-              selectedOrderType = title;
-            });
-          },
-          borderRadius: BorderRadius.circular(4),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey.shade800,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
+      // Jika halaman tidak ditemukan, tampilkan pesan error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Halaman "$pageTitle" belum tersedia'),
+          duration: const Duration(seconds: 2),
         ),
       );
     }
   }
 
-  Widget _buildMobileDetailRow(IconData icon, String label, String value, MaterialColor color) {
+  Widget _buildMobileDetailRow(
+    IconData icon,
+    String label,
+    String value,
+    MaterialColor color,
+  ) {
     return Row(
       children: [
         Container(
@@ -757,16 +804,22 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label,
-                  style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.grey.shade600,
-                      fontWeight: FontWeight.w500)),
-              Text(value,
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade800)),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.grey.shade800,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey.shade800,
+                ),
+              ),
             ],
           ),
         ),

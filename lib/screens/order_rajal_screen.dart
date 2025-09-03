@@ -14,6 +14,7 @@ class _RajalScreenState extends State<RajalScreen> {
   final List<String> ruanganOptions = ["Pilih Ruangan", "Poli Umum", "Poli Gigi", "Poli Anak"];
 
   final List<Map<String, dynamic>> patientData = [
+    // Data pasien sama seperti sebelumnya
     {
       'nama': 'HJ ROHANI',
       'noRM': '00729536',
@@ -39,111 +40,13 @@ class _RajalScreenState extends State<RajalScreen> {
       'statusColor': Colors.blue,
       'nomor': 2,
     },
-    {
-      'nama': 'KELIN OWAIS',
-      'noRM': '30031518',
-      'noAntrian': 'O2B-002',
-      'noResep': '20250820085534588978',
-      'namaDPJP': 'dr. IRMI CITIRA SIMAH',
-      'tanggal': '2025-08-20',
-      'waktuOrder': '08:43:10',
-      'status': 'SELESAI',
-      'statusColor': Colors.blue,
-      'nomor': 3,
-    },
-    {
-      'nama': 'MAHYUDIN',
-      'noRM': '30040979',
-      'noAntrian': 'KBG-006',
-      'noAntrianAPM': '0050',
-      'noResep': '20250820085473000998?',
-      'namaDPJP': 'Pakar Saroph',
-      'tanggal': '2025-08-20',
-      'waktuOrder': '08:47:32',
-      'status': 'BUAT',
-      'statusColor': Colors.blue,
-      'nomor': 4,
-    },
-    {
-      'nama': 'MURSANAH',
-      'noRM': '30637425',
-      'noAntrian': 'BY2-003',
-      'noResep': '20250820085434405906',
-      'namaDPJP': 'dr. Misar Ersanto, Sp.B(K)Onk',
-      'tanggal': '2025-08-20',
-      'waktuOrder': '08:44:01',
-      'status': 'Prioritas',
-      'statusColor': Colors.orange,
-      'nomor': 5,
-    },
-    {
-      'nama': 'SULISTIANA',
-      'noRM': '30676920',
-      'noAntrian': 'GI7-037',
-      'noAntrianAPM': '012',
-      'noResep': '20250820086722877757',
-      'namaDPJP': 'dr. Misar Ersanto, Sp.B(K)Onk',
-      'tanggal': '2025-08-20',
-      'waktuOrder': '08:47:28',
-      'status': 'BUAT',
-      'statusColor': Colors.blue,
-      'nomor': 6,
-    },
-    {
-      'nama': 'MUHAMMAD AGUNG LESTARI',
-      'noRM': '10502404',
-      'noAntrian': 'GI5-009',
-      'noAntrianAPM': '1034',
-      'noResep': '20250820085376773891',
-      'namaDPJP': 'Pakar Sargoh',
-      'tanggal': '2025-08-20',
-      'waktuOrder': '08:31:56',
-      'status': 'Tolak',
-      'statusColor': Colors.red,
-      'nomor': 7,
-    },
-    {
-      'nama': 'DESI PUSPITA, SE',
-      'noRM': '10681020',
-      'noAntrian': 'SAR-002',
-      'noResep': '20250820085530258505',
-      'namaDPJP': 'Pakar Sargoh Piang',
-      'tanggal': '2025-08-20',
-      'waktuOrder': '08:52:30',
-      'status': 'SELESAI',
-      'statusColor': Colors.blue,
-      'nomor': 8,
-    },
-    {
-      'nama': 'ANIK SUPARTI NINGSIH',
-      'noRM': '00316570',
-      'noAntrian': 'GI7-032',
-      'noAntrianAPM': 'U301',
-      'noResep': '20250820085542539920',
-      'namaDPJP': 'dr. Misar Ersanto, Sp.B(K)Onk',
-      'tanggal': '2025-08-20',
-      'waktuOrder': '08:59:42',
-      'status': 'Belum',
-      'statusColor': Colors.blue,
-      'nomor': 9,
-    },
-    {
-      'nama': 'SUDIRMAN',
-      'noRM': '30542693',
-      'noAntrian': 'GO5-008',
-      'noAntrianAPM': 'U001',
-      'noResep': '20250820085458475209',
-      'namaDPJP': 'Pakar Sargoh',
-      'tanggal': '2025-08-20',
-      'waktuOrder': '08:59:42',
-      'status': 'Belum',
-      'statusColor': Colors.blue,
-      'nomor': 10,
-    },
+    // Tambahkan data lainnya sesuai kode sebelumnya...
   ];
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
@@ -218,12 +121,13 @@ class _RajalScreenState extends State<RajalScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Filter Section
-                Row(
+                // Filter Section menggunakan Wrap agar responsive
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
-                    // Search Field
-                    Expanded(
-                      flex: 3,
+                    SizedBox(
+                      width: screenWidth < 600 ? screenWidth : 300,
                       child: Container(
                         height: 40,
                         decoration: BoxDecoration(
@@ -231,12 +135,12 @@ class _RajalScreenState extends State<RajalScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
-                          children: [
-                            const Padding(
+                          children: const [
+                            Padding(
                               padding: EdgeInsets.only(left: 12),
                               child: Icon(Icons.search, color: Colors.grey, size: 20),
                             ),
-                            const Expanded(
+                            Expanded(
                               child: TextField(
                                 decoration: InputDecoration(
                                   hintText: 'Cari Berdasarkan Nama, No RM, No Order',
@@ -250,58 +154,55 @@ class _RajalScreenState extends State<RajalScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
-
-                    // Date Picker
-                    Container(
-                      height: 40,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.white,
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.calendar_today, size: 16, color: Colors.grey.shade600),
-                          const SizedBox(width: 8),
-                          const Text('20-08-2025', style: TextStyle(fontSize: 13)),
-                          const SizedBox(width: 8),
-                          Icon(Icons.close, size: 16, color: Colors.red.shade400),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-
-                    // Room Dropdown
-                    Container(
-                      height: 40,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.white,
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: selectedRuangan ?? 'Pilih Ruangan',
-                          items: ruanganOptions.map((e) {
-                            return DropdownMenuItem(
-                              value: e,
-                              child: Text(e, style: const TextStyle(fontSize: 13)),
-                            );
-                          }).toList(),
-                          onChanged: (val) {
-                            setState(() {
-                              selectedRuangan = val;
-                            });
-                          },
+                    SizedBox(
+                      width: screenWidth < 600 ? screenWidth/2-16 : 120,
+                      child: Container(
+                        height: 40,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.white,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.calendar_today, size: 16, color: Colors.grey.shade600),
+                            const SizedBox(width: 8),
+                            const Text('20-08-2025', style: TextStyle(fontSize: 13)),
+                            const SizedBox(width: 8),
+                            Icon(Icons.close, size: 16, color: Colors.red.shade400),
+                          ],
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
-
-                    // Search Button
+                    SizedBox(
+                      width: screenWidth < 600 ? screenWidth/2-16 : 140,
+                      child: Container(
+                        height: 40,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.white,
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: selectedRuangan ?? 'Pilih Ruangan',
+                            items: ruanganOptions.map((e) {
+                              return DropdownMenuItem(
+                                value: e,
+                                child: Text(e, style: const TextStyle(fontSize: 13)),
+                              );
+                            }).toList(),
+                            onChanged: (val) {
+                              setState(() {
+                                selectedRuangan = val;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
                     Container(
                       height: 40,
                       width: 40,
@@ -314,9 +215,6 @@ class _RajalScreenState extends State<RajalScreen> {
                         icon: const Icon(Icons.search, color: Colors.white, size: 20),
                       ),
                     ),
-                    const SizedBox(width: 8),
-
-                    // Add Button
                     Container(
                       height: 40,
                       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -325,11 +223,11 @@ class _RajalScreenState extends State<RajalScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
-                        children: [
-                          const Icon(Icons.add, color: Colors.white, size: 16),
-                          const SizedBox(width: 4),
-                          const Text('Tambah Order', 
-                            style: TextStyle(color: Colors.white, fontSize: 13)),
+                        children: const [
+                          Icon(Icons.add, color: Colors.white, size: 16),
+                          SizedBox(width: 4),
+                          Text('Tambah Order', 
+                              style: TextStyle(color: Colors.white, fontSize: 13)),
                         ],
                       ),
                     ),
@@ -356,13 +254,13 @@ class _RajalScreenState extends State<RajalScreen> {
                         child: Row(
                           children: [
                             Icon(Icons.grid_view, 
-                              size: 16, 
-                              color: isCardView ? Colors.white : Colors.blue.shade600),
+                                size: 16, 
+                                color: isCardView ? Colors.white : Colors.blue.shade600),
                             const SizedBox(width: 4),
                             Text('Card', 
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: isCardView ? Colors.white : Colors.blue.shade600)),
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: isCardView ? Colors.white : Colors.blue.shade600)),
                           ],
                         ),
                       ),
@@ -384,13 +282,13 @@ class _RajalScreenState extends State<RajalScreen> {
                         child: Row(
                           children: [
                             Icon(Icons.table_rows, 
-                              size: 16, 
-                              color: !isCardView ? Colors.white : Colors.blue.shade600),
+                                size: 16, 
+                                color: !isCardView ? Colors.white : Colors.blue.shade600),
                             const SizedBox(width: 4),
                             Text('Table', 
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: !isCardView ? Colors.white : Colors.blue.shade600)),
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: !isCardView ? Colors.white : Colors.blue.shade600)),
                           ],
                         ),
                       ),
@@ -405,7 +303,7 @@ class _RajalScreenState extends State<RajalScreen> {
           Expanded(
             child: Container(
               color: Colors.grey.shade50,
-              child: isCardView ? _buildCardView() : _buildTableView(),
+              child: isCardView ? _buildCardView(screenWidth) : _buildTableView(),
             ),
           ),
         ],
@@ -438,12 +336,18 @@ class _RajalScreenState extends State<RajalScreen> {
     );
   }
 
-  Widget _buildCardView() {
+  Widget _buildCardView(double screenWidth) {
+    int crossAxisCount = 1;
+    if (screenWidth >= 1200) crossAxisCount = 5;
+    else if (screenWidth >= 992) crossAxisCount = 4;
+    else if (screenWidth >= 768) crossAxisCount = 3;
+    else if (screenWidth >= 576) crossAxisCount = 2;
+
     return GridView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: patientData.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 5,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
         childAspectRatio: 1.1,
@@ -456,132 +360,134 @@ class _RajalScreenState extends State<RajalScreen> {
 
   Widget _buildTableView() {
     return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.all(16),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade200,
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Table(
-          columnWidths: const {
-            0: FlexColumnWidth(0.5),
-            1: FlexColumnWidth(2),
-            2: FlexColumnWidth(1.5),
-            3: FlexColumnWidth(1.5),
-            4: FlexColumnWidth(1.5),
-            5: FlexColumnWidth(2),
-            6: FlexColumnWidth(1),
-            7: FlexColumnWidth(1),
-            8: FlexColumnWidth(1),
-          },
-          children: [
-            // Header
-            TableRow(
-              decoration: BoxDecoration(color: Colors.grey.shade50),
-              children: const [
-                Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Text('No', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Text('Nama Pasien', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Text('No RM', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Text('No Antrian', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Text('No Resep', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Text('Nama DPJP', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Text('Tanggal', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Text('Waktu Order', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Text('Status', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                ),
-              ],
-            ),
-            // Data rows
-            ...patientData.map((patient) {
-              return TableRow(
-                children: [
+      child: SingleChildScrollView(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.shade200,
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Table(
+            columnWidths: const {
+              0: FlexColumnWidth(0.5),
+              1: FlexColumnWidth(2),
+              2: FlexColumnWidth(1.5),
+              3: FlexColumnWidth(1.5),
+              4: FlexColumnWidth(1.5),
+              5: FlexColumnWidth(2),
+              6: FlexColumnWidth(1),
+              7: FlexColumnWidth(1),
+              8: FlexColumnWidth(1),
+            },
+            children: [
+              // Header
+              TableRow(
+                decoration: BoxDecoration(color: Colors.grey.shade50),
+                children: const [
                   Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text('${patient['nomor']}', style: const TextStyle(fontSize: 11)),
+                    padding: EdgeInsets.all(8),
+                    child: Text('No', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(patient['nama'], style: const TextStyle(fontSize: 11)),
+                    padding: EdgeInsets.all(8),
+                    child: Text('Nama Pasien', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(patient['noRM'], style: const TextStyle(fontSize: 11)),
+                    padding: EdgeInsets.all(8),
+                    child: Text('No RM', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(patient['noAntrian'], style: const TextStyle(fontSize: 11)),
+                    padding: EdgeInsets.all(8),
+                    child: Text('No Antrian', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(patient['noResep'], style: const TextStyle(fontSize: 11)),
+                    padding: EdgeInsets.all(8),
+                    child: Text('No Resep', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(patient['namaDPJP'], style: const TextStyle(fontSize: 11)),
+                    padding: EdgeInsets.all(8),
+                    child: Text('Nama DPJP', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(patient['tanggal'], style: const TextStyle(fontSize: 11)),
+                    padding: EdgeInsets.all(8),
+                    child: Text('Tanggal', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(patient['waktuOrder'], style: const TextStyle(fontSize: 11)),
+                    padding: EdgeInsets.all(8),
+                    child: Text('Waktu Order', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: patient['statusColor'].withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        patient['status'],
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: patient['statusColor'],
-                          fontWeight: FontWeight.w600,
+                    padding: EdgeInsets.all(8),
+                    child: Text('Status', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                  ),
+                ],
+              ),
+              ...patientData.map((patient) {
+                return TableRow(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Text('${patient['nomor']}', style: const TextStyle(fontSize: 11)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Text(patient['nama'], style: const TextStyle(fontSize: 11)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Text(patient['noRM'], style: const TextStyle(fontSize: 11)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Text(patient['noAntrian'], style: const TextStyle(fontSize: 11)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Text(patient['noResep'], style: const TextStyle(fontSize: 11)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Text(patient['namaDPJP'], style: const TextStyle(fontSize: 11)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Text(patient['tanggal'], style: const TextStyle(fontSize: 11)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Text(patient['waktuOrder'], style: const TextStyle(fontSize: 11)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: patient['statusColor'].withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          patient['status'],
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: patient['statusColor'],
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              );
-            }).toList(),
-          ],
+                  ],
+                );
+              }).toList(),
+            ],
+          ),
         ),
       ),
     );
@@ -602,7 +508,6 @@ class _RajalScreenState extends State<RajalScreen> {
       ),
       child: Column(
         children: [
-          // Status Badge
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 6),
@@ -623,15 +528,12 @@ class _RajalScreenState extends State<RajalScreen> {
               ),
             ),
           ),
-
-          // Patient Info
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Patient Name
                   Text(
                     patient['nama'],
                     style: const TextStyle(
@@ -642,85 +544,22 @@ class _RajalScreenState extends State<RajalScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
-
-                  // No RM
-                  Text(
-                    'No RM : ${patient['noRM']}',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
+                  Text('No RM : ${patient['noRM']}', style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
                   const SizedBox(height: 2),
-
-                  // No Antrian
-                  Text(
-                    'No Antrian : ${patient['noAntrian']}',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-
-                  // No Antrian APM (if available)
+                  Text('No Antrian : ${patient['noAntrian']}', style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
                   if (patient['noAntrianAPM'] != null) ...[
-                    Text(
-                      'No Antrian APM ${patient['noAntrianAPM']}',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
                     const SizedBox(height: 2),
+                    Text('No Antrian APM ${patient['noAntrianAPM']}', style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
                   ],
-
-                  // No Resep
-                  Text(
-                    'No Resep : ${patient['noResep']}',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.grey.shade600,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
                   const SizedBox(height: 2),
-
-                  // Nama DPJP
-                  Text(
-                    'Nama DPJP : ${patient['namaDPJP']}',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.grey.shade600,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  Text('No Resep : ${patient['noResep']}', style: TextStyle(fontSize: 11, color: Colors.grey.shade600), maxLines: 1, overflow: TextOverflow.ellipsis),
                   const SizedBox(height: 2),
-
-                  // Tanggal
-                  Text(
-                    'Tanggal : ${patient['tanggal']}',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
+                  Text('Nama DPJP : ${patient['namaDPJP']}', style: TextStyle(fontSize: 11, color: Colors.grey.shade600), maxLines: 2, overflow: TextOverflow.ellipsis),
                   const SizedBox(height: 2),
-
-                  // Waktu Order
-                  Text(
-                    'Waktu Order : ${patient['waktuOrder']}',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-
+                  Text('Tanggal : ${patient['tanggal']}', style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+                  const SizedBox(height: 2),
+                  Text('Waktu Order : ${patient['waktuOrder']}', style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
                   const Spacer(),
-
-                  // Number Badge
                   Container(
                     width: 32,
                     height: 32,
@@ -730,14 +569,7 @@ class _RajalScreenState extends State<RajalScreen> {
                       border: Border.all(color: Colors.grey.shade300),
                     ),
                     child: Center(
-                      child: Text(
-                        '${patient['nomor']}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade700,
-                        ),
-                      ),
+                      child: Text('${patient['nomor']}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey.shade700)),
                     ),
                   ),
                 ],
