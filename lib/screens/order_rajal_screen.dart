@@ -102,7 +102,9 @@ class _RajalScreenState extends State<RajalScreen> {
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 1,
+        elevation: 1, 
+        // title: const Text(
+        //   'Daftar Order
         title: const Text(
           'Daftar Order Obat Rajal',
           style: TextStyle(

@@ -5,99 +5,128 @@ class OrderDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blue[50],
-      appBar: AppBar(
-        title: const Text(
-          'Form Detail',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-        ),
-        backgroundColor: Colors.blue[700],
-        elevation: 2,
-        iconTheme: const IconThemeData(color: Colors.white),
+  return Scaffold(
+    backgroundColor: Colors.blue[50],
+    appBar: AppBar(
+      title: const Text(
+        'Form Detail',
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // === FORM FILTER ===
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
-                    spreadRadius: 1,
-                    blurRadius: 3,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: [
-                  _buildTextField(context, "Kode", "20250731143058"),
-                  _buildDropdown(context, "Unit Farmasi", ["Gudang", "Apotek"], "Gudang"),
-                  _buildTextField(context, "Tanggal Pelaksanaan", "31-07-2025"),
-                  _buildDropdown(context, "Bulan Stock Opname",
-                      ["Januari", "Februari", "Juli"], "Juli"),
-                  _buildDropdown(context, "Tahun Stock Opname", ["2024", "2025"], "2025"),
-                  _buildDropdown(context, "Tipe Petugas", ["Staff", "Admin"], "Staff"),
-                  _buildTextField(context, "Petugas", "Diana Aprilia"),
-                ],
-              ),
+      backgroundColor: Colors.blue[700],
+      elevation: 2,
+      iconTheme: const IconThemeData(color: Colors.white),
+    ),
+    body: SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // === FORM FILTER 2 KOLOM SELALU ===
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  spreadRadius: 1,
+                  blurRadius: 3,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-            
-            // === TABEL SECTION ===
-            LayoutBuilder(
-              builder: (context, constraints) {
-                // Tampilkan tabel berdampingan jika layar cukup lebar
-                if (constraints.maxWidth > 800) {
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: _buildTableCard(
-                          title: "Stok Barang Gudang",
-                          table: _buildGudangTable(),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _buildTableCard(
-                          title: "Stok Opname",
-                          table: _buildOpnameTable(),
-                        ),
-                      ),
-                    ],
-                  );
-                } else {
-                  // Tampilkan tabel secara vertikal untuk layar sempit
-                  return Column(
-                    children: [
-                      _buildTableCard(
+            child: Column(
+              children: [
+                // Row 1: Kode & Unit Farmasi
+                Row(
+                  children: [
+                    Expanded(child: _buildTextField(context, "Kode", "20250731143058")),
+                    const SizedBox(width: 12),
+                    Expanded(child: _buildDropdown(context, "Unit Farmasi", ["Gudang", "Apotek"], "Gudang")),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                
+                // Row 2: Tanggal Pelaksanaan & Bulan Stock Opname
+                Row(
+                  children: [
+                    Expanded(child: _buildTextField(context, "Tanggal Pelaksanaan", "31-07-2025")),
+                    const SizedBox(width: 12),
+                    Expanded(child: _buildDropdown(context, "Bulan Stock Opname", ["Januari", "Februari", "Juli"], "Juli")),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                
+                // Row 3: Tahun Stock Opname & Tipe Petugas
+                Row(
+                  children: [
+                    Expanded(child: _buildDropdown(context, "Tahun Stock Opname", ["2024", "2025"], "2025")),
+                    const SizedBox(width: 12),
+                    Expanded(child: _buildDropdown(context, "Tipe Petugas", ["Staff", "Admin"], "Staff")),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                
+                // Row 4: Petugas & Field Kosong
+                Row(
+                  children: [
+                    Expanded(child: _buildTextField(context, "Petugas", "Diana Aprilia")),
+                    const SizedBox(width: 12),
+                    Expanded(child: Container()), // Field kosong untuk menjaga 2 kolom
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // === TABEL SECTION RESPONSIF ===
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth > 800) {
+                // desktop → tabel berdampingan
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: _buildTableCard(
                         title: "Stok Barang Gudang",
                         table: _buildGudangTable(),
                       ),
-                      const SizedBox(height: 20),
-                      _buildTableCard(
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _buildTableCard(
                         title: "Stok Opname",
                         table: _buildOpnameTable(),
                       ),
-                    ],
-                  );
-                }
-              },
-            ),
-          ],
-        ),
+                    ),
+                  ],
+                );
+              } else {
+                // mobile → tabel vertikal
+                return Column(
+                  children: [
+                    _buildTableCard(
+                      title: "Stok Barang Gudang",
+                      table: _buildGudangTable(),
+                    ),
+                    const SizedBox(height: 20),
+                    _buildTableCard(
+                      title: "Stok Opname",
+                      table: _buildOpnameTable(),
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   // Widget untuk card tabel
   Widget _buildTableCard({required String title, required Widget table}) {
