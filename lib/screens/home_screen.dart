@@ -305,7 +305,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               ),
                             );
                             break;
-<<<<<<< Updated upstream
                             case 'Manajemen Bed':
                             Navigator.push(
                               context,
@@ -314,8 +313,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               ),
                             );
                             break;
-=======
->>>>>>> Stashed changes
                             case 'Rekam Medik':
                             Navigator.push(
                               context,
