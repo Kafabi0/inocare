@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inocare/screens/billingpayment_screen.dart';
 import 'package:inocare/screens/dashboard.dart';
-import 'package:inocare/screens/diklat_screen.dart';
+import 'package:inocare/screens/diklat_penelitian.dart';
 import 'package:inocare/screens/emergency_protocols_screen.dart';
 import 'package:inocare/screens/ermperawat_screen.dart';
 import 'package:inocare/screens/ermdoctor_screen.dart';

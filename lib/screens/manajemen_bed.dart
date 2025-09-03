@@ -725,7 +725,6 @@ class _ManajemenBedState extends State<ManajemenBed> {
     );
   }
 
-  // Widget tabel responsif - untuk mobile gunakan card, untuk desktop gunakan table
   Widget _buildResponsiveDataView(List<Map<String, dynamic>> pageItems) {
     if (_isMobile) {
       return _buildMobileCardView(pageItems);
