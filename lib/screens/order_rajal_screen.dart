@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inocare/screens/stok_barang.dart';
 import '../screens/farmasi_screen.dart';
 
 class RajalScreen extends StatefulWidget {
@@ -20,7 +21,7 @@ class _RajalScreenState extends State<RajalScreen> {
     "Proses Amprah": const FarmasiScreen(),
     "Proses Order Obat": const RajalScreen(),
     "Master Barang": const FarmasiScreen(),
-    "Stok Barang Farmasi": const FarmasiScreen(),
+    "Stok Barang Farmasi": const StokBarangScreen(),
     "Penerimaan Barang": const FarmasiScreen(),
     "Pengeluaran Barang": const FarmasiScreen(),
     "Stok Opname": const FarmasiScreen(),

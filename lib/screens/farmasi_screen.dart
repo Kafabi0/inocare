@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inocare/screens/order_rajal_screen.dart';
+import 'package:inocare/screens/stok_barang.dart';
 
 class FarmasiScreen extends StatefulWidget {
   const FarmasiScreen({super.key});
@@ -20,7 +21,7 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
     "Proses Amprah": const FarmasiScreen(),
     "Proses Order Obat": const RajalScreen(),
     "Master Barang": const FarmasiScreen(),
-    "Stok Barang Farmasi": const FarmasiScreen(),
+    "Stok Barang Farmasi": const StokBarangScreen(),
     "Penerimaan Barang": const FarmasiScreen(),
     "Pengeluaran Barang": const FarmasiScreen(),
     "Stok Opname": const FarmasiScreen(),
@@ -46,7 +47,7 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
       "title": "Stok Barang Farmasi",
       "icon": Icons.medical_services,
       "color": Colors.purple,
-      "page": const FarmasiScreen(),
+      "page": const StokBarangScreen(),
     },
     {
       "title": "Penerimaan Barang",
