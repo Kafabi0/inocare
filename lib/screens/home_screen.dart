@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inocare/screens/billingpayment_screen.dart';
 import 'package:inocare/screens/dashboard.dart';
+import 'package:inocare/screens/diklat_screen.dart';
 import 'package:inocare/screens/emergency_protocols_screen.dart';
 import 'package:inocare/screens/ermperawat_screen.dart';
 import 'package:inocare/screens/ermdoctor_screen.dart';
@@ -318,6 +319,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               context,
                               MaterialPageRoute(
                                 builder: (_) => const RekamMedisPage(),
+                              ),
+                            );
+                            break;
+                            case 'Administrasi Layanan':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const PreSurveyListScreen(),
                               ),
                             );
                             break;
