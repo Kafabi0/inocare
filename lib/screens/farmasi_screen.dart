@@ -115,32 +115,42 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1,
-        leading: Builder(
-          builder:
-              (context) => IconButton(
-                icon: const Icon(Icons.menu, color: Colors.black87),
-                onPressed: () => Scaffold.of(context).openDrawer(),
-              ),
-        ),
-        title: const Text(
-          'Farmasi',
-          style: TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.notifications_outlined,
-              color: Colors.black87,
-            ),
-            onPressed: () {},
-          ),
-        ],
+        leading: IconButton(
+      icon: const Icon(Icons.arrow_back, color: Colors.black87),
+      onPressed: () => Navigator.pop(context),
+    ),
+    title: const Text(
+      'Farmasi',
+      style: TextStyle(
+        color: Colors.black87,
+        fontWeight: FontWeight.w600,
+        fontSize: 18,
       ),
-      drawer: Drawer(
+    ),
+    actions: [
+      IconButton(
+        icon: const Icon(Icons.notifications_outlined, color: Colors.black87),
+        onPressed: () {},
+      ),
+      Builder(
+        builder: (context) => IconButton(
+          icon: const Icon(Icons.menu, color: Colors.black87),
+          onPressed: () => Scaffold.of(context).openEndDrawer(),
+        ),
+      ),
+    ],
+  ),
+  //       actions: [
+  //         IconButton(
+  //           icon: const Icon(
+  //             Icons.notifications_outlined,
+  //             color: Colors.black87,
+  //           ),
+  //           onPressed: () {},
+  //         ),
+  //       ],
+  //     ),
+      endDrawer: Drawer(
         backgroundColor: Colors.white,
         child: Column(
           children: [
