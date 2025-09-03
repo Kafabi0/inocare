@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inocare/screens/order_rajal_screen.dart';
 import 'package:inocare/screens/stok_barang.dart';
+import 'package:inocare/screens/order_detail_screen.dart';
 
 class FarmasiScreen extends StatefulWidget {
   const FarmasiScreen({super.key});
@@ -685,7 +686,13 @@ class _FarmasiScreenState extends State<FarmasiScreen> {
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton.icon(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const OrderDetailScreen(),
+                                      ),
+                                    );
+                                  },
                                   icon: const Icon(Icons.visibility, size: 16),
                                   label: const Text('Lihat Detail'),
                                   style: ElevatedButton.styleFrom(
