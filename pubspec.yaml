@@ -59,15 +59,8 @@ dependencies:
   share_plus: ^11.1.0
   external_path: ^2.2.0
   syncfusion_flutter_calendar: ^30.2.7
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   open_file: ^3.5.10
-=======
   dashed_rect: ^0.0.4
->>>>>>> Stashed changes
-=======
-  dashed_rect: ^0.0.4
->>>>>>> Stashed changes
 
 dev_dependencies:
   flutter_test:
