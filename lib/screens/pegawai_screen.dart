@@ -458,386 +458,610 @@ class _PegawaiScreenState extends State<PegawaiScreen> {
   }
   
   void _showScheduleDetail(DateTime date, List<dynamic> schedules, bool isMedical) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.all(0),
-          content: Container(
-            width: MediaQuery.of(context).size.width * 0.95,
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.75,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Header
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: isMedical ? const Color(0xFF1E40AF) : const Color(0xFF059669),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(4),
-                      topRight: Radius.circular(4),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              isMedical ? 'Daftar Jadwal Medis' : 'Daftar Jadwal Non Medis',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Tanggal: ${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}',
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        icon: const Icon(Icons.close, color: Colors.white, size: 22),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      ),
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.all(16),
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 0.85,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              // Enhanced Header
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      isMedical ? const Color(0xFF1E40AF) : const Color(0xFF059669),
+                      isMedical ? const Color(0xFF2563EB) : const Color(0xFF10B981),
                     ],
                   ),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
                 ),
-                
-                // Content dengan horizontal scroll
-                Flexible(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Container(
-                      width: 800,
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        isMedical ? Icons.medical_services : Icons.work,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Table Header
+                          Text(
+                            isMedical ? 'Jadwal Petugas Medis' : 'Jadwal Petugas Non-Medis',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.calendar_today,
+                                color: Colors.white.withOpacity(0.8),
+                                size: 16,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}',
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.9),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  '${schedules.length} Jadwal',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Material(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          child: const Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // Responsive Content Area
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    // Determine if we need horizontal scroll based on screen width
+                    bool needsHorizontalScroll = constraints.maxWidth < 800;
+                    double tableWidth = needsHorizontalScroll ? 900 : constraints.maxWidth;
+                    
+                    return Column(
+                      children: [
+                        // Mobile-friendly header with scroll hint
+                        if (needsHorizontalScroll)
                           Container(
-                            color: Colors.grey[100],
-                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.orange[50],
+                              border: Border(
+                                bottom: BorderSide(color: Colors.orange[200]!),
+                              ),
+                            ),
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Container(
-                                  width: 50,
-                                  alignment: Alignment.center,
-                                  child: const Text(
-                                    'No',
-                                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                                  ),
+                                Icon(
+                                  Icons.swipe,
+                                  size: 18,
+                                  color: Colors.orange[600],
                                 ),
-                                Container(
-                                  width: 40,
-                                  alignment: Alignment.center,
-                                  child: const Text(
-                                    '#',
-                                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Container(
-                                  width: 100,
-                                  alignment: Alignment.center,
-                                  child: const Text(
-                                    'Foto',
-                                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Container(
-                                  width: 200,
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    isMedical ? 'Nama Dokter' : 'Nama Staff',
-                                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Container(
-                                  width: 180,
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    isMedical ? 'Spesialis/Unit Layanan' : 'Posisi',
-                                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Container(
-                                  width: 80,
-                                  alignment: Alignment.center,
-                                  child: const Text(
-                                    'Jam Mulai',
-                                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Container(
-                                  width: 80,
-                                  alignment: Alignment.center,
-                                  child: const Text(
-                                    'Jam Selesai',
-                                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Container(
-                                  width: 80,
-                                  alignment: Alignment.center,
-                                  child: const Text(
-                                    'Aksi',
-                                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Geser ke samping untuk melihat detail lengkap',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.orange[700],
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          
-                          Expanded(
+                        
+                        // Enhanced Table Header
+                        Container(
+                          width: double.infinity,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
                             child: Container(
-                              color: Colors.white,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.vertical,
-                                child: Column(
-                                  children: schedules.asMap().entries.map((entry) {
-                                    int index = entry.key;
-                                    dynamic schedule = entry.value;
-                                    
-                                    // Get category and color
-                                    String category = '';
-                                    Color categoryColor = Colors.grey;
-                                    String photoAsset = '';
-                                    
-                                    if (schedule is CategorizedDoctorSchedule) {
-                                      category = schedule.category;
-                                      categoryColor = categoryColors[category] ?? Colors.grey;
-                                      photoAsset = schedule.photoAsset;
-                                    } else if (schedule is CategorizedStaffSchedule) {
-                                      category = schedule.category;
-                                      categoryColor = categoryColors[category] ?? Colors.grey;
-                                      photoAsset = schedule.photoAsset;
-                                    }
-                                    
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        border: Border(
-                                          bottom: BorderSide(color: Colors.grey[300]!),
-                                        ),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            width: 50,
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              '${index + 1}',
-                                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: 40,
-                                            alignment: Alignment.center,
-                                            child: Container(
-                                              width: 20,
-                                              height: 20,
-                                              decoration: BoxDecoration(
-                                                color: categoryColor,
-                                                borderRadius: BorderRadius.circular(10),
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: 100,
-                                            alignment: Alignment.center,
-                                            child: Container(
-                                              width: 70,
-                                              height: 70,
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(8),
-                                                border: Border.all(color: categoryColor, width: 2),
-                                              ),
-                                              child: ClipRRect(
-                                                borderRadius: BorderRadius.circular(6),
-                                                child: photoAsset.isNotEmpty
-                                                    ? Image.asset(
-                                                        photoAsset,
-                                                        fit: BoxFit.cover,
-                                                        errorBuilder: (context, error, stackTrace) {
-                                                          return Container(
-                                                            color: categoryColor.withOpacity(0.1),
-                                                            child: Center(
-                                                              child: Text(
-                                                                schedule.name.isNotEmpty ? schedule.name[0].toUpperCase() : '?',
-                                                                style: TextStyle(
-                                                                  color: categoryColor,
-                                                                  fontWeight: FontWeight.bold,
-                                                                  fontSize: 28,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          );
-                                                        },
-                                                      )
-                                                    : Container(
-                                                        color: categoryColor.withOpacity(0.1),
-                                                        child: Center(
-                                                          child: Text(
-                                                            schedule.name.isNotEmpty ? schedule.name[0].toUpperCase() : '?',
-                                                            style: TextStyle(
-                                                              color: categoryColor,
-                                                              fontWeight: FontWeight.bold,
-                                                              fontSize: 28,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: 200,
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              schedule.name,
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                          Container(
-                                            width: 180,
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              isMedical ? (schedule as CategorizedDoctorSchedule).specialty : (schedule as CategorizedStaffSchedule).position,
-                                              style: const TextStyle(fontSize: 12),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                          Container(
-                                            width: 80,
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              schedule.startTime,
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color: Color(0xFF059669),
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: 80,
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              schedule.endTime,
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color: Color(0xFFDC2626),
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: 80,
-                                            alignment: Alignment.center,
-                                            child: InkWell(
-                                              onTap: () {
-                                                Navigator.pop(context);
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) => DoctorDetailScreen(
-                                                      name: schedule.name,
-                                                      specialty: isMedical ? (schedule as CategorizedDoctorSchedule).specialty : (schedule as CategorizedStaffSchedule).position,
-                                                      category: category,
-                                                      isMedical: isMedical,
-                                                      photoAsset: photoAsset,
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                              child: Container(
-                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                decoration: BoxDecoration(
-                                                  color: categoryColor,
-                                                  borderRadius: BorderRadius.circular(4),
-                                                ),
-                                                child: const Text(
-                                                  'Detail',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 10,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }).toList(),
+                              width: tableWidth,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [Colors.grey[100]!, Colors.grey[50]!],
                                 ),
+                              ),
+                              child: Row(
+                                children: [
+                                  _buildHeaderCell('No', 60, true),
+                                  _buildHeaderCell('Status', 70, true),
+                                  _buildHeaderCell('Foto', 100, true),
+                                  _buildHeaderCell(
+                                    isMedical ? 'Nama Dokter/Perawat' : 'Nama Staff',
+                                    needsHorizontalScroll ? 200 : (tableWidth - 530) * 0.4,
+                                    false,
+                                  ),
+                                  _buildHeaderCell(
+                                    isMedical ? 'Spesialisasi/Unit' : 'Posisi/Departemen',
+                                    needsHorizontalScroll ? 180 : (tableWidth - 530) * 0.35,
+                                    false,
+                                  ),
+                                  _buildHeaderCell('Jam Mulai', 100, true),
+                                  _buildHeaderCell('Jam Selesai', 100, true),
+                                  _buildHeaderCell('Aksi', 80, true),
+                                ],
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                
-                // Footer hint
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(4),
-                      bottomRight: Radius.circular(4),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.swap_horiz,
-                        size: 16,
-                        color: Colors.grey[600],
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Geser ke samping untuk melihat semua kolom',
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.grey[600],
-                          fontStyle: FontStyle.italic,
                         ),
-                      ),
-                    ],
-                  ),
+                        
+                        // Enhanced Table Content
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Container(
+                              width: tableWidth,
+                              child: ListView.separated(
+                                itemCount: schedules.length,
+                                separatorBuilder: (context, index) => Divider(
+                                  height: 1,
+                                  color: Colors.grey[200],
+                                ),
+                                itemBuilder: (context, index) {
+                                  dynamic schedule = schedules[index];
+                                  
+                                  // Get category info
+                                  String category = '';
+                                  Color categoryColor = Colors.grey;
+                                  String photoAsset = '';
+                                  
+                                  if (schedule is CategorizedDoctorSchedule) {
+                                    category = schedule.category;
+                                    categoryColor = _getCategoryColor(category);
+                                    photoAsset = schedule.photoAsset;
+                                  } else if (schedule is CategorizedStaffSchedule) {
+                                    category = schedule.category;
+                                    categoryColor = _getCategoryColor(category);
+                                    photoAsset = schedule.photoAsset;
+                                  }
+                                  
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      color: index.isEven ? Colors.white : Colors.grey[25],
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: Colors.grey[100]!,
+                                          width: 0.5,
+                                        ),
+                                      ),
+                                    ),
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        _navigateToDetail(schedule, category, isMedical, photoAsset);
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+                                        child: Row(
+                                          children: [
+                                            // Number
+                                            _buildDataCell(
+                                              '${index + 1}',
+                                              60,
+                                              true,
+                                              const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            
+                                            // Status indicator
+                                            _buildDataCell(
+                                              '',
+                                              70,
+                                              true,
+                                              null,
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Container(
+                                                    width: 12,
+                                                    height: 12,
+                                                    decoration: BoxDecoration(
+                                                      color: categoryColor,
+                                                      shape: BoxShape.circle,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Container(
+                                                    padding: const EdgeInsets.symmetric(
+                                                      horizontal: 6,
+                                                      vertical: 2,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.green[500],
+                                                      borderRadius: BorderRadius.circular(8),
+                                                    ),
+                                                    child: const Text(
+                                                      'Aktif',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 8,
+                                                        fontWeight: FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            
+                                            // Photo
+                                            _buildDataCell(
+                                              '',
+                                              100,
+                                              true,
+                                              null,
+                                              child: _buildPhotoWidget(photoAsset, schedule.name, categoryColor),
+                                            ),
+                                            
+                                            // Name
+                                            _buildDataCell(
+                                              schedule.name,
+                                              needsHorizontalScroll ? 200 : (tableWidth - 530) * 0.4,
+                                              false,
+                                              const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 14,
+                                                color: Color(0xFF111827),
+                                              ),
+                                            ),
+                                            
+                                            // Specialty/Position
+                                            _buildDataCell(
+                                              isMedical 
+                                                ? (schedule as CategorizedDoctorSchedule).specialty 
+                                                : (schedule as CategorizedStaffSchedule).position,
+                                              needsHorizontalScroll ? 180 : (tableWidth - 530) * 0.35,
+                                              false,
+                                              TextStyle(
+                                                fontSize: 13,
+                                                color: Colors.grey[600],
+                                              ),
+                                            ),
+                                            
+                                            // Start time
+                                            _buildDataCell(
+                                              schedule.startTime,
+                                              100,
+                                              true,
+                                              const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFF059669),
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                            
+                                            // End time
+                                            _buildDataCell(
+                                              schedule.endTime,
+                                              100,
+                                              true,
+                                              const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFFDC2626),
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                            
+                                            // Action button
+                                            _buildDataCell(
+                                              '',
+                                              80,
+                                              true,
+                                              null,
+                                              child: Material(
+                                                color: categoryColor,
+                                                borderRadius: BorderRadius.circular(8),
+                                                child: InkWell(
+                                                  borderRadius: BorderRadius.circular(8),
+                                                  onTap: () {
+                                                    Navigator.pop(context);
+                                                    _navigateToDetail(schedule, category, isMedical, photoAsset);
+                                                  },
+                                                  child: Container(
+                                                    padding: const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 6,
+                                                    ),
+                                                    child: const Text(
+                                                      'Detail',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 11,
+                                                        fontWeight: FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                        
+                        // Enhanced Footer
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[50],
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(20),
+                              bottomRight: Radius.circular(20),
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              if (needsHorizontalScroll)
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.touch_app,
+                                      size: 16,
+                                      color: Colors.grey[600],
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Tap pada baris untuk melihat detail lengkap',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              if (needsHorizontalScroll) const SizedBox(height: 8),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: isMedical 
+                                        ? const Color(0xFF1E40AF).withOpacity(0.1)
+                                        : const Color(0xFF059669).withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      'Total: ${schedules.length} jadwal hari ini',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: isMedical 
+                                          ? const Color(0xFF1E40AF)
+                                          : const Color(0xFF059669),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
+
+Widget _buildHeaderCell(String title, double width, bool isCenter) {
+  return Container(
+    width: width,
+    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+    child: Text(
+      title,
+      style: const TextStyle(
+        fontSize: 13,
+        fontWeight: FontWeight.bold,
+        color: Color(0xFF374151),
+      ),
+      textAlign: isCenter ? TextAlign.center : TextAlign.left,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+    ),
+  );
+}
+
+// Helper method untuk membuat data cell
+Widget _buildDataCell(
+  String text,
+  double width,
+  bool isCenter,
+  TextStyle? style, {
+  Widget? child,
+}) {
+  return Container(
+    width: width,
+    padding: const EdgeInsets.symmetric(horizontal: 12),
+    child: child ?? Text(
+      text,
+      style: style ?? const TextStyle(fontSize: 13),
+      textAlign: isCenter ? TextAlign.center : TextAlign.left,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+    ),
+  );
+}
+
+// Helper method untuk membuat photo widget
+Widget _buildPhotoWidget(String photoAsset, String name, Color categoryColor) {
+  return Container(
+    width: 60,
+    height: 60,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: categoryColor.withOpacity(0.3), width: 2),
+      boxShadow: [
+        BoxShadow(
+          color: categoryColor.withOpacity(0.1),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: photoAsset.isNotEmpty
+          ? Image.asset(
+              photoAsset,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return _buildInitialsWidget(name, categoryColor);
+              },
+            )
+          : _buildInitialsWidget(name, categoryColor),
+    ),
+  );
+}
+
+// Helper method untuk membuat initials widget
+Widget _buildInitialsWidget(String name, Color categoryColor) {
+  return Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          categoryColor.withOpacity(0.1),
+          categoryColor.withOpacity(0.05),
+        ],
+      ),
+    ),
+    child: Center(
+      child: Text(
+        name.isNotEmpty ? name[0].toUpperCase() : '?',
+        style: TextStyle(
+          color: categoryColor,
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
+      ),
+    ),
+  );
+}
+
+// Helper method untuk mendapatkan warna kategori
+Color _getCategoryColor(String category) {
+  const Map<String, Color> categoryColors = {
+    'Dokter Spesialis': Color(0xFF2563EB),
+    'Dokter Umum': Color(0xFF3B82F6),
+    'Perawat': Color(0xFF10B981),
+    'Bidan': Color(0xFF8B5CF6),
+    'Apoteker': Color(0xFFF59E0B),
+    'Staff': Color(0xFFEC4899),
+  };
+  return categoryColors[category] ?? const Color(0xFF64748B);
+}
+
+// Helper method untuk navigasi ke detail
+void _navigateToDetail(dynamic schedule, String category, bool isMedical, String photoAsset) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => DoctorDetailScreen(
+        name: schedule.name,
+        specialty: isMedical 
+          ? (schedule as CategorizedDoctorSchedule).specialty 
+          : (schedule as CategorizedStaffSchedule).position,
+        category: category,
+        isMedical: isMedical,
+        photoAsset: photoAsset,
+      ),
+    ),
+  );
+}
   
   Widget _buildEmployeeCard(String role, int count) {
     Color cardColor = categoryColors[role] ?? const Color(0xFF64748B);
