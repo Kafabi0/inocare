@@ -25,6 +25,7 @@ import '../screens/appointment_screen.dart';
 import '../screens/prescription_screen.dart';
 import '../data/appointment_data.dart';
 import '../screens/casemix.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -32,28 +33,33 @@ class HomeScreen extends StatefulWidget {
   State createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   bool _showAllQuickAccess = false;
   late ScrollController _scrollController;
   late AnimationController _fadeController;
-  
-  String _searchQuery="";
+
+  String _searchQuery = "";
+  final TextEditingController _searchController = TextEditingController(); 
+
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController()
-      ..addListener(() {
-        if (_scrollController.offset >= 300) {
-          if (!_fadeController.isAnimating && _fadeController.status != AnimationStatus.forward) {
-            _fadeController.forward();
+    _scrollController =
+        ScrollController()..addListener(() {
+          if (_scrollController.offset >= 300) {
+            if (!_fadeController.isAnimating &&
+                _fadeController.status != AnimationStatus.forward) {
+              _fadeController.forward();
+            }
+          } else {
+            if (!_fadeController.isAnimating &&
+                _fadeController.status != AnimationStatus.reverse) {
+              _fadeController.reverse();
+            }
           }
-        } else {
-          if (!_fadeController.isAnimating && _fadeController.status != AnimationStatus.reverse) {
-            _fadeController.reverse();
-          }
-        }
-      });
+        });
     _fadeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),
@@ -64,6 +70,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   void dispose() {
     _scrollController.dispose();
     _fadeController.dispose();
+    _searchController.dispose(); 
+
     super.dispose();
   }
 
@@ -78,7 +86,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDark ? const Color(0xFF1E1E2C) : const Color(0xFFF3F4F6);
+    final backgroundColor =
+        isDark ? const Color(0xFF1E1E2C) : const Color(0xFFF3F4F6);
     final cardColor = isDark ? const Color(0xFF2D2D44) : Colors.white;
     final primaryColor = Theme.of(context).primaryColor;
 
@@ -97,10 +106,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         ),
       ),
       floatingActionButton: ScaleTransition(
-        scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-          parent: _fadeController,
-          curve: Curves.easeOutCubic,
-        )),
+        scale: Tween<double>(begin: 0.0, end: 1.0).animate(
+          CurvedAnimation(parent: _fadeController, curve: Curves.easeOutCubic),
+        ),
         child: FadeTransition(
           opacity: _fadeController,
           child: Container(
@@ -140,15 +148,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildQuickAccessGrid(Color cardColor, Color primaryColor) {
-        final filteredItems = quickAccessItems.where((item) {
-      final label = (item['label'] as String).toLowerCase();
-      return label.contains(_searchQuery.toLowerCase());
-    }).toList();
+    final filteredItems =
+        quickAccessItems.where((item) {
+          final label = (item['label'] as String).toLowerCase();
+          return label.contains(_searchQuery.toLowerCase());
+        }).toList();
 
     // tampilkan semua hasil pencarian, atau kalau kosong pakai default showAll
-    final displayedItems = _showAllQuickAccess
-        ? filteredItems
-        : filteredItems.take(9).toList();
+    final displayedItems =
+        _showAllQuickAccess ? filteredItems : filteredItems.take(9).toList();
     // final displayedItems = _showAllQuickAccess ? quickAccessItems : quickAccessItems.take(9).toList();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -160,21 +168,53 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-                TextField(
+              TextField(
+                controller: _searchController, // ✅ hubungkan controller
                 decoration: InputDecoration(
                   hintText: "Search menu...",
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
+                  prefixIcon: const Icon(Icons.search, color: Colors.white),
+                  suffixIcon: _searchQuery.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.close, color: Colors.white),
+                          onPressed: () {
+                            setState(() {
+                              _searchQuery = "";
+                              _searchController.clear(); // ✅ hapus teks
+                            });
+                            FocusScope.of(context).unfocus(); // tutup keyboard
+                          },
+                        )
+                      : null,// hanya muncul saat ada input
+
+                  filled: true,
+                  fillColor: Colors.blue.shade600,
+                  hintStyle: const TextStyle(color: Colors.white70),
+
+                  enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 1.5,
+                    ),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.white, width: 2),
+                  ),
+
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
                 ),
+                style: const TextStyle(color: Colors.white),
                 onChanged: (value) {
                   setState(() {
                     _searchQuery = value;
                   });
                 },
               ),
+
               const SizedBox(height: 16),
               GridView.builder(
                 shrinkWrap: true,
@@ -208,7 +248,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const AppointmentCalendarScreen(),
+                                builder:
+                                    (_) => const AppointmentCalendarScreen(),
                               ),
                             );
                             break;
@@ -216,7 +257,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const PrescriptionManagementScreen(),
+                                builder:
+                                    (_) => const PrescriptionManagementScreen(),
                               ),
                             );
                             break;
@@ -224,7 +266,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const EmergencyProtocolsScreen(),
+                                builder:
+                                    (_) => const EmergencyProtocolsScreen(),
                               ),
                             );
                             break;
@@ -248,9 +291,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => PatientRecordsScreen(
-                                  appointments: appointmentsData,
-                                ),
+                                builder:
+                                    (_) => PatientRecordsScreen(
+                                      appointments: appointmentsData,
+                                    ),
                               ),
                             );
                             break;
@@ -326,7 +370,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               ),
                             );
                             break;
-                            case 'Kepegawaian':
+                          case 'Kepegawaian':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -334,7 +378,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               ),
                             );
                             break;
-                            case 'Manajemen Bed':
+                          case 'Manajemen Bed':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -342,7 +386,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               ),
                             );
                             break;
-                            case 'Rekam Medik':
+                          case 'Rekam Medik':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -350,22 +394,22 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               ),
                             );
                             break;
-                            case 'Administrasi Layanan':
+                          case 'Administrasi Layanan':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => const PreSurveyListScreen(),
                               ),
                             );
-                            // case 'Farmasi':
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (_) => const FarmasiScreen(),
-                            //   ),
-                            // );
-                            // break;
-                            case 'Casemix':
+                          // case 'Farmasi':
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (_) => const FarmasiScreen(),
+                          //   ),
+                          // );
+                          // break;
+                          case 'Casemix':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
