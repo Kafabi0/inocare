@@ -36,6 +36,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   bool _showAllQuickAccess = false;
   late ScrollController _scrollController;
   late AnimationController _fadeController;
+  
+  String _searchQuery="";
 
   @override
   void initState() {
@@ -138,7 +140,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildQuickAccessGrid(Color cardColor, Color primaryColor) {
-    final displayedItems = _showAllQuickAccess ? quickAccessItems : quickAccessItems.take(9).toList();
+        final filteredItems = quickAccessItems.where((item) {
+      final label = (item['label'] as String).toLowerCase();
+      return label.contains(_searchQuery.toLowerCase());
+    }).toList();
+
+    // tampilkan semua hasil pencarian, atau kalau kosong pakai default showAll
+    final displayedItems = _showAllQuickAccess
+        ? filteredItems
+        : filteredItems.take(9).toList();
+    // final displayedItems = _showAllQuickAccess ? quickAccessItems : quickAccessItems.take(9).toList();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Card(
@@ -149,6 +160,22 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
+                TextField(
+                decoration: InputDecoration(
+                  hintText: "Search menu...",
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
