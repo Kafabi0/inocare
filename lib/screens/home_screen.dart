@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inocare/screens/adminlayanan_screen.dart';
 import 'package:inocare/screens/billingpayment_screen.dart';
 import 'package:inocare/screens/dashboard.dart';
 import 'package:inocare/screens/diklat_penelitian.dart';
@@ -157,7 +158,6 @@ class _HomeScreenState extends State<HomeScreen>
     // tampilkan semua hasil pencarian, atau kalau kosong pakai default showAll
     final displayedItems =
         _showAllQuickAccess ? filteredItems : filteredItems.take(9).toList();
-    // final displayedItems = _showAllQuickAccess ? quickAccessItems : quickAccessItems.take(9).toList();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Card(
@@ -398,7 +398,7 @@ class _HomeScreenState extends State<HomeScreen>
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const PreSurveyListScreen(),
+                                builder: (_) => const AdminLayanan(),
                               ),
                             );
                           // case 'Farmasi':

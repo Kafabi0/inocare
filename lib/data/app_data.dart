@@ -53,7 +53,7 @@ final List<Map<String, dynamic>> quickAccessItems = [
   {'label': 'ERM Paru', 'icon': MdiIcons.lungs, 'color': Colors.orange},
   {'label': 'Kepegawaian', 'icon': MdiIcons.accountStar, 'color': Colors.orange},
   {'label': 'ERM Eondokrin Metabolisme Diabetes', 'icon': MdiIcons.stomach, 'color': Colors.orange},
-  {'label': 'Casemix', 'icon': MdiIcons.vectorLink, 'color': Colors.orange},
+  {'label': 'Casemix', 'icon': MdiIcons.vectorCombine, 'color': Colors.orange},
   {'label': 'Case Manager', 'icon': MdiIcons.clipboardTextSearchOutline, 'color': Colors.orange},
   {'label': 'Dashboard & Reporting', 'icon': MdiIcons.chartSankey, 'color': Colors.orange},
   {'label': 'Remunerasi', 'icon': MdiIcons.cash, 'color': Colors.orange},

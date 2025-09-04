@@ -167,7 +167,7 @@ class _MedicalTopHeaderSectionState extends State<MedicalTopHeaderSection>
                 ),
                 child: ClipOval(
                   child: Image.asset(
-                    'assets/images/diva.png',
+                    'assets/dokter/doctor55.png',
                     width: 52,
                     height: 52,
                     fit: BoxFit.cover,

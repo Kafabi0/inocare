@@ -24,11 +24,11 @@ class HealthRecordsScreen extends StatelessWidget {
                 children: [
                   const CircleAvatar(
                     radius: 40,
-                    backgroundImage: AssetImage('assets/images/diva.png'),
+                    backgroundImage: AssetImage('assets/dokter/doctor55.png'),
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    "Diva",
+                    "Dokter",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   const SizedBox(height: 4),

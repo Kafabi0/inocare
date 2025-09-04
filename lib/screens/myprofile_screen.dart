@@ -500,8 +500,8 @@ class MedicalProfileScreen extends StatelessWidget {
                               PageRouteBuilder(
                                 pageBuilder: (context, animation, secondaryAnimation) =>
                                     const MyProfileScreen(
-                                  imagePath: 'assets/images/diva.png',
-                                  name: 'Diva',
+                                  imagePath:'assets/dokter/doctor55.png',
+                                  name: 'Dokter',
                                   position: 'Senior Medical Officer',
                                 ),
                                 transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -558,7 +558,7 @@ class MedicalProfileScreen extends StatelessWidget {
                                       backgroundColor: const Color(0xFF1E3A8A).withOpacity(isDark ? 0.8 : 1.0),
                                       child: ClipOval(
                                         child: Image.asset(
-                                          'assets/images/diva.png',
+                                          'assets/dokter/doctor55.png',
                                           width: 120,
                                           height: 120,
                                           fit: BoxFit.cover,
@@ -604,7 +604,7 @@ class MedicalProfileScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          'Diva ',
+                          'Dokter ',
                           style: GoogleFonts.inter(
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
@@ -709,7 +709,7 @@ class MedicalProfileScreen extends StatelessWidget {
                       _buildDetailCard(
                         context,
                         'Full Name',
-                        ' Diva',
+                        ' Dokter',
                         icon: Icons.person,
                         iconColor: const Color(0xFF607D8B),
                       ),
@@ -770,7 +770,7 @@ class MedicalProfileScreen extends StatelessWidget {
                       _buildDetailCard(
                         context,
                         'Email Address',
-                        'diva@hkl.gov.my',
+                        'dokter@hkl.gov.my',
                         icon: Icons.email,
                         iconColor: const Color(0xFF1976D2),
                         isLink: true,
