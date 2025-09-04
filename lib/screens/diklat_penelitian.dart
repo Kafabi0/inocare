@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+// import 'package:inocare/screens/kajietik_screen.dart';
+// import 'package:inocare/screens/kajiproposal_screen.dart';
+// import 'package:inocare/screens/preparat_screen.dart';
+import 'package:inocare/widgets/routediklat.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class PreSurveyListScreen extends StatefulWidget {
   const PreSurveyListScreen({super.key});
@@ -100,11 +105,17 @@ class _PreSurveyListScreenState extends State<PreSurveyListScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildDetailRow("Nomor Permohonan", item['nomor_permohonan']),
-                _buildDetailRow("Tanggal Permohonan", item['tanggal_permohonan']),
+                _buildDetailRow(
+                  "Tanggal Permohonan",
+                  item['tanggal_permohonan'],
+                ),
                 _buildDetailRow("Surat Balasan", item['surat_balasan']),
                 _buildDetailRow("Perihal", item['perihal']),
                 _buildDetailRow("Tanggal", item['tanggal']),
-                _buildDetailRow("Ruangan", (item['ruangan'] as List).join(", ")),
+                _buildDetailRow(
+                  "Ruangan",
+                  (item['ruangan'] as List).join(", "),
+                ),
                 _buildDetailRow("Status Bayar", item['status_bayar']),
               ],
             ),
@@ -141,11 +152,12 @@ class _PreSurveyListScreenState extends State<PreSurveyListScreen> {
 
   // === MENU DRAWER ===
   void _onMenuSelect(String menu) {
-    setState(() {
-      _selectedMenu = menu;
-    });
-    Navigator.pop(context); // tutup drawer setelah pilih
-  }
+  setState(() {
+    _selectedMenu = menu;
+  });
+  Navigator.pop(context); // tutup drawer
+  AppRoutes.navigate(context, menu); // pindah halaman sesuai menu
+}
 
   Widget _buildMenuItem(IconData icon, String title) {
     final bool isSelected = _selectedMenu == title;
@@ -179,15 +191,19 @@ class _PreSurveyListScreenState extends State<PreSurveyListScreen> {
           'Kegiatan Penelitian',
           style: TextStyle(color: Colors.white),
         ),
+        centerTitle: true,
         backgroundColor: const Color(0xFF1565C0),
         actions: [
           Builder(
-            builder: (context) => IconButton(
-              icon: const Icon(Icons.menu, color: Colors.white),
-              onPressed: () {
-                Scaffold.of(context).openEndDrawer(); // buka drawer di kanan
-              },
-            ),
+            builder:
+                (context) => IconButton(
+                  icon: const Icon(Icons.menu, color: Colors.white),
+                  onPressed: () {
+                    Scaffold.of(
+                      context,
+                    ).openEndDrawer(); // buka drawer di kanan
+                  },
+                ),
           ),
         ],
       ),
@@ -197,16 +213,18 @@ class _PreSurveyListScreenState extends State<PreSurveyListScreen> {
           children: [
             const DrawerHeader(
               decoration: BoxDecoration(color: Color(0xFF1565C0)),
+
               child: Text(
-                "Menu Kegiatan",
-                style: TextStyle(color: Colors.white, fontSize: 18),
+                "Menu",
+                style: TextStyle(color: Colors.white, fontSize: 24),
+                textAlign: TextAlign.center,
               ),
             ),
-            _buildMenuItem(Icons.search, "Pre Survey"),
-            _buildMenuItem(Icons.assignment, "Kaji Etik"),
-            _buildMenuItem(Icons.description, "Kaji Proposal"),
-            _buildMenuItem(Icons.science, "Penelitian"),
-            _buildMenuItem(Icons.image, "Preparat"),
+            _buildMenuItem(MdiIcons.featureSearchOutline, "Pre Survey"),
+            _buildMenuItem(MdiIcons.bookEditOutline, "Kaji Etik"),
+            _buildMenuItem(MdiIcons.fileDocumentEditOutline, "Kaji Proposal"),
+            _buildMenuItem(MdiIcons.deskLampOn, "Penelitian"),
+            _buildMenuItem(MdiIcons.cashMultiple, "Preparat"),
           ],
         ),
       ),
@@ -358,106 +376,114 @@ class _PreSurveyListScreenState extends State<PreSurveyListScreen> {
                     DataColumn(label: Text('Status Bayar')),
                     DataColumn(label: Text('Action')),
                   ],
-                  rows: _data.map((item) {
-                    return DataRow(
-                      cells: [
-                        DataCell(Text(item['no'].toString())),
-                        DataCell(
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Nomor: ${item['nomor_permohonan']}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
+                  rows:
+                      _data.map((item) {
+                        return DataRow(
+                          cells: [
+                            DataCell(Text(item['no'].toString())),
+                            DataCell(
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Nomor: ${item['nomor_permohonan']}",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    "Tanggal: ${item['tanggal_permohonan']}",
+                                  ),
+                                ],
+                              ),
+                            ),
+                            DataCell(Text(item['surat_balasan'])),
+                            DataCell(
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.green[100],
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  item['perihal'],
+                                  style: const TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
-                              Text("Tanggal: ${item['tanggal_permohonan']}"),
-                            ],
-                          ),
-                        ),
-                        DataCell(Text(item['surat_balasan'])),
-                        DataCell(
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
                             ),
-                            decoration: BoxDecoration(
-                              color: Colors.green[100],
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              item['perihal'],
-                              style: const TextStyle(
-                                color: Colors.green,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                        DataCell(
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(
-                              (item['ruangan'] as List).length,
-                              (index) => Text(
-                                "${index + 1}. ${item['ruangan'][index]}",
-                                style: const TextStyle(fontSize: 13),
-                              ),
-                            ),
-                          ),
-                        ),
-                        DataCell(Text(item['tanggal'])),
-                        DataCell(
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: item['is_lunas']
-                                  ? Colors.green[100]
-                                  : Colors.red[100],
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              item['status_bayar'],
-                              style: TextStyle(
-                                color: item['is_lunas']
-                                    ? Colors.green[800]
-                                    : Colors.red[800],
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                        DataCell(
-                          Row(
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit, color: Colors.blue),
-                                onPressed: () {
-                                  // aksi edit
-                                },
-                              ),
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.remove_red_eye,
-                                  color: Colors.grey,
+                            DataCell(
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(
+                                  (item['ruangan'] as List).length,
+                                  (index) => Text(
+                                    "${index + 1}. ${item['ruangan'][index]}",
+                                    style: const TextStyle(fontSize: 13),
+                                  ),
                                 ),
-                                onPressed: () {
-                                  _showDetailDialog(item);
-                                },
                               ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
+                            ),
+                            DataCell(Text(item['tanggal'])),
+                            DataCell(
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color:
+                                      item['is_lunas']
+                                          ? Colors.green[100]
+                                          : Colors.red[100],
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  item['status_bayar'],
+                                  style: TextStyle(
+                                    color:
+                                        item['is_lunas']
+                                            ? Colors.green[800]
+                                            : Colors.red[800],
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            DataCell(
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: Colors.blue,
+                                    ),
+                                    onPressed: () {
+                                      // aksi edit
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.remove_red_eye,
+                                      color: Colors.grey,
+                                    ),
+                                    onPressed: () {
+                                      _showDetailDialog(item);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
                 ),
               ),
             ),

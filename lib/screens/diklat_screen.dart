@@ -15,7 +15,7 @@ class DiklatScreen extends StatelessWidget {
       {
         "title": "Master",
         "icon": MdiIcons.database,
-        "page": const PreSurveyListScreen(),
+        "page": const DummyPage(title:"master"),
       },
       {
         "title": "Petugas", 
@@ -96,6 +96,20 @@ class DiklatScreen extends StatelessWidget {
             },
           );
         },
+      ),
+    );
+  }
+}
+class DummyPage extends StatelessWidget {
+  final String title;
+  const DummyPage({super.key, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(title)),
+      body: Center(
+        child: Text("Ini halaman $title", style: const TextStyle(fontSize: 20)),
       ),
     );
   }

@@ -76,7 +76,7 @@ class _DiklatPelatihanPageState extends State<DiklatPelatihanPage> {
     bool isWide = MediaQuery.of(context).size.width > 800;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Kegiatan"), centerTitle: true),
+      appBar: AppBar(title: const Text("Kegiatan Pelatihan"), centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(

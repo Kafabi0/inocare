@@ -24,7 +24,7 @@ import '../screens/doctor_list.dart';
 import '../screens/appointment_screen.dart';
 import '../screens/prescription_screen.dart';
 import '../data/appointment_data.dart';
-
+import '../screens/casemix.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -330,11 +330,19 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                 builder: (_) => const PreSurveyListScreen(),
                               ),
                             );
-                            case 'Farmasi':
+                            // case 'Farmasi':
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (_) => const FarmasiScreen(),
+                            //   ),
+                            // );
+                            // break;
+                            case 'Casemix':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const FarmasiScreen(),
+                                builder: (_) => const CasemixPage(),
                               ),
                             );
                             break;
