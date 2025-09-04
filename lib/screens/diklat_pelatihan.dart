@@ -16,17 +16,17 @@ class _DiklatPelatihanPageState extends State<DiklatPelatihanPage> {
       "tgl": "2025-08-14",
     },
     {
-      "noSurat": "000.9.2/235/VII.01/II/2025",
+      "noSurat": "001.9.2/235/VII.01/II/2025",
       "perihal": "Pelatihan BTCLS",
       "tgl": "2025-08-20",
     },
     {
-      "noSurat": "000.9.2/236/VII.01/II/2025",
+      "noSurat": "002.9.2/236/VII.01/II/2025",
       "perihal": "Workshop Manajemen ICU",
       "tgl": "2025-09-01",
     },
     {
-      "noSurat": "000.9.2/237/VII.01/II/2025",
+      "noSurat": "003.9.2/237/VII.01/II/2025",
       "perihal": "Simulasi Kebencanaan",
       "tgl": "2025-09-10",
     },

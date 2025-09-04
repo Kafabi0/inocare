@@ -508,7 +508,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                   backgroundColor: Colors.white,
                   child: CircleAvatar(
                     radius: 33,
-                    backgroundImage: const AssetImage('assets/images/diva.png'),
+                    backgroundImage: const AssetImage('assets/dokter/doctor55.png'),
                     backgroundColor: Colors.transparent,
                   ),
                 ),
@@ -521,7 +521,7 @@ class _SettingsScreenState extends State<SettingsScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Diva ',
+                  'Dokter ',
                   style: _getAdaptiveTextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -562,7 +562,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'UINSSC',
+                      'rsj',
                       style: _getAdaptiveTextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
