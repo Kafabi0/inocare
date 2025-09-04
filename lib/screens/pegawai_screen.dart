@@ -553,7 +553,7 @@ class _PegawaiScreenState extends State<PegawaiScreen> {
                                   '${schedules.length} Jadwal',
                                   style: const TextStyle(
                                     color: Colors.white,
-                                    fontSize: 12,
+                                    fontSize: 10,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -616,7 +616,7 @@ class _PegawaiScreenState extends State<PegawaiScreen> {
                                 Text(
                                   'Geser ke samping untuk melihat detail lengkap',
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 10,
                                     color: Colors.orange[700],
                                     fontWeight: FontWeight.w500,
                                   ),
