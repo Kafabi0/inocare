@@ -179,12 +179,12 @@ class _HomeScreenState extends State<HomeScreen>
                           onPressed: () {
                             setState(() {
                               _searchQuery = "";
-                              _searchController.clear(); // ✅ hapus teks
+                              _searchController.clear();
                             });
-                            FocusScope.of(context).unfocus(); // tutup keyboard
+                            FocusScope.of(context).unfocus();
                           },
                         )
-                      : null,// hanya muncul saat ada input
+                      : null,
 
                   filled: true,
                   fillColor: Colors.blue.shade600,
@@ -193,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen>
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(
-                      color: Colors.white,
+                      color: Colors.lightBlueAccent,
                       width: 1.5,
                     ),
                   ),
