@@ -239,7 +239,7 @@ class _PasienSelesaiPageState extends State<PasienSelesaiPage> {
                   children: [
                     // Search field
                     Expanded(
-                      flex: 2,
+                      flex: 1,
                       child: TextField(
                         controller: _searchController,
                         decoration: InputDecoration(
@@ -861,7 +861,6 @@ class _PasienDetailModalState extends State<PasienDetailModal>
               ),
               child: Column(
                 children: [
-                  // Header dengan tombol close
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -883,7 +882,6 @@ class _PasienDetailModalState extends State<PasienDetailModal>
                     ],
                   ),
                   const SizedBox(height: 16),
-                  // Info pasien dalam grid 2 kolom
                   Row(
                     children: [
                       Expanded(
@@ -900,7 +898,7 @@ class _PasienDetailModalState extends State<PasienDetailModal>
                       Expanded(
                         child: Column(
                           children: [
-                            _buildInfoItem('Jenis Kelamin', widget.pasien.jenisKelamin),
+                            _buildInfoItem('Jenis Kelamin', widget.pasien.jenisKelamin,),
                             _buildInfoItem('Tanggal Lahir', widget.pasien.tanggalLahir.split('\n')[0]),
                             _buildInfoItem('Tipe Pasien', widget.pasien.tipePasien),
                             _buildInfoItem('Tanggal Selesai Layanan', widget.pasien.waktuSelesaiLayanan.split('\n')[0]),
@@ -1092,7 +1090,7 @@ class _PasienDetailModalState extends State<PasienDetailModal>
             child: Text(
               value.isNotEmpty ? value : '-',
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
               ),
@@ -1120,14 +1118,14 @@ class _PasienDetailModalState extends State<PasienDetailModal>
             children: [
               Icon(
                 Icons.info_outline,
-                size: 48,
+                size: 30,
                 color: Colors.red[400],
               ),
               const SizedBox(height: 16),
               Text(
                 'Data Triase belum diinput',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Colors.red[700],
                 ),
