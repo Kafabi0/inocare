@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:open_file/open_file.dart';
+import 'package:open_filex/open_filex.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 
@@ -32,7 +32,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> with Tick
       'id': 'INV-2025-001',
       'patient': 'Budi Santoso',
       'patientId': 'P001234',
-      'service': 'Konsultasi Spesialis Penyakit Dalam',
+      'service': 'Konsultasi Penyakit Dalam',
       'doctor': 'Dr. Sarah Wijaya, Sp.PD',
       'amount': 350000,
       'isPaid': false, // Belum Lunas
@@ -323,22 +323,22 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> with Tick
 }
 
 
-  // Metode untuk menyimpan dan membuka file PDF
-  Future<void> _saveAndOpenPdf(Uint8List pdfBytes, String fileName) async {
-    try {
-      final output = await getTemporaryDirectory();
-      final file = File('${output.path}/$fileName');
-      await file.writeAsBytes(pdfBytes);
-      await OpenFile.open(file.path);
-    } catch (e) {
-      // Tampilkan notifikasi jika gagal
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal menyimpan atau membuka file PDF: $e')),
-        );
-      }
+ Future<void> _saveAndOpenPdf(Uint8List pdfBytes, String fileName) async {
+  try {
+    final output = await getTemporaryDirectory();
+    final file = File('${output.path}/$fileName');
+    await file.writeAsBytes(pdfBytes);
+
+    // pakai open_filex
+    await OpenFilex.open(file.path);
+  } catch (e) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menyimpan atau membuka file PDF: $e')),
+      );
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -362,6 +362,29 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> with Tick
             ),
             child: Column(
               children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: Colors.black87),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    Text(
+                      'Billing & Payment',
+                      style: GoogleFonts.inter(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.notifications, color: Colors.black),
+                      onPressed: () {},
+                    ),
+                  ]),
+              
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -394,10 +417,6 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> with Tick
                           ],
                         ),
                       ],
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.notifications_none, color: Colors.grey[600]),
-                      onPressed: () {},
                     ),
                   ],
                 ),

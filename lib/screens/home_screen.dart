@@ -11,6 +11,7 @@ import 'package:inocare/screens/farmasi_screen.dart';
 import 'package:inocare/screens/feedback_screen.dart';
 import 'package:inocare/screens/healthanalytics_screen.dart';
 import 'package:inocare/screens/healthfacilities_screen.dart';
+import 'package:inocare/screens/kasir_screen.dart';
 import 'package:inocare/screens/manajemen_bed.dart';
 import 'package:inocare/screens/medical_equipment.dart';
 import 'package:inocare/screens/patient_records_screen.dart';
@@ -415,6 +416,14 @@ class _HomeScreenState extends State<HomeScreen>
                               context,
                               MaterialPageRoute(
                                 builder: (_) => const CasemixPage(),
+                              ),
+                            );
+                            break;
+                            case 'Kasir':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const KasirPage(),
                               ),
                             );
                             break;

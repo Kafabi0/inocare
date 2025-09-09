@@ -59,8 +59,9 @@ dependencies:
   share_plus: ^11.1.0
   external_path: ^2.2.0
   syncfusion_flutter_calendar: ^30.2.7
-  open_file: ^3.5.10
+  # open_file: ^3.5.10
   dashed_rect: ^0.0.4
+  open_filex: ^4.7.0
 
 dev_dependencies:
   flutter_test:

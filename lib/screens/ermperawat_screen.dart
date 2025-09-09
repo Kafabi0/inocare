@@ -890,7 +890,6 @@ class _ErmPerawatScreenState extends State<ErmPerawatScreen> with SingleTickerPr
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth < 600) {
-          // Mobile pagination - simplified
           return Column(
             children: [
               Row(
