@@ -72,10 +72,7 @@ class _KasirPageState extends State<KasirPage> with TickerProviderStateMixin {
         foregroundColor: Colors.white,
         title: Row(
           children: [
-             Icon(
-              MdiIcons.cashRegister,
-              size: 28,
-            ),
+            Icon(MdiIcons.cashRegister, size: 28),
             const SizedBox(width: 12),
             const Text(
               "Kasir",
@@ -626,6 +623,7 @@ class _KasirPageState extends State<KasirPage> with TickerProviderStateMixin {
                     "registrasi": _noRegistrasi,
                     "pasien": "M NUR HARUN TEST",
                     "kasir": _petugasKasir,
+                    "terbilang": "Dua ratus lima puluh lima ribu rupiah",
                     "kategori": kategori,
                     "tanggal": _tglKuitansi,
                     "total": _billing.fold<int>(
@@ -1354,218 +1352,328 @@ class _KasirPageState extends State<KasirPage> with TickerProviderStateMixin {
             return pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                // HEADER
-                pw.Container(
-                  width: double.infinity,
-                  padding: const pw.EdgeInsets.all(20),
-                  decoration: const pw.BoxDecoration(
-                    color: PdfColors.blue50,
-                    borderRadius: pw.BorderRadius.all(pw.Radius.circular(8)),
-                  ),
-                  child: pw.Column(
-                    children: [
-                      pw.Text(
-                        "PEMERINTAH PROVINSI LAMPUNG",
-                        style: pw.TextStyle(
-                          fontSize: 12,
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                      pw.SizedBox(height: 4),
-                      pw.Text(
-                        "RSUD Abdul Moeloek",
-                        style: pw.TextStyle(
-                          fontSize: 16,
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                      pw.Text(
-                        "TELP 0721-703312 \n BANDAR LAMPUNG",
-                        style: const pw.TextStyle(fontSize: 10),
-                      ),
-                      pw.SizedBox(height: 12),
-                      pw.Container(
-                        padding: const pw.EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        decoration: const pw.BoxDecoration(
-                          color: PdfColors.blue,
-                          borderRadius: pw.BorderRadius.all(
-                            pw.Radius.circular(4),
-                          ),
-                        ),
-                        child: pw.Text(
-                          "TANDA BUKTI PEMBAYARAN",
-                          style: pw.TextStyle(
-                            fontSize: 14,
-                            fontWeight: pw.FontWeight.bold,
-                            color: PdfColors.white,
-                          ),
-                        ),
-                      ),
-                      pw.SizedBox(height: 4),
-                      pw.Text(
-                        "PERGUB NOMOR 6 TAHUN 2019",
-                        style: const pw.TextStyle(fontSize: 10),
-                      ),
-                    ],
-                  ),
-                ),
-                pw.SizedBox(height: 24),
-
-                // INFO KUITANSI
-                pw.Container(
-                  width: double.infinity,
-                  padding: const pw.EdgeInsets.all(16),
-                  decoration: pw.BoxDecoration(
-                    border: pw.Border.all(color: PdfColors.grey400),
-                    borderRadius: const pw.BorderRadius.all(
-                      pw.Radius.circular(8),
-                    ),
-                  ),
-                  child: pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text(
-                        "INFORMASI KUITANSI",
-                        style: pw.TextStyle(
-                          fontSize: 12,
-                          fontWeight: pw.FontWeight.bold,
-                          color: PdfColors.blue800,
-                        ),
-                      ),
-                      pw.SizedBox(height: 8),
-                      _buildPdfInfoRow(
-                        "No. Kuitansi",
-                        data['no']?.toString() ?? "-",
-                      ),
-                      _buildPdfInfoRow(
-                        "No. Registrasi",
-                        data['registrasi']?.toString() ?? "-",
-                      ),
-                      _buildPdfInfoRow(
-                        "Nama Pasien",
-                        data['pasien']?.toString() ?? "-",
-                      ),
-                      _buildPdfInfoRow(
-                        "Petugas Kasir",
-                        data['kasir']?.toString() ?? "-",
-                      ),
-                      _buildPdfInfoRow(
-                        "Kategori Pembayaran",
-                        data['kategori']?.toString() ?? "-",
-                      ),
-                      _buildPdfInfoRow(
-                        "Tanggal Bayar",
-                        data['tanggal'] != null
-                            ? DateFormat(
-                              'dd MMMM yyyy',
-                            ).format(data['tanggal'] as DateTime)
-                            : "-",
-                      ),
-                    ],
-                  ),
-                ),
-                pw.SizedBox(height: 24),
-
-                // TABEL BILLING
+                // Kop Surat
                 pw.Text(
-                  "RINCIAN PEMBAYARAN",
+                  "PEMERINTAH PROVINSI LAMPUNG",
+                  style: pw.TextStyle(
+                    fontSize: 12,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.Text(
+                  "RSUD Abdul Moeloek",
                   style: pw.TextStyle(
                     fontSize: 14,
                     fontWeight: pw.FontWeight.bold,
-                    color: PdfColors.blue800,
+                  ),
+                ),
+                pw.Text("TELP 0721-703312", style: pw.TextStyle(fontSize: 10)),
+                pw.Text("BANDAR LAMPUNG", style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 16),
+
+                // Judul & Info Kanan
+                // Judul + Keterangan kanan
+                // Bagian Judul + KASA + No
+                pw.Stack(
+                  children: [
+                    // Judul di tengah
+                    pw.Align(
+                      alignment: pw.Alignment.topCenter,
+                      child: pw.Column(
+                        children: [
+                          pw.Text(
+                            "TANDA BUKTI PEMBAYARAN",
+                            style: pw.TextStyle(
+                              fontSize: 14,
+                              fontWeight: pw.FontWeight.bold,
+                            ),
+                          ),
+                          pw.Text(
+                            "PERGUB NOMOR 6 TAHUN 2019",
+                            style: pw.TextStyle(fontSize: 10),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Info kanan
+                    pw.Align(
+                      alignment: pw.Alignment.topRight,
+                      child: pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text("KASA I", style: pw.TextStyle(fontSize: 10)),
+                          pw.Text(
+                            "No. ${data['no'] ?? '-'}",
+                            style: pw.TextStyle(fontSize: 10),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Divider full width
+                pw.Divider(thickness: 1, color: PdfColors.black),
+                pw.SizedBox(height: 16),
+
+                // Narasi penerimaan uang
+                pw.Text(
+                  "Bendahara Penerimaan / Bendahara Penerimaan Pembantu KASA I / KASA II / KASA III",
+                  style: pw.TextStyle(fontSize: 10),
+                ),
+                pw.SizedBox(height: 4),
+                pw.Text(
+                  "Telah menerima uang sebesar Rp ${NumberFormat('#,###').format(data['total'] ?? 0)}",
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.Text(
+                  "(${data['terbilang'] ?? '-'})",
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    fontStyle: pw.FontStyle.italic,
                   ),
                 ),
                 pw.SizedBox(height: 8),
+                pw.Text(
+                  "Dari Sdr/Sdri : ${data['pasien'] ?? '-'}",
+                  style: pw.TextStyle(fontSize: 10),
+                ),
+                pw.Text(
+                  "Sebagai Pembayaran OS Nama : ${data['pasien'] ?? '-'}",
+                  style: pw.TextStyle(fontSize: 10),
+                ),
+                pw.SizedBox(height: 16),
+
+                // Tabel Rincian
                 pw.Table(
-                  border: pw.TableBorder.all(
-                    width: 1,
-                    color: PdfColors.grey400,
-                  ),
+                  border: null,
                   columnWidths: {
-                    0: const pw.FixedColumnWidth(40),
-                    1: const pw.FlexColumnWidth(3),
-                    2: const pw.FlexColumnWidth(1),
-                    3: const pw.FlexColumnWidth(1.5),
+                    0: const pw.FlexColumnWidth(3),
+                    1: const pw.FlexColumnWidth(1),
                   },
                   children: [
-                    pw.TableRow(
-                      decoration: const pw.BoxDecoration(color: PdfColors.blue),
-                      children: [
-                        _buildPdfTableHeader("No"),
-                        _buildPdfTableHeader("Deskripsi Layanan"),
-                        _buildPdfTableHeader("Unit"),
-                        _buildPdfTableHeader("Nominal"),
-                      ],
-                    ),
-                    ...(data["billing"] as List<dynamic>? ?? [])
-                        .asMap()
-                        .entries
-                        .map((entry) {
-                          final i = entry.key + 1;
-                          final b = entry.value as Map<String, dynamic>;
-                          return pw.TableRow(
-                            decoration: pw.BoxDecoration(
-                              color:
-                                  i % 2 == 0
-                                      ? PdfColors.grey100
-                                      : PdfColors.white,
+                    ...(data["billing"] as List<dynamic>? ?? []).map((item) {
+                      return pw.TableRow(
+                        decoration: const pw.BoxDecoration(
+                          border: pw.Border(
+                            bottom: pw.BorderSide(
+                              color: PdfColors.grey,
+                              width: 0.5,
                             ),
-                            children: [
-                              _buildPdfTableCell(i.toString(), true),
-                              _buildPdfTableCell(
-                                b["deskripsi"]?.toString() ?? "-",
-                              ),
-                              _buildPdfTableCell(b["unit"]?.toString() ?? "-"),
-                              _buildPdfTableCell(
-                                "Rp ${NumberFormat('#,###').format(b["nominal"] ?? 0)}",
-                                true,
-                              ),
-                            ],
-                          );
-                        }),
+                          ),
+                        ),
+                        children: [
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.symmetric(vertical: 2),
+                            child: pw.Text(
+                              item["deskripsi"] ?? "",
+                              style: pw.TextStyle(fontSize: 10),
+                            ),
+                          ),
+                          pw.Align(
+                            alignment: pw.Alignment.centerRight,
+                            child: pw.Row(
+                              mainAxisSize: pw.MainAxisSize.min,
+                              children: [
+                                pw.Text(
+                                  "Rp.",
+                                  style: pw.TextStyle(
+                                    fontSize: 10,
+                                    color: PdfColors.blue900,
+                                    fontWeight: pw.FontWeight.bold,
+                                  ),
+                                ),
+                                pw.SizedBox(width: 8),
+
+                                // Nominal selalu rata kanan dengan lebar tetap
+                                pw.Container(
+                                  width:
+                                      60, // 👉 atur sesuai panjang angka terbesar
+                                  alignment: pw.Alignment.centerRight,
+                                  child: pw.Text(
+                                    NumberFormat(
+                                      '#,###',
+                                    ).format(item["nominal"] ?? 0),
+                                    style: pw.TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: pw.FontWeight.bold,
+                                      color: PdfColors.blue900,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
                   ],
                 ),
                 pw.SizedBox(height: 16),
 
-                // TOTAL
-                pw.Container(
-                  width: double.infinity,
-                  padding: const pw.EdgeInsets.all(16),
-                  decoration: pw.BoxDecoration(
-                    color: PdfColors.green50,
-                    border: pw.Border.all(color: PdfColors.green),
-                    borderRadius: const pw.BorderRadius.all(
-                      pw.Radius.circular(8),
+                // Total
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.end,
+                  children: [
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.end,
+                      children: [
+                        // Biaya
+                        pw.Row(
+                          mainAxisSize: pw.MainAxisSize.min,
+                          children: [
+                            pw.Text(
+                              "Biaya :",
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                fontWeight: pw.FontWeight.bold,
+                              ),
+                            ),
+                            pw.SizedBox(width: 8),
+                            pw.Text(
+                              "Rp.",
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                fontWeight: pw.FontWeight.bold,
+                              ),
+                            ),
+                            pw.SizedBox(width: 8),
+                            pw.Container(
+                              width: 70, // atur sesuai panjang angka terbesar
+                              alignment: pw.Alignment.centerRight,
+                              child: pw.Text(
+                                NumberFormat(
+                                  '#,###',
+                                ).format(data["total"] ?? 0),
+                                style: pw.TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: PdfColors.red,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // Pembayaran
+                        pw.Row(
+                          mainAxisSize: pw.MainAxisSize.min,
+                          children: [
+                            pw.Text(
+                              "Pembayaran :",
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                fontWeight: pw.FontWeight.bold,
+                              ),
+                            ),
+                            pw.SizedBox(width: 8),
+                            pw.Text(
+                              "Rp.",
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                fontWeight: pw.FontWeight.bold,
+                              ),
+                            ),
+                            pw.SizedBox(width: 8),
+                            pw.Container(
+                              width: 70,
+                              alignment: pw.Alignment.centerRight,
+                              child: pw.Text(
+                                NumberFormat(
+                                  '#,###',
+                                ).format(data["dibayar"] ?? 0),
+                                style: pw.TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: PdfColors.red,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // Sisa
+                        pw.Row(
+                          mainAxisSize: pw.MainAxisSize.min,
+                          children: [
+                            pw.Text(
+                              "Sisa :",
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                fontWeight: pw.FontWeight.bold,
+                              ),
+                            ),
+                            pw.SizedBox(width: 8),
+                            pw.Text(
+                              "Rp.",
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                fontWeight: pw.FontWeight.bold,
+                              ),
+                            ),
+                            pw.SizedBox(width: 8),
+                            pw.Container(
+                              width: 70,
+                              alignment: pw.Alignment.centerRight,
+                              child: pw.Text(
+                                NumberFormat('#,###').format(data["sisa"] ?? 0),
+                                style: pw.TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: PdfColors.red,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // Total Tagihan
+                        pw.Row(
+                          mainAxisSize: pw.MainAxisSize.min,
+                          children: [
+                            pw.Text(
+                              "Total Tagihan :",
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                fontWeight: pw.FontWeight.bold,
+                              ),
+                            ),
+                            pw.SizedBox(width: 8),
+                            pw.Text(
+                              "Rp.",
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                fontWeight: pw.FontWeight.bold,
+                              ),
+                            ),
+                            pw.SizedBox(width: 8),
+                            pw.Container(
+                              width: 70,
+                              alignment: pw.Alignment.centerRight,
+                              child: pw.Text(
+                                NumberFormat(
+                                  '#,###',
+                                ).format(data["total"] ?? 0),
+                                style: pw.TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: PdfColors.red,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ),
-                  child: pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                    children: [
-                      pw.Text(
-                        "TOTAL PEMBAYARAN",
-                        style: pw.TextStyle(
-                          fontSize: 14,
-                          fontWeight: pw.FontWeight.bold,
-                          color: PdfColors.green800,
-                        ),
-                      ),
-                      pw.Text(
-                        "Rp ${NumberFormat('#,###').format(data["total"] ?? 0)}",
-                        style: pw.TextStyle(
-                          fontSize: 16,
-                          fontWeight: pw.FontWeight.bold,
-                          color: PdfColors.green800,
-                        ),
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
                 pw.SizedBox(height: 40),
 
-                // TANDA TANGAN
+                // Tanda tangan
                 pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   children: [
@@ -1574,15 +1682,11 @@ class _KasirPageState extends State<KasirPage> with TickerProviderStateMixin {
                       "Bendahara Penerimaan",
                       "",
                     ),
-                    _buildPdfSignature(
-                      "Petugas",
-                      "Kasir",
-                      data['kasir']?.toString() ?? "",
-                    ),
+                    _buildPdfSignature("Petugas", "Kasir", data['kasir'] ?? ""),
                     _buildPdfSignature(
                       "Tanggal diterima",
                       DateFormat("dd-MM-yyyy").format(DateTime.now()),
-                      "(Penyetor)",
+                      "Penyetor",
                     ),
                   ],
                 ),
