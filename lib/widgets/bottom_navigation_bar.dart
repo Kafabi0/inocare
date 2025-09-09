@@ -13,18 +13,25 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: onTap,
       type: BottomNavigationBarType.fixed,
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? const Color(0xFF1E1E2C) : Colors.white,
       selectedItemColor: const Color(0xFF0D6EFD),
-      unselectedItemColor: Colors.grey[600],
+      unselectedItemColor: isDark ? Colors.grey[400] : Colors.grey[600],
       items: [
-        _buildBarItem(FontAwesomeIcons.house, 'Home', 0),
-        _buildBarItem(FontAwesomeIcons.notesMedical, 'Health Records', 1),
-        _buildBarItem(FontAwesomeIcons.solidBell, 'Notifications', 2),
-        _buildBarItem(FontAwesomeIcons.gear, 'Settings', 3),
+        _buildBarItem(FontAwesomeIcons.house, 'Home', 0, isDark),
+        _buildBarItem(
+          FontAwesomeIcons.notesMedical,
+          'Health Records',
+          1,
+          isDark,
+        ),
+        _buildBarItem(FontAwesomeIcons.solidBell, 'Notifications', 2, isDark),
+        _buildBarItem(FontAwesomeIcons.gear, 'Settings', 3, isDark),
       ],
     );
   }
@@ -33,6 +40,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
     IconData icon,
     String label,
     int index,
+    bool isDark,
   ) {
     return BottomNavigationBarItem(
       label: label,
@@ -50,7 +58,14 @@ class CustomBottomNavigationBar extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          FaIcon(icon, size: 20),
+          FaIcon(
+            icon,
+            size: 20,
+            color:
+                currentIndex == index
+                    ? const Color(0xFF0D6EFD)
+                    : (isDark ? Colors.grey[400] : Colors.grey[600]),
+          ),
         ],
       ),
     );
