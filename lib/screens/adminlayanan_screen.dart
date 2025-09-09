@@ -12,6 +12,8 @@ class _AdminLayananState extends State<AdminLayanan> {
   String _searchQuery = "";
   String? _statusBillingFilter;
 
+  final TextEditingController _searchController = TextEditingController();
+
   // Dummy data pasien
   final List<Map<String, dynamic>> _patients = [
     {
@@ -46,14 +48,13 @@ class _AdminLayananState extends State<AdminLayanan> {
 
   @override
   Widget build(BuildContext context) {
-    final pasienList =
-        _patients.where((p) {
-          final query = _searchQuery.toLowerCase();
-          final billingMatch =
-              _statusBillingFilter == null ||
-              p["statusBilling"] == _statusBillingFilter;
-          return p["nama"].toLowerCase().contains(query) && billingMatch;
-        }).toList();
+    final pasienList = _patients.where((p) {
+      final query = _searchQuery.toLowerCase();
+      final billingMatch =
+          _statusBillingFilter == null ||
+          p["statusBilling"] == _statusBillingFilter;
+      return p["nama"].toLowerCase().contains(query) && billingMatch;
+    }).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -62,13 +63,15 @@ class _AdminLayananState extends State<AdminLayanan> {
       ),
       body: Column(
         children: [
-          // 🔍 Search + Filter
+          // 🔍 Search + Filter + Reset
           Padding(
             padding: const EdgeInsets.all(12),
             child: Row(
               children: [
+                // 🔍 Search field
                 Expanded(
                   child: TextField(
+                    controller: _searchController,
                     decoration: InputDecoration(
                       hintText: "Cari pasien...",
                       prefixIcon: const Icon(Icons.search),
@@ -88,29 +91,76 @@ class _AdminLayananState extends State<AdminLayanan> {
                   ),
                 ),
                 const SizedBox(width: 8),
+
+                // ⬇️ Dropdown filter
                 DropdownButton<String>(
                   hint: const Text("Status Billing"),
                   value: _statusBillingFilter,
-                  items:
-                      ["Lengkap", "Belum Lengkap"]
-                          .map(
-                            (status) => DropdownMenuItem(
-                              value: status,
-                              child: Text(status),
-                            ),
-                          )
-                          .toList(),
+                  items: ["Lengkap", "Belum Lengkap"]
+                      .map(
+                        (status) => DropdownMenuItem(
+                          value: status,
+                          child: Text(status),
+                        ),
+                      )
+                      .toList(),
                   onChanged: (val) {
                     setState(() {
                       _statusBillingFilter = val;
                     });
                   },
                 ),
+                const SizedBox(width: 8),
+
+                // // 🔄 Reset button
+                // IconButton(
+                //   icon: const Icon(Icons.refresh, color: Colors.red),
+                //   tooltip: "Reset Filter",
+                //   onPressed: () {
+                //     setState(() {
+                //       _searchQuery = "";
+                //       _statusBillingFilter = null;
+                //       _searchController.clear(); // kosongkan TextField
+                //     });
+                //   },
+                // ),
               ],
             ),
           ),
 
-          // 📋 List pasien (responsive card)
+          // 🏷️ Filter chips
+          if (_searchQuery.isNotEmpty || _statusBillingFilter != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Wrap(
+                spacing: 8,
+                children: [
+                  if (_searchQuery.isNotEmpty)
+                    Chip(
+                      label: Text('Cari: $_searchQuery'),
+                      deleteIcon: const Icon(Icons.close),
+                      onDeleted: () {
+                        setState(() {
+                          _searchQuery = "";
+                          _searchController.clear();
+                        });
+                      },
+                    ),
+                  if (_statusBillingFilter != null)
+                    Chip(
+                      label: Text('Billing: $_statusBillingFilter'),
+                      deleteIcon: const Icon(Icons.close),
+                      onDeleted: () {
+                        setState(() {
+                          _statusBillingFilter = null;
+                        });
+                      },
+                    ),
+                ],
+              ),
+            ),
+
+          // 📋 List pasien
           Expanded(
             child: ListView.builder(
               itemCount: pasienList.length,
@@ -179,8 +229,8 @@ class _AdminLayananState extends State<AdminLayanan> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder:
-                                        (_) => DetailPasienPage(pasien: pasien),
+                                    builder: (_) =>
+                                        DetailPasienPage(pasien: pasien),
                                   ),
                                 );
                               },

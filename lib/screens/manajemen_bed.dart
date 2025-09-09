@@ -738,6 +738,7 @@ class _ManajemenBedState extends State<ManajemenBed> {
       children:
           pageItems.map((bed) {
             return Card(
+              color: Colors.white,
               margin: const EdgeInsets.only(bottom: 8),
               child: Padding(
                 padding: const EdgeInsets.all(12),
