@@ -13,6 +13,72 @@ class _RekamDetailPageState extends State<RekamDetailPage>
   late TabController _tabController;
   final TextEditingController _pesertaController = TextEditingController();
 
+  // Data dummy untuk riwayat kunjungan
+  final List<Map<String, dynamic>> _riwayatKunjungan = [
+    {
+      'tanggal': '06-08-2025',
+      'jam': '16:06:02',
+      'keterangan': 'IGD',
+      'diagnosa': 'ICD'
+    },
+    {
+      'tanggal': '04-08-2025',
+      'jam': '16:02:54',
+      'keterangan': 'RAWAT JALAN',
+      'diagnosa': 'RAWAT JALAN'
+    },
+    {
+      'tanggal': '28-07-2025',
+      'jam': '08:27:40',
+      'keterangan': 'IGD => RAWAT INAP',
+      'diagnosa': 'IGD => RAWAT INAP',
+      'periode': 'v1/l 2025-08-12',
+      'additional': '12:27:58'
+    },
+    {
+      'tanggal': '15-07-2025',
+      'jam': '09:39:20',
+      'keterangan': 'RAWAT JALAN',
+      'diagnosa': 'RAWAT JALAN'
+    },
+    {
+      'tanggal': '10-07-2025',
+      'jam': '14:30:15',
+      'keterangan': 'RAWAT JALAN',
+      'diagnosa': 'RAWAT JALAN'
+    },
+    {
+      'tanggal': '08-07-2025',
+      'jam': '10:29:04',
+      'keterangan': 'RAWAT JALAN',
+      'diagnosa': 'RAWAT JALAN'
+    },
+    {
+      'tanggal': '20-06-2025',
+      'jam': '15:03:54',
+      'keterangan': 'RAWAT JALAN',
+      'diagnosa': 'RAWAT JALAN'
+    },
+    {
+      'tanggal': '10-06-2025',
+      'jam': '13:43:48',
+      'keterangan': 'RAWAT JALAN',
+      'diagnosa': 'RAWAT JALAN'
+    },
+    {
+      'tanggal': '22-05-2025',
+      'jam': '09:16:53',
+      'keterangan': 'RAWAT JALAN',
+      'diagnosa': 'RAWAT JALAN'
+    },
+    {
+      'tanggal': '15-05-2025',
+      'jam': '15:06:01',
+      'keterangan': 'RAWAT JALAN',
+      'diagnosa': 'RAWAT JALAN'
+    },
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -164,8 +230,8 @@ class _RekamDetailPageState extends State<RekamDetailPage>
                 // Bio Data Tab - Complete content
                 _buildBioDataTab(),
 
-                // Riwayat Kunjungan Tab - Empty for now
-                _buildEmptyTab('Riwayat Kunjungan'),
+                // Riwayat Kunjungan Tab - NEW IMPLEMENTATION
+                _buildRiwayatKunjunganTab(),
 
                 // Berkas Digital Tab - Empty for now
                 _buildEmptyTab('Berkas Digital'),
@@ -175,6 +241,170 @@ class _RekamDetailPageState extends State<RekamDetailPage>
         ],
       ),
     );
+  }
+
+  // NEW: Riwayat Kunjungan Tab Implementation
+  Widget _buildRiwayatKunjunganTab() {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: [
+          // Header dengan judul "Episode"
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.indigo[600],
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  spreadRadius: 1,
+                  blurRadius: 2,
+                  offset: Offset(0, 1),
+                ),
+              ],
+            ),
+            child: Text(
+              'Episode',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          
+          // List Riwayat Kunjungan
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: _riwayatKunjungan.length,
+              itemBuilder: (context, index) {
+                final item = _riwayatKunjungan[index];
+                return _buildRiwayatKunjunganItem(item, index);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRiwayatKunjunganItem(Map<String, dynamic> item, int index) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Colors.grey[300]!, width: 0.5),
+        ),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Tanggal dan Jam
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item['tanggal'],
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    item['jam'],
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  // Tampilkan periode jika ada (untuk rawat inap)
+                  if (item['periode'] != null) ...[
+                    SizedBox(height: 2),
+                    Text(
+                      item['periode'],
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.blue[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                  // Tampilkan additional time jika ada
+                  if (item['additional'] != null) ...[
+                    SizedBox(height: 2),
+                    Text(
+                      item['additional'],
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            
+            SizedBox(width: 16),
+            
+            // Keterangan/Diagnosa
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: _getKeteranganColor(item['keterangan']),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      item['keterangan'],
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: _getKeteranganTextColor(item['keterangan']),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Color _getKeteranganColor(String keterangan) {
+    if (keterangan.contains('IGD')) {
+      return Colors.red[100]!;
+    } else if (keterangan.contains('RAWAT INAP')) {
+      return Colors.orange[100]!;
+    } else if (keterangan.contains('RAWAT JALAN')) {
+      return Colors.blue[100]!;
+    }
+    return Colors.grey[100]!;
+  }
+
+  Color _getKeteranganTextColor(String keterangan) {
+    if (keterangan.contains('IGD')) {
+      return Colors.red[800]!;
+    } else if (keterangan.contains('RAWAT INAP')) {
+      return Colors.orange[800]!;
+    } else if (keterangan.contains('RAWAT JALAN')) {
+      return Colors.blue[800]!;
+    }
+    return Colors.grey[800]!;
   }
 
   // Empty tab placeholder

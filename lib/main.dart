@@ -7,6 +7,7 @@ import 'screens/settings_screen.dart';
 import 'widgets/bottom_navigation_bar.dart';
 import 'screens/doctor_list.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -68,6 +69,16 @@ class _InoCareAppState extends State<InoCareApp> {
       title: 'InoCare',
       debugShowCheckedModeBanner: false,
       themeMode: _themeMode,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'), // English
+        Locale('id'), // Indonesian
+      ],
+      locale: const Locale('id'),
       theme: ThemeData(
         brightness: Brightness.light,
         primaryColor: const Color(0xFF0D6EFD),
