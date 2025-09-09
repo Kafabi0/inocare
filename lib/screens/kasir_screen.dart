@@ -118,288 +118,355 @@ class _KasirPageState extends State<KasirPage> with TickerProviderStateMixin {
 
   // =================== DETAIL BILLING ===================
   Widget _buildBilling() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ===== Info Registrasi =====
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
+  return SingleChildScrollView(
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ===== Info Registrasi =====
+          Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.blue[50] ?? Colors.blue.shade50,
-                      Colors.blue[25] ?? Colors.blue.shade100.withOpacity(0.5),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.blue[50] ?? Colors.blue.shade50,
+                    Colors.blue[25] ??
+                        Colors.blue.shade100.withOpacity(0.5),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.person_outline,
-                          color: Colors.blue[700],
-                          size: 24,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.person_outline,
+                          color: Colors.blue[700], size: 24),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Informasi Pasien",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue[800],
                         ),
-                        const SizedBox(width: 8),
-                        Text(
-                          "Informasi Pasien",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue[800],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  _buildInfoRow("No. Registrasi", _noRegistrasi),
+                  _buildInfoRow("Waktu Registrasi", "28-07-2025 14:15:21"),
+                  _buildInfoRow("Nama Pasien", "M NUR HARUN TEST"),
+                  _buildInfoRow("Instalasi", "RAWATINAP"),
+                  _buildInfoRow("Unit Layanan", "BEDAH DIGESTIF"),
+                  _buildInfoRow("Cara Bayar", "Umum"),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // ===== Header Tabel =====
+          Row(
+            children: [
+              Icon(Icons.list_alt, color: Colors.blue[700], size: 24),
+              const SizedBox(width: 8),
+              Text(
+                "Detail Billing",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue[800],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // ===== Tabel Billing =====
+          Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.white,
+              ),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: DataTable(
+                  headingRowColor:
+                      WidgetStateProperty.all(Colors.blue[700]),
+                  headingTextStyle: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                  dataTextStyle: const TextStyle(
+                    fontSize: 13,
+                    color: Colors.black87,
+                  ),
+                  columnSpacing: 16,
+                  headingRowHeight: 50,
+                  dataRowMinHeight: 50,
+                  dataRowMaxHeight: 70,
+                  border: TableBorder.all(
+                    color: Colors.grey[300] ?? Colors.grey.shade300,
+                    width: 1,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  columns: const [
+                    DataColumn(label: Text("No")),
+                    DataColumn(label: Text("Unit Layanan")),
+                    DataColumn(label: Text("Tipe")),
+                    DataColumn(label: Text("Tanggal")),
+                    DataColumn(label: Text("Deskripsi")),
+                    DataColumn(label: Text("Cara Bayar")),
+                    DataColumn(label: Text("No Kuitansi")),
+                    DataColumn(label: Text("Nominal")),
+                  ],
+                  rows: _billing.asMap().entries.map((entry) {
+                    final index = entry.key + 1;
+                    final b = entry.value;
+                    return DataRow(
+                      color: WidgetStateProperty.resolveWith((states) {
+                        return index % 2 == 0
+                            ? Colors.grey[50]
+                            : Colors.white;
+                      }),
+                      cells: [
+                        DataCell(Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.blue[100],
+                            borderRadius: BorderRadius.circular(6),
                           ),
-                        ),
+                          child: Text(
+                            index.toString(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue[800],
+                            ),
+                          ),
+                        )),
+                        DataCell(Text(b["unit"]?.toString() ?? "-")),
+                        DataCell(Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.orange[100],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            b["tipe"]?.toString() ?? "-",
+                            style: TextStyle(
+                              color: Colors.orange[800],
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        )),
+                        DataCell(Text(b["tanggal"]?.toString() ?? "-")),
+                        DataCell(SizedBox(
+                          width: 200,
+                          child: Text(
+                            b["deskripsi"]?.toString() ?? "-",
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        )),
+                        DataCell(Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: (b["caraBayar"]?.toString() ?? "") ==
+                                    "UMUM"
+                                ? Colors.green[100]
+                                : Colors.purple[100],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            b["caraBayar"]?.toString() ?? "-",
+                            style: TextStyle(
+                              color:
+                                  (b["caraBayar"]?.toString() ?? "") == "UMUM"
+                                      ? Colors.green[800]
+                                      : Colors.purple[800],
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        )),
+                        const DataCell(Text(
+                          "-",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        )),
+                        DataCell(Text(
+                          "Rp ${NumberFormat('#,###').format(b["nominal"] ?? 0)}",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green[700],
+                            fontSize: 14,
+                          ),
+                        )),
                       ],
-                    ),
-                    const SizedBox(height: 16),
-                    _buildInfoRow("No. Registrasi", _noRegistrasi),
-                    _buildInfoRow("Waktu Registrasi", "28-07-2025 14:15:21"),
-                    _buildInfoRow("Nama Pasien", "M NUR HARUN TEST"),
-                    _buildInfoRow("Instalasi", "RAWATINAP"),
-                    _buildInfoRow("Unit Layanan", "BEDAH DIGESTIF"),
-                    _buildInfoRow("Cara Bayar", "Umum"),
-                  ],
+                    );
+                  }).toList(),
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+          ),
 
-            // ===== Header Tabel =====
-            Row(
-              children: [
-                Icon(Icons.list_alt, color: Colors.blue[700], size: 24),
-                const SizedBox(width: 8),
-                Text(
-                  "Detail Billing",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue[800],
-                  ),
-                ),
-              ],
+          // ===== Total Summary + Tombol Bayar =====
+          const SizedBox(height: 16),
+          Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
-            const SizedBox(height: 12),
-
-            // ===== Tabel Billing =====
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.green[50] ?? Colors.green.shade50,
+                    Colors.green[25] ??
+                        Colors.green.shade100.withOpacity(0.5),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
               ),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: Colors.white,
-                ),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    headingRowColor: WidgetStateProperty.all(Colors.blue[700]),
-                    headingTextStyle: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                    dataTextStyle: const TextStyle(
-                      fontSize: 13,
-                      color: Colors.black87,
-                    ),
-                    columnSpacing: 16,
-                    headingRowHeight: 50,
-                    dataRowMinHeight: 50,
-                    dataRowMaxHeight: 70,
-                    border: TableBorder.all(
-                      color: Colors.grey[300] ?? Colors.grey.shade300,
-                      width: 1,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    columns: const [
-                      DataColumn(label: Text("No")),
-                      DataColumn(label: Text("Unit Layanan")),
-                      DataColumn(label: Text("Tipe")),
-                      DataColumn(label: Text("Tanggal")),
-                      DataColumn(label: Text("Deskripsi")),
-                      DataColumn(label: Text("Cara Bayar")),
-                      DataColumn(label: Text("No Kuitansi")),
-                      DataColumn(label: Text("Nominal")),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Total Billing:",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green[800],
+                        ),
+                      ),
+                      Text(
+                        "Rp ${NumberFormat('#,###').format(_billing.fold<int>(0, (sum, b) => sum + ((b["nominal"] as int?) ?? 0)))}",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green[700],
+                        ),
+                      ),
                     ],
-                    rows:
-                        _billing.asMap().entries.map((entry) {
-                          final index = entry.key + 1;
-                          final b = entry.value;
-                          return DataRow(
-                            color: WidgetStateProperty.resolveWith((states) {
-                              return index % 2 == 0
-                                  ? Colors.grey[50]
-                                  : Colors.white;
-                            }),
-                            cells: [
-                              DataCell(
-                                Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue[100],
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Text(
-                                    index.toString(),
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.blue[800],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              DataCell(Text(b["unit"]?.toString() ?? "-")),
-                              DataCell(
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.orange[100],
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    b["tipe"]?.toString() ?? "-",
-                                    style: TextStyle(
-                                      color: Colors.orange[800],
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              DataCell(Text(b["tanggal"]?.toString() ?? "-")),
-                              DataCell(
-                                SizedBox(
-                                  width: 200,
-                                  child: Text(
-                                    b["deskripsi"]?.toString() ?? "-",
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ),
-                              DataCell(
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        (b["caraBayar"]?.toString() ?? "") ==
-                                                "UMUM"
-                                            ? Colors.green[100]
-                                            : Colors.purple[100],
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    b["caraBayar"]?.toString() ?? "-",
-                                    style: TextStyle(
-                                      color:
-                                          (b["caraBayar"]?.toString() ?? "") ==
-                                                  "UMUM"
-                                              ? Colors.green[800]
-                                              : Colors.purple[800],
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const DataCell(
-                                Text(
-                                  "-",
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                ),
-                              ),
-                              DataCell(
-                                Text(
-                                  "Rp ${NumberFormat('#,###').format(b["nominal"] ?? 0)}",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.green[700],
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        }).toList(),
                   ),
-                ),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: const Icon(Icons.payment, color: Colors.white),
+                    label: const Text(
+                      "Bayar",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () => _showPaymentPopup(context),
+                  ),
+                ],
               ),
             ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
-            // ===== Total Summary =====
+// ===== POPUP PEMBAYARAN =====
+void _showPaymentPopup(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    builder: (context) {
+      return Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 5,
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: Colors.grey[400],
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            const Text(
+              "Pilih Metode Pembayaran",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 16),
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.green[50] ?? Colors.green.shade50,
-                      Colors.green[25] ??
-                          Colors.green.shade100.withOpacity(0.5),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Total Billing:",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green[800],
-                      ),
-                    ),
-                    Text(
-                      "Rp ${NumberFormat('#,###').format(_billing.fold<int>(0, (sum, b) => sum + ((b["nominal"] as int?) ?? 0)))}",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green[700],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            ListTile(
+              leading: const Icon(Icons.money, color: Colors.green),
+              title: const Text("Tunai"),
+              onTap: () {
+                Navigator.pop(context);
+                // aksi pembayaran tunai
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.credit_card, color: Colors.blue),
+              title: const Text("Kartu Kredit/Debit"),
+              onTap: () {
+                Navigator.pop(context);
+                // aksi pembayaran kartu
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.account_balance_wallet,
+                  color: Colors.orange),
+              title: const Text("E-Wallet"),
+              onTap: () {
+                Navigator.pop(context);
+                // aksi pembayaran e-wallet
+              },
             ),
           ],
         ),
-      ),
-    );
-  }
+      );
+    },
+  );
+}
+
+
 
   Widget _buildInfoRow(String label, String value) {
     return Padding(
