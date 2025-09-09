@@ -459,6 +459,7 @@ void _showPaymentPopup(BuildContext context) {
                 // aksi pembayaran e-wallet
               },
             ),
+            
           ],
         ),
       );
@@ -566,6 +567,7 @@ void _showPaymentPopup(BuildContext context) {
         children: [
           // Form Kuitansi Card
           Card(
+            color: Colors.white,
             elevation: 2,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
