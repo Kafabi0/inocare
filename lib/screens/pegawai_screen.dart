@@ -935,133 +935,133 @@ class _PegawaiScreenState extends State<PegawaiScreen> {
     },
   );
 }
-
-Widget _buildHeaderCell(String title, double width, bool isCenter) {
-  return Container(
-    width: width,
-    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-    child: Text(
-      title,
-      style: const TextStyle(
-        fontSize: 13,
-        fontWeight: FontWeight.bold,
-        color: Color(0xFF374151),
-      ),
-      textAlign: isCenter ? TextAlign.center : TextAlign.left,
-      maxLines: 2,
-      overflow: TextOverflow.ellipsis,
-    ),
-  );
-}
-
-// Helper method untuk membuat data cell
-Widget _buildDataCell(
-  String text,
-  double width,
-  bool isCenter,
-  TextStyle? style, {
-  Widget? child,
-}) {
-  return Container(
-    width: width,
-    padding: const EdgeInsets.symmetric(horizontal: 12),
-    child: child ?? Text(
-      text,
-      style: style ?? const TextStyle(fontSize: 13),
-      textAlign: isCenter ? TextAlign.center : TextAlign.left,
-      maxLines: 2,
-      overflow: TextOverflow.ellipsis,
-    ),
-  );
-}
-
-// Helper method untuk membuat photo widget
-Widget _buildPhotoWidget(String photoAsset, String name, Color categoryColor) {
-  return Container(
-    width: 60,
-    height: 60,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: categoryColor.withOpacity(0.3), width: 2),
-      boxShadow: [
-        BoxShadow(
-          color: categoryColor.withOpacity(0.1),
-          blurRadius: 8,
-          offset: const Offset(0, 2),
+  
+  Widget _buildHeaderCell(String title, double width, bool isCenter) {
+    return Container(
+      width: width,
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF374151),
         ),
-      ],
-    ),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: photoAsset.isNotEmpty
-          ? Image.asset(
-              photoAsset,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return _buildInitialsWidget(name, categoryColor);
-              },
-            )
-          : _buildInitialsWidget(name, categoryColor),
-    ),
-  );
-}
-
-// Helper method untuk membuat initials widget
-Widget _buildInitialsWidget(String name, Color categoryColor) {
-  return Container(
-    decoration: BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          categoryColor.withOpacity(0.1),
-          categoryColor.withOpacity(0.05),
+        textAlign: isCenter ? TextAlign.center : TextAlign.left,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+  
+  // Helper method untuk membuat data cell
+  Widget _buildDataCell(
+    String text,
+    double width,
+    bool isCenter,
+    TextStyle? style, {
+    Widget? child,
+  }) {
+    return Container(
+      width: width,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: child ?? Text(
+        text,
+        style: style ?? const TextStyle(fontSize: 13),
+        textAlign: isCenter ? TextAlign.center : TextAlign.left,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+  
+  // Helper method untuk membuat photo widget
+  Widget _buildPhotoWidget(String photoAsset, String name, Color categoryColor) {
+    return Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: categoryColor.withOpacity(0.3), width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: categoryColor.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
-    ),
-    child: Center(
-      child: Text(
-        name.isNotEmpty ? name[0].toUpperCase() : '?',
-        style: TextStyle(
-          color: categoryColor,
-          fontWeight: FontWeight.bold,
-          fontSize: 20,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: photoAsset.isNotEmpty
+            ? Image.asset(
+                photoAsset,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return _buildInitialsWidget(name, categoryColor);
+                },
+              )
+            : _buildInitialsWidget(name, categoryColor),
+      ),
+    );
+  }
+  
+  // Helper method untuk membuat initials widget
+  Widget _buildInitialsWidget(String name, Color categoryColor) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            categoryColor.withOpacity(0.1),
+            categoryColor.withOpacity(0.05),
+          ],
         ),
       ),
-    ),
-  );
-}
-
-// Helper method untuk mendapatkan warna kategori
-Color _getCategoryColor(String category) {
-  const Map<String, Color> categoryColors = {
-    'Dokter Spesialis': Color(0xFF2563EB),
-    'Dokter Umum': Color(0xFF3B82F6),
-    'Perawat': Color(0xFF10B981),
-    'Bidan': Color(0xFF8B5CF6),
-    'Apoteker': Color(0xFFF59E0B),
-    'Staff': Color(0xFFEC4899),
-  };
-  return categoryColors[category] ?? const Color(0xFF64748B);
-}
-
-// Helper method untuk navigasi ke detail
-void _navigateToDetail(dynamic schedule, String category, bool isMedical, String photoAsset) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => DoctorDetailScreen(
-        name: schedule.name,
-        specialty: isMedical 
-          ? (schedule as CategorizedDoctorSchedule).specialty 
-          : (schedule as CategorizedStaffSchedule).position,
-        category: category,
-        isMedical: isMedical,
-        photoAsset: photoAsset,
+      child: Center(
+        child: Text(
+          name.isNotEmpty ? name[0].toUpperCase() : '?',
+          style: TextStyle(
+            color: categoryColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
+  
+  // Helper method untuk mendapatkan warna kategori
+  Color _getCategoryColor(String category) {
+    const Map<String, Color> categoryColors = {
+      'Dokter Spesialis': Color(0xFF2563EB),
+      'Dokter Umum': Color(0xFF3B82F6),
+      'Perawat': Color(0xFF10B981),
+      'Bidan': Color(0xFF8B5CF6),
+      'Apoteker': Color(0xFFF59E0B),
+      'Staff': Color(0xFFEC4899),
+    };
+    return categoryColors[category] ?? const Color(0xFF64748B);
+  }
+  
+  // Helper method untuk navigasi ke detail
+  void _navigateToDetail(dynamic schedule, String category, bool isMedical, String photoAsset) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DoctorDetailScreen(
+          name: schedule.name,
+          specialty: isMedical 
+            ? (schedule as CategorizedDoctorSchedule).specialty 
+            : (schedule as CategorizedStaffSchedule).position,
+          category: category,
+          isMedical: isMedical,
+          photoAsset: photoAsset,
+        ),
+      ),
+    );
+  }
   
   Widget _buildEmployeeCard(String role, int count) {
     Color cardColor = categoryColors[role] ?? const Color(0xFF64748B);
@@ -1616,6 +1616,62 @@ class PegawaiDoctorScreen extends StatelessWidget {
             ),
           ),
           
+          // Tambahkan tombol "Tambah" di sini
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Material(
+              color: color,
+              borderRadius: BorderRadius.circular(8),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(8),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddEmployeeScreen(
+                        category: category,
+                        categoryColor: color,
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Tambah $category',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(12),
@@ -2126,7 +2182,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
       ),
     );
   }
-
+  
   Widget _buildInitialsAvatar(Color categoryColor) {
     return Container(
       decoration: BoxDecoration(
@@ -2152,7 +2208,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
       ),
     );
   }
-
+  
   Widget _buildEditableField({
     required TextEditingController controller,
     required String hint,
@@ -2182,7 +2238,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
       ),
     );
   }
-
+  
   Widget _buildInfoCard({
     required String title,
     required IconData icon,
@@ -2238,7 +2294,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
       ),
     );
   }
-
+  
   Widget _buildInfoRow({
     required String label,
     required TextEditingController controller,
@@ -2318,7 +2374,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
       ),
     );
   }
-
+  
   Widget _buildScheduleCard(Color categoryColor) {
     return Container(
       decoration: BoxDecoration(
@@ -2440,6 +2496,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                   borderRadius: BorderRadius.circular(12),
                   onTap: () {
                     // Add schedule logic
+                    _showAddScheduleDialog(categoryColor);
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -2474,7 +2531,240 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
       ),
     );
   }
-
+  
+  void _showAddScheduleDialog(Color categoryColor) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String day = 'Senin';
+        String startTime = '08:00';
+        String endTime = '16:00';
+        
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: categoryColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Icons.schedule,
+                            color: categoryColor,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Tambah Jadwal Kerja',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: categoryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Day Selector
+                    Text(
+                      'Hari',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey[200]!),
+                      ),
+                      child: DropdownButtonFormField<String>(
+                        value: day,
+                        onChanged: (value) {
+                          setState(() {
+                            day = value!;
+                          });
+                        },
+                        items: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']
+                            .map((day) => DropdownMenuItem(
+                                  value: day,
+                                  child: Text(day),
+                                ))
+                            .toList(),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        ),
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Time Range
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Jam Mulai',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[50],
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.grey[200]!),
+                                ),
+                                child: TextFormField(
+                                  initialValue: startTime,
+                                  onChanged: (value) {
+                                    startTime = value;
+                                  },
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                    hintText: '08:00',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Jam Selesai',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[50],
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.grey[200]!),
+                                ),
+                                child: TextFormField(
+                                  initialValue: endTime,
+                                  onChanged: (value) {
+                                    endTime = value;
+                                  },
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                    hintText: '16:00',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Material(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(12),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(12),
+                              onTap: () => Navigator.pop(context),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                child: Text(
+                                  'Batal',
+                                  style: TextStyle(
+                                    color: Colors.grey[700],
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Material(
+                            color: categoryColor,
+                            borderRadius: BorderRadius.circular(12),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(12),
+                              onTap: () {
+                                Navigator.pop(context);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Jadwal kerja hari $day ($startTime - $endTime) berhasil ditambahkan'),
+                                    backgroundColor: categoryColor,
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                child: const Text(
+                                  'Simpan',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+  
   // Helper method untuk mendapatkan icon kategori
   IconData _getCategoryIcon(String category) {
     switch (category) {
@@ -2566,6 +2856,943 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
               ),
       ],
     );
+  }
+}
+
+// Add Employee Screen
+class AddEmployeeScreen extends StatefulWidget {
+  final String category;
+  final Color categoryColor;
+  
+  const AddEmployeeScreen({
+    Key? key,
+    required this.category,
+    required this.categoryColor,
+  }) : super(key: key);
+  
+  @override
+  State<AddEmployeeScreen> createState() => _AddEmployeeScreenState();
+}
+
+class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
+  late TextEditingController _nameController;
+  late TextEditingController _specialtyController;
+  late TextEditingController _nikController;
+  late TextEditingController _emailController;
+  late TextEditingController _phoneController;
+  String? _selectedGender;
+  List<Map<String, String>> _workSchedules = [];
+  
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController();
+    _specialtyController = TextEditingController();
+    _nikController = TextEditingController();
+    _emailController = TextEditingController();
+    _phoneController = TextEditingController();
+  }
+  
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _specialtyController.dispose();
+    _nikController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
+      appBar: AppBar(
+        title: Text(
+          'Tambah ${widget.category}',
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        backgroundColor: widget.categoryColor,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header Card
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: widget.categoryColor,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.categoryColor.withOpacity(0.2),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                    child: Icon(
+                      _getCategoryIcon(widget.category),
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Tambah ${widget.category} Baru',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Silakan isi data ${widget.category.toLowerCase()} dengan lengkap',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.8),
+                      fontSize: 14,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 24),
+            
+            // Form Card
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Name Field
+                  _buildFormField(
+                    label: 'Nama Lengkap',
+                    controller: _nameController,
+                    icon: Icons.person_outline,
+                    isRequired: true,
+                  ),
+                  
+                  const SizedBox(height: 20),
+                  
+                  // Specialty/Position Field
+                  _buildFormField(
+                    label: _isMedicalStaff(widget.category) ? 'Spesialisasi' : 'Posisi',
+                    controller: _specialtyController,
+                    icon: _isMedicalStaff(widget.category) ? Icons.medical_services_outlined : Icons.work_outline,
+                    isRequired: true,
+                  ),
+                  
+                  const SizedBox(height: 20),
+                  
+                  // NIK Field
+                  _buildFormField(
+                    label: 'NIK',
+                    controller: _nikController,
+                    icon: Icons.badge_outlined,
+                    isRequired: true,
+                    keyboardType: TextInputType.number,
+                  ),
+                  
+                  const SizedBox(height: 20),
+                  
+                  // Gender Field
+                  _buildGenderField(),
+                  
+                  const SizedBox(height: 20),
+                  
+                  // Email Field
+                  _buildFormField(
+                    label: 'Email',
+                    controller: _emailController,
+                    icon: Icons.email_outlined,
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  
+                  const SizedBox(height: 20),
+                  
+                  // Phone Field
+                  _buildFormField(
+                    label: 'No. Telepon',
+                    controller: _phoneController,
+                    icon: Icons.phone_outlined,
+                    keyboardType: TextInputType.phone,
+                  ),
+                  
+                  const SizedBox(height: 20),
+                  
+                  // Tambah Jadwal Button
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: widget.categoryColor, width: 1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(12),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: _addWorkSchedule,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.add,
+                                color: widget.categoryColor,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Tambah Jadwal Kerja',
+                                style: TextStyle(
+                                  color: widget.categoryColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  
+                  // Display work schedules
+                  _buildWorkSchedules(),
+                  
+                  const SizedBox(height: 32),
+                  
+                  // Submit Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: Material(
+                      color: widget.categoryColor,
+                      borderRadius: BorderRadius.circular(12),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: _submitForm,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.save,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                'Simpan Data',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildFormField({
+    required String label,
+    required TextEditingController controller,
+    required IconData icon,
+    bool isRequired = false,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF1E293B),
+              ),
+            ),
+            if (isRequired)
+              Text(
+                ' *',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red[400],
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[200]!),
+          ),
+          child: TextField(
+            controller: controller,
+            keyboardType: keyboardType,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Color(0xFF1E293B),
+            ),
+            decoration: InputDecoration(
+              prefixIcon: Icon(
+                icon,
+                color: Colors.grey[500],
+                size: 20,
+              ),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              hintText: 'Masukkan $label',
+              hintStyle: TextStyle(
+                color: Colors.grey[400],
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildGenderField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Row(
+          children: [
+            Text(
+              'Jenis Kelamin',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF1E293B),
+              ),
+            ),
+            Text(
+              ' *',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.red,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[200]!),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      _selectedGender = 'Laki-laki';
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    decoration: BoxDecoration(
+                      color: _selectedGender == 'Laki-laki' 
+                          ? widget.categoryColor.withOpacity(0.1) 
+                          : Colors.transparent,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        bottomLeft: Radius.circular(12),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.male,
+                          color: _selectedGender == 'Laki-laki' 
+                              ? widget.categoryColor 
+                              : Colors.grey[500],
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Laki-laki',
+                          style: TextStyle(
+                            color: _selectedGender == 'Laki-laki' 
+                                ? widget.categoryColor 
+                                : Colors.grey[700],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                width: 1,
+                height: 50,
+                color: Colors.grey[200],
+              ),
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      _selectedGender = 'Perempuan';
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    decoration: BoxDecoration(
+                      color: _selectedGender == 'Perempuan' 
+                          ? widget.categoryColor.withOpacity(0.1) 
+                          : Colors.transparent,
+                      borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(12),
+                        bottomRight: Radius.circular(12),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.female,
+                          color: _selectedGender == 'Perempuan' 
+                              ? widget.categoryColor 
+                              : Colors.grey[500],
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Perempuan',
+                          style: TextStyle(
+                            color: _selectedGender == 'Perempuan' 
+                                ? widget.categoryColor 
+                                : Colors.grey[700],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+  
+  void _addWorkSchedule() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String day = 'Senin';
+        String startTime = '08:00';
+        String endTime = '16:00';
+        
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: widget.categoryColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Icons.schedule,
+                            color: widget.categoryColor,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Tambah Jadwal Kerja',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: widget.categoryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Day Selector
+                    Text(
+                      'Hari',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey[200]!),
+                      ),
+                      child: DropdownButtonFormField<String>(
+                        value: day,
+                        onChanged: (value) {
+                          setState(() {
+                            day = value!;
+                          });
+                        },
+                        items: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']
+                            .map((day) => DropdownMenuItem(
+                                  value: day,
+                                  child: Text(day),
+                                ))
+                            .toList(),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        ),
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Time Range
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Jam Mulai',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[50],
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.grey[200]!),
+                                ),
+                                child: TextFormField(
+                                  initialValue: startTime,
+                                  onChanged: (value) {
+                                    startTime = value;
+                                  },
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                    hintText: '08:00',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Jam Selesai',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[50],
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.grey[200]!),
+                                ),
+                                child: TextFormField(
+                                  initialValue: endTime,
+                                  onChanged: (value) {
+                                    endTime = value;
+                                  },
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                    hintText: '16:00',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Material(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(12),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(12),
+                              onTap: () => Navigator.pop(context),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                child: Text(
+                                  'Batal',
+                                  style: TextStyle(
+                                    color: Colors.grey[700],
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Material(
+                            color: widget.categoryColor,
+                            borderRadius: BorderRadius.circular(12),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(12),
+                              onTap: () {
+                                this.setState(() {
+                                  _workSchedules.add({
+                                    'day': day,
+                                    'startTime': startTime,
+                                    'endTime': endTime,
+                                  });
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                child: const Text(
+                                  'Simpan',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+  
+  Widget _buildWorkSchedules() {
+    if (_workSchedules.isEmpty) {
+      return Container();
+    }
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20),
+        Row(
+          children: [
+            Icon(
+              Icons.schedule,
+              color: widget.categoryColor,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Jadwal Kerja',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[800],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[200]!),
+          ),
+          child: Column(
+            children: [
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: _workSchedules.length,
+                separatorBuilder: (context, index) => Divider(
+                  height: 1,
+                  color: Colors.grey[200],
+                ),
+                itemBuilder: (context, index) {
+                  final schedule = _workSchedules[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: widget.categoryColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Icons.today,
+                            color: widget.categoryColor,
+                            size: 18,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                schedule['day']!,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF1E293B),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${schedule['startTime']} - ${schedule['endTime']}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.delete_outline,
+                            color: Colors.red[400],
+                            size: 20,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _workSchedules.removeAt(index);
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+  
+  void _submitForm() {
+    // Validasi form
+    if (_nameController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Nama lengkap harus diisi'),
+          backgroundColor: Colors.red[400],
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      );
+      return;
+    }
+    
+    if (_specialtyController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_isMedicalStaff(widget.category) 
+              ? 'Spesialisasi harus diisi' 
+              : 'Posisi harus diisi'),
+          backgroundColor: Colors.red[400],
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      );
+      return;
+    }
+    
+    if (_nikController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('NIK harus diisi'),
+          backgroundColor: Colors.red[400],
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      );
+      return;
+    }
+    
+    if (_selectedGender == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Jenis kelamin harus dipilih'),
+          backgroundColor: Colors.red[400],
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      );
+      return;
+    }
+    
+    // Simpan data (di sini biasanya akan ada proses penyimpanan ke database)
+    final newEmployee = {
+      'name': _nameController.text,
+      'specialty': _specialtyController.text,
+      'nik': _nikController.text,
+      'gender': _selectedGender,
+      'email': _emailController.text,
+      'phone': _phoneController.text,
+      'category': widget.category,
+      'schedules': _workSchedules,
+    };
+    
+    print('Data pegawai baru: $newEmployee'); // Untuk debugging
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${widget.category} berhasil ditambahkan dengan ${_workSchedules.length} jadwal kerja'),
+        backgroundColor: widget.categoryColor,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
+    
+    // Kembali ke halaman sebelumnya
+    Navigator.pop(context);
+  }
+  
+  bool _isMedicalStaff(String category) {
+    return category == 'Dokter Spesialis' || 
+           category == 'Dokter Umum' || 
+           category == 'Perawat' || 
+           category == 'Bidan';
+  }
+  
+  IconData _getCategoryIcon(String category) {
+    switch (category) {
+      case 'Dokter Spesialis':
+        return Icons.local_hospital;
+      case 'Dokter Umum':
+        return Icons.medical_services;
+      case 'Perawat':
+        return Icons.favorite;
+      case 'Bidan':
+        return Icons.child_care;
+      case 'Apoteker':
+        return Icons.medication;
+      case 'Staff':
+        return Icons.work;
+      default:
+        return Icons.person;
+    }
   }
 }
 
