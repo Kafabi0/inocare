@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'dart:io';
 import 'package:open_filex/open_filex.dart';
-
 import 'package:path_provider/path_provider.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class KasirPage extends StatefulWidget {
   const KasirPage({super.key});
@@ -25,7 +26,7 @@ class _KasirPageState extends State<KasirPage> with TickerProviderStateMixin {
       "unit": "GINJAL-HIPERTENSI",
       "tipe": "Tindakan",
       "tanggal": "2025-08-12",
-      "deskripsi": "Pemeriksaan Rawat Jalan – Test Psikologi",
+      "deskripsi": "Pemeriksaan Rawat Jalan \n Test Psikologi",
       "caraBayar": "UMUM",
       "nominal": 235000,
     },
@@ -65,131 +66,338 @@ class _KasirPageState extends State<KasirPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final double fontSize = MediaQuery.of(context).size.width < 400 ? 12 : 14;
-
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text("Kasir"),
-        bottom: TabBar(
-          controller: _mainTab,
-          labelColor: Colors.white, 
-          unselectedLabelColor: Colors.white70,
-          tabs: const [Tab(text: "Detail Billing"), Tab(text: "Kuitansi")],
-          
+        elevation: 0,
+        backgroundColor: Colors.blue[700],
+        foregroundColor: Colors.white,
+        title: Row(
+          children: [
+             Icon(
+              MdiIcons.cashRegister,
+              size: 28,
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              "Kasir",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48),
+          child: Container(
+            color: Colors.blue[700],
+            child: TabBar(
+              controller: _mainTab,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.white70,
+              indicatorColor: Colors.white,
+              indicatorWeight: 3,
+              labelStyle: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
+              unselectedLabelStyle: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
+              ),
+              tabs: const [
+                Tab(
+                  icon: Icon(Icons.receipt_long, size: 20),
+                  text: "Detail Billing",
+                ),
+                Tab(icon: Icon(Icons.payment, size: 20), text: "Kuitansi"),
+              ],
+            ),
+          ),
         ),
       ),
       body: TabBarView(
         controller: _mainTab,
-        children: [_buildBilling(fontSize), _buildKuitansiForm(fontSize)],
+        children: [_buildBilling(), _buildKuitansiForm()],
       ),
     );
   }
 
   // =================== DETAIL BILLING ===================
-  Widget _buildBilling(double fontSize) {
+  Widget _buildBilling() {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ===== Info Registrasi =====
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                borderRadius: BorderRadius.circular(8),
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildInfoRow("No. Registrasi", _noRegistrasi),
-                  _buildInfoRow("Waktu Registrasi", "28-07-2025 14:15:21"),
-                  _buildInfoRow("Nama Pasien", "M NUR HARUN TEST"),
-                  _buildInfoRow("Instalasi", "RAWATINAP"),
-                  _buildInfoRow("Unit Layanan", "BEDAH DIGESTIF"),
-                  _buildInfoRow("Cara Bayar", "Umum"),
-                ],
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.blue[50] ?? Colors.blue.shade50,
+                      Colors.blue[25] ?? Colors.blue.shade100.withOpacity(0.5),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.person_outline,
+                          color: Colors.blue[700],
+                          size: 24,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          "Informasi Pasien",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue[800],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    _buildInfoRow("No. Registrasi", _noRegistrasi),
+                    _buildInfoRow("Waktu Registrasi", "28-07-2025 14:15:21"),
+                    _buildInfoRow("Nama Pasien", "M NUR HARUN TEST"),
+                    _buildInfoRow("Instalasi", "RAWATINAP"),
+                    _buildInfoRow("Unit Layanan", "BEDAH DIGESTIF"),
+                    _buildInfoRow("Cara Bayar", "Umum"),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
+
+            // ===== Header Tabel =====
+            Row(
+              children: [
+                Icon(Icons.list_alt, color: Colors.blue[700], size: 24),
+                const SizedBox(width: 8),
+                Text(
+                  "Detail Billing",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue[800],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
 
             // ===== Tabel Billing =====
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                headingRowColor: MaterialStateProperty.all(
-                  Colors.blue.shade100,
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.white,
                 ),
-                columnSpacing: 12,
-                headingRowHeight: 40,
-                dataRowMinHeight: 40,
-                dataRowMaxHeight: 60,
-                columns: const [
-                  DataColumn(label: Text("No")),
-                  DataColumn(label: Text("Unit Layanan")),
-                  DataColumn(label: Text("Tipe Billing")),
-                  DataColumn(label: Text("Tanggal Layanan")),
-                  DataColumn(label: Text("Deskripsi")),
-                  DataColumn(label: Text("Cara Bayar")),
-                  DataColumn(label: Text("No Kuitansi")),
-                  DataColumn(label: Text("Nominal")),
-                ],
-                rows:
-                    _billing.asMap().entries.map((entry) {
-                      final index = entry.key + 1;
-                      final b = entry.value;
-                      return DataRow(
-                        cells: [
-                          DataCell(
-                            Text(
-                              index.toString(),
-                              style: TextStyle(fontSize: fontSize),
-                            ),
-                          ),
-                          DataCell(
-                            Text(
-                              b["unit"],
-                              style: TextStyle(fontSize: fontSize),
-                            ),
-                          ),
-                          DataCell(
-                            Text(
-                              b["tipe"],
-                              style: TextStyle(fontSize: fontSize),
-                            ),
-                          ),
-                          DataCell(
-                            Text(
-                              b["tanggal"],
-                              style: TextStyle(fontSize: fontSize),
-                            ),
-                          ),
-                          DataCell(
-                            Text(
-                              b["deskripsi"],
-                              style: TextStyle(fontSize: fontSize),
-                            ),
-                          ),
-                          DataCell(
-                            Text(
-                              b["caraBayar"],
-                              style: TextStyle(fontSize: fontSize),
-                            ),
-                          ),
-                          const DataCell(Text("-")),
-                          DataCell(
-                            Text(
-                              "Rp ${NumberFormat('#,###').format(b["nominal"])}",
-                              style: TextStyle(
-                                fontSize: fontSize,
-                                fontWeight: FontWeight.bold,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    headingRowColor: WidgetStateProperty.all(Colors.blue[700]),
+                    headingTextStyle: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                    dataTextStyle: const TextStyle(
+                      fontSize: 13,
+                      color: Colors.black87,
+                    ),
+                    columnSpacing: 16,
+                    headingRowHeight: 50,
+                    dataRowMinHeight: 50,
+                    dataRowMaxHeight: 70,
+                    border: TableBorder.all(
+                      color: Colors.grey[300] ?? Colors.grey.shade300,
+                      width: 1,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    columns: const [
+                      DataColumn(label: Text("No")),
+                      DataColumn(label: Text("Unit Layanan")),
+                      DataColumn(label: Text("Tipe")),
+                      DataColumn(label: Text("Tanggal")),
+                      DataColumn(label: Text("Deskripsi")),
+                      DataColumn(label: Text("Cara Bayar")),
+                      DataColumn(label: Text("No Kuitansi")),
+                      DataColumn(label: Text("Nominal")),
+                    ],
+                    rows:
+                        _billing.asMap().entries.map((entry) {
+                          final index = entry.key + 1;
+                          final b = entry.value;
+                          return DataRow(
+                            color: WidgetStateProperty.resolveWith((states) {
+                              return index % 2 == 0
+                                  ? Colors.grey[50]
+                                  : Colors.white;
+                            }),
+                            cells: [
+                              DataCell(
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue[100],
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    index.toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blue[800],
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }).toList(),
+                              DataCell(Text(b["unit"]?.toString() ?? "-")),
+                              DataCell(
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange[100],
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    b["tipe"]?.toString() ?? "-",
+                                    style: TextStyle(
+                                      color: Colors.orange[800],
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              DataCell(Text(b["tanggal"]?.toString() ?? "-")),
+                              DataCell(
+                                SizedBox(
+                                  width: 200,
+                                  child: Text(
+                                    b["deskripsi"]?.toString() ?? "-",
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        (b["caraBayar"]?.toString() ?? "") ==
+                                                "UMUM"
+                                            ? Colors.green[100]
+                                            : Colors.purple[100],
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    b["caraBayar"]?.toString() ?? "-",
+                                    style: TextStyle(
+                                      color:
+                                          (b["caraBayar"]?.toString() ?? "") ==
+                                                  "UMUM"
+                                              ? Colors.green[800]
+                                              : Colors.purple[800],
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const DataCell(
+                                Text(
+                                  "-",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Text(
+                                  "Rp ${NumberFormat('#,###').format(b["nominal"] ?? 0)}",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green[700],
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }).toList(),
+                  ),
+                ),
+              ),
+            ),
+
+            // ===== Total Summary =====
+            const SizedBox(height: 16),
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.green[50] ?? Colors.green.shade50,
+                      Colors.green[25] ??
+                          Colors.green.shade100.withOpacity(0.5),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Total Billing:",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green[800],
+                      ),
+                    ),
+                    Text(
+                      "Rp ${NumberFormat('#,###').format(_billing.fold<int>(0, (sum, b) => sum + ((b["nominal"] as int?) ?? 0)))}",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green[700],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -200,39 +408,65 @@ class _KasirPageState extends State<KasirPage> with TickerProviderStateMixin {
 
   Widget _buildInfoRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+          const Text(": ", style: TextStyle(fontWeight: FontWeight.bold)),
           Expanded(
             flex: 3,
             child: Text(
-              label,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              value,
+              style: const TextStyle(
+                color: Colors.black54,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
-          const Text(": "),
-          Expanded(flex: 5, child: Text(value)),
         ],
       ),
     );
   }
 
   // =================== KUITANSI ===================
-  Widget _buildKuitansiForm(double fontSize) {
+  Widget _buildKuitansiForm() {
     return Column(
       children: [
-        TabBar(
-          controller: _payTab,
-          isScrollable: true,
-          labelColor: Colors.blue,
-          unselectedLabelColor: Colors.grey,
-          tabs: const [
-            Tab(text: "UMUM"),
-            Tab(text: "BPJS"),
-            Tab(text: "JAMKESDA"),
-            Tab(text: "PEMDA LAMPUNG"),
-            Tab(text: "PT. AJ CENTRAL ASIA RAYA"),
-          ],
+        Container(
+          color: Colors.white,
+          child: TabBar(
+            controller: _payTab,
+            isScrollable: true,
+            labelColor: Colors.blue[700],
+            unselectedLabelColor: Colors.grey[600],
+            indicatorColor: Colors.blue[700],
+            indicatorWeight: 3,
+            labelStyle: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
+            unselectedLabelStyle: const TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+            ),
+            tabs: [
+              _buildPaymentTab("UMUM", Icons.person),
+              _buildPaymentTab("BPJS", Icons.local_hospital),
+              _buildPaymentTab("JAMKESDA", Icons.account_balance),
+              _buildPaymentTab("PEMDA LAMPUNG", Icons.location_city),
+              _buildPaymentTab("PT. AJ CENTRAL ASIA RAYA", Icons.business),
+            ],
+          ),
         ),
         Expanded(
           child: TabBarView(
@@ -250,492 +484,1273 @@ class _KasirPageState extends State<KasirPage> with TickerProviderStateMixin {
     );
   }
 
+  Widget _buildPaymentTab(String text, IconData icon) {
+    return Tab(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16),
+          const SizedBox(width: 8),
+          Flexible(child: Text(text)),
+        ],
+      ),
+    );
+  }
+
   Widget _buildFormContent(String kategori) {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          Expanded(
-            child: ListView(
-              children: [
-                Text(
-                  "Kuitansi ($kategori)",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                _buildFormRow(
-                  "No. Kuitansi",
+          // Form Kuitansi Card
+          Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Row(
                     children: [
+                      Icon(Icons.receipt, color: Colors.blue[700], size: 24),
+                      const SizedBox(width: 12),
                       Expanded(
-                        child: TextField(
-                          controller: TextEditingController(text: _noKuitansi),
-                          enabled: false,
+                        child: Text(
+                          "Form Kuitansi ($kategori)",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue[800],
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _noKuitansi = DateFormat(
-                              "yyyyMMddHHmmss",
-                            ).format(DateTime.now());
-                          });
-                        },
-                        child: const Text("Ambil Nomor"),
                       ),
                     ],
                   ),
-                ),
+                  const SizedBox(height: 24),
 
-                _buildFormRow(
-                  "No. Registrasi",
-                  TextField(
-                    controller: TextEditingController(text: _noRegistrasi),
-                    enabled: false,
+                  _buildFormRow(
+                    "No. Kuitansi",
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey[300] ?? Colors.grey.shade300,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.grey[100],
+                            ),
+                            child: TextField(
+                              controller: TextEditingController(
+                                text: _noKuitansi,
+                              ),
+                              enabled: false,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black54,
+                              ),
+                              decoration: const InputDecoration(
+                                contentPadding: EdgeInsets.all(12),
+                                border: InputBorder.none,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              _noKuitansi = DateFormat(
+                                "yyyyMMddHHmmss",
+                              ).format(DateTime.now());
+                            });
+                          },
+                          icon: const Icon(Icons.refresh, size: 18),
+                          label: const Text("Generate"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue[700],
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
 
-                _buildFormRow(
-                  "Petugas Kasir",
-                  TextField(
-                    controller: TextEditingController(text: _petugasKasir),
-                    enabled: false,
+                  _buildFormRow(
+                    "No. Registrasi",
+                    _buildReadOnlyField(_noRegistrasi),
                   ),
-                ),
 
-                _buildFormRow(
-                  "Tgl. Kuitansi",
-                  TextButton(
-                    onPressed: () async {
-                      final picked = await showDatePicker(
-                        context: context,
-                        initialDate: _tglKuitansi,
-                        firstDate: DateTime(2020),
-                        lastDate: DateTime(2100),
-                      );
-                      if (picked != null) setState(() => _tglKuitansi = picked);
-                    },
-                    child: Text(DateFormat("yyyy-MM-dd").format(_tglKuitansi)),
+                  _buildFormRow(
+                    "Petugas Kasir",
+                    _buildReadOnlyField(_petugasKasir),
                   ),
-                ),
 
-                _buildFormRow(
-                  "Tgl. Bayar",
-                  TextButton(
-                    onPressed: () async {
-                      final picked = await showDatePicker(
-                        context: context,
-                        initialDate: _tglBayar,
-                        firstDate: DateTime(2020),
-                        lastDate: DateTime(2100),
-                      );
-                      if (picked != null) setState(() => _tglBayar = picked);
-                    },
-                    child: Text(DateFormat("yyyy-MM-dd").format(_tglBayar)),
+                  _buildFormRow(
+                    "Tanggal Kuitansi",
+                    _buildDateButton(_tglKuitansi, (picked) {
+                      setState(() => _tglKuitansi = picked);
+                    }),
                   ),
-                ),
-              ],
+
+                  _buildFormRow(
+                    "Tanggal Bayar",
+                    _buildDateButton(_tglBayar, (picked) {
+                      setState(() => _tglBayar = picked);
+                    }),
+                  ),
+                ],
+              ),
             ),
           ),
 
-          // Tombol simpan
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _kuitansiList.add({
-                  "no": _noKuitansi,
-                  "registrasi": _noRegistrasi,
-                  "pasien": "M NUR HARUN TEST",
-                  "kasir": _petugasKasir,
-                  "kategori": kategori,
-                  "tanggal": _tglKuitansi,
-                  "total": _billing.fold<int>(
-                    0,
-                    (sum, b) => sum + (b["nominal"] as int),
-                  ),
-                  "billing": _billing.where((b) => b["nominal"] > 0).toList(),
-                });
-              });
+          const SizedBox(height: 16),
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Kuitansi $kategori disimpan!")),
-              );
-            },
-            child: const Text("Simpan"),
+          // Tombol Simpan
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                setState(() {
+                  _kuitansiList.add({
+                    "no": _noKuitansi,
+                    "registrasi": _noRegistrasi,
+                    "pasien": "M NUR HARUN TEST",
+                    "kasir": _petugasKasir,
+                    "kategori": kategori,
+                    "tanggal": _tglKuitansi,
+                    "total": _billing.fold<int>(
+                      0,
+                      (sum, b) => sum + ((b["nominal"] as int?) ?? 0),
+                    ),
+                    "billing":
+                        _billing
+                            .where(
+                              (b) =>
+                                  (b["nominal"] as int?) != null &&
+                                  (b["nominal"] as int) > 0,
+                            )
+                            .toList(),
+                  });
+                });
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Row(
+                      children: [
+                        const Icon(Icons.check_circle, color: Colors.white),
+                        const SizedBox(width: 12),
+                        Text("Kuitansi $kategori berhasil disimpan!"),
+                      ],
+                    ),
+                    backgroundColor: Colors.green[600],
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.save, size: 20),
+              label: const Text(
+                "Simpan Kuitansi",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green[600],
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                elevation: 2,
+              ),
+            ),
           ),
 
-          const SizedBox(height: 20),
-          Expanded(child: _buildKuitansiTable()),
+          const SizedBox(height: 24),
+
+          // Tabel Kuitansi - dengan tinggi yang dibatasi
+          SizedBox(
+            height: 400, // Atau tinggi yang sesuai kebutuhan Anda
+            child: _buildKuitansiTable(),
+          ),
+
+          const SizedBox(height: 20), // Spacing tambahan di bawah
         ],
+      ),
+    );
+  }
+
+  Widget _buildReadOnlyField(String value) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[300] ?? Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.grey[100],
+      ),
+      child: TextField(
+        controller: TextEditingController(text: value),
+        enabled: false,
+        style: const TextStyle(
+          fontWeight: FontWeight.w500,
+          color: Colors.black54,
+        ),
+        decoration: const InputDecoration(
+          contentPadding: EdgeInsets.all(12),
+          border: InputBorder.none,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateButton(DateTime date, Function(DateTime) onDateSelected) {
+    return InkWell(
+      onTap: () async {
+        final picked = await showDatePicker(
+          context: context,
+          initialDate: date,
+          firstDate: DateTime(2020),
+          lastDate: DateTime(2100),
+          builder: (context, child) {
+            return Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: ColorScheme.light(
+                  primary: Colors.blue[700] ?? Colors.blue.shade700,
+                  onPrimary: Colors.white,
+                  surface: Colors.white,
+                  onSurface: Colors.black,
+                ),
+              ),
+              child: child!,
+            );
+          },
+        );
+        if (picked != null) onDateSelected(picked);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey[300] ?? Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.white,
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.calendar_today, color: Colors.blue[700], size: 20),
+            const SizedBox(width: 12),
+            Text(
+              DateFormat("dd MMMM yyyy").format(date),
+              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+            ),
+            const Spacer(),
+            Icon(Icons.arrow_drop_down, color: Colors.grey[600]),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildKuitansiTable() {
     if (_kuitansiList.isEmpty) {
-      return const Center(child: Text("Belum ada kuitansi"));
+      return Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Container(
+          height: 300,
+          padding: const EdgeInsets.all(40),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.grey[50],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.receipt_long_outlined,
+                size: 64,
+                color: Colors.grey[400],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                "Belum ada kuitansi tersimpan",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Kuitansi yang disimpan akan muncul di sini",
+                style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+              ),
+            ],
+          ),
+        ),
+      );
     }
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: DataTable(
-        headingRowColor: MaterialStateProperty.all(Colors.blue.shade100),
-        columns: const [
-          DataColumn(label: Text("No Kuitansi")),
-          DataColumn(label: Text("Kategori")),
-          DataColumn(label: Text("Tanggal")),
-          DataColumn(label: Text("Total")),
-          DataColumn(label: Text("Aksi")),
-        ],
-        rows:
-            _kuitansiList.map((data) {
-              return DataRow(
-                cells: [
-                  DataCell(Text(data["no"])),
-                  DataCell(Text(data["kategori"])),
-                  DataCell(
-                    Text(DateFormat("yyyy-MM-dd").format(data["tanggal"])),
-                  ),
-                  DataCell(
-                    Text("Rp ${NumberFormat('#,###').format(data["total"])}"),
-                  ),
-                  DataCell(
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.info, color: Colors.blue),
-                          onPressed: () => _showDetail(context,data),
-                        ),
-                        IconButton(
-                          icon: const Icon(
-                            Icons.picture_as_pdf,
-                            color: Colors.red,
-                          ),
-                          onPressed: () => _downloadPdf(context, data),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            }).toList(),
-      ),
-    );
-  }
-
-  void _showDetail(BuildContext context, Map<String, dynamic> data) {
-  final currency = NumberFormat.currency(locale: "id", symbol: "Rp ", decimalDigits: 0);
-
-  showDialog(
-    context: context,
-    builder: (_) => AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: Row(
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.receipt_long, color: Colors.blue),
-          const SizedBox(width: 8),
-          Text("Detail Kuitansi\n ${data['no']}"),
-        ],
-      ),
-      content: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              title: const Text("Kategori"),
-              subtitle: Text(data['kategori']),
-              leading: const Icon(Icons.category, color: Colors.indigo),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.blue[700],
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
             ),
-            ListTile(
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              title: const Text("Tanggal"),
-              subtitle: Text(DateFormat("dd MMMM yyyy").format(data['tanggal'])),
-              leading: const Icon(Icons.date_range, color: Colors.teal),
-            ),
-            const Divider(),
-            const Text(
-              "Billing",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            ...data["billing"].map<Widget>((b) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(child: Text(b["deskripsi"])),
-                    Text(currency.format(b["nominal"])),
-                  ],
-                ),
-              );
-            }).toList(),
-            const Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: const Row(
               children: [
-                const Text(
-                  "Total",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                Icon(Icons.list_alt, color: Colors.white, size: 20),
+                SizedBox(width: 8),
                 Text(
-                  currency.format(data["billing"]
-                      .fold(0, (sum, b) => sum + (b["nominal"] as int))),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
+                  "Daftar Kuitansi Tersimpan",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
-          ],
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minWidth: MediaQuery.of(context).size.width - 32,
+                  ),
+                  child: DataTable(
+                    headingRowColor: WidgetStateProperty.all(Colors.grey[100]),
+                    headingTextStyle: TextStyle(
+                      color: Colors.blue[800],
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                    dataTextStyle: const TextStyle(
+                      fontSize: 13,
+                      color: Colors.black87,
+                    ),
+                    columnSpacing: 20,
+                    headingRowHeight: 50,
+                    dataRowMinHeight: 60,
+                    dataRowMaxHeight: 80,
+                    columns: const [
+                      DataColumn(label: Text("No Kuitansi")),
+                      DataColumn(label: Text("Kategori")),
+                      DataColumn(label: Text("Tanggal")),
+                      DataColumn(label: Text("Total")),
+                      DataColumn(label: Text("Aksi")),
+                    ],
+                    rows:
+                        _kuitansiList.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final data = entry.value;
+                          return DataRow(
+                            color: WidgetStateProperty.resolveWith((states) {
+                              return index % 2 == 0
+                                  ? Colors.grey[50]
+                                  : Colors.white;
+                            }),
+                            cells: [
+                              DataCell(
+                                Text(
+                                  data["no"]?.toString() ?? "-",
+                                  style: const TextStyle(
+                                    fontFamily: 'monospace',
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: _getKategoriColor(
+                                      data["kategori"]?.toString() ?? "",
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    data["kategori"]?.toString() ?? "-",
+                                    style: TextStyle(
+                                      color: _getKategoriTextColor(
+                                        data["kategori"]?.toString() ?? "",
+                                      ),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Text(
+                                  data["tanggal"] != null
+                                      ? DateFormat(
+                                        "dd/MM/yyyy",
+                                      ).format(data["tanggal"] as DateTime)
+                                      : "-",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Text(
+                                  "Rp ${NumberFormat('#,###').format(data["total"] ?? 0)}",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green[700],
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.info_outline,
+                                        color: Colors.blue[600],
+                                        size: 20,
+                                      ),
+                                      onPressed:
+                                          () => _showDetail(context, data),
+                                      tooltip: "Detail",
+                                      style: IconButton.styleFrom(
+                                        backgroundColor: Colors.blue[50],
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.picture_as_pdf,
+                                        color: Colors.red[600],
+                                        size: 20,
+                                      ),
+                                      onPressed:
+                                          () => _downloadPdf(context, data),
+                                      tooltip: "Download PDF",
+                                      style: IconButton.styleFrom(
+                                        backgroundColor: Colors.red[50],
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        }).toList(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getKategoriColor(String kategori) {
+    switch (kategori) {
+      case "UMUM":
+        return Colors.green[100] ?? Colors.green.shade100;
+      case "BPJS":
+        return Colors.blue[100] ?? Colors.blue.shade100;
+      case "JAMKESDA":
+        return Colors.orange[100] ?? Colors.orange.shade100;
+      case "PEMDA LAMPUNG":
+        return Colors.purple[100] ?? Colors.purple.shade100;
+      case "PT. AJ CENTRAL ASIA RAYA":
+        return Colors.teal[100] ?? Colors.teal.shade100;
+      default:
+        return Colors.grey[100] ?? Colors.grey.shade100;
+    }
+  }
+
+  Color _getKategoriTextColor(String kategori) {
+    switch (kategori) {
+      case "UMUM":
+        return Colors.green[800] ?? Colors.green.shade800;
+      case "BPJS":
+        return Colors.blue[800] ?? Colors.blue.shade800;
+      case "JAMKESDA":
+        return Colors.orange[800] ?? Colors.orange.shade800;
+      case "PEMDA LAMPUNG":
+        return Colors.purple[800] ?? Colors.purple.shade800;
+      case "PT. AJ CENTRAL ASIA RAYA":
+        return Colors.teal[800] ?? Colors.teal.shade800;
+      default:
+        return Colors.grey[800] ?? Colors.grey.shade800;
+    }
+  }
+
+  void _showDetail(BuildContext context, Map<String, dynamic> data) {
+    final currency = NumberFormat.currency(
+      locale: "id",
+      symbol: "Rp ",
+      decimalDigits: 0,
+    );
+
+    showDialog(
+      context: context,
+      builder:
+          (_) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.blue[600] ?? Colors.blue.shade600,
+                    Colors.blue[700] ?? Colors.blue.shade700,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.receipt_long, color: Colors.white, size: 28),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Detail Kuitansi",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          data['no']?.toString() ?? "-",
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                            fontFamily: 'monospace',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildDetailTile(
+                    Icons.category,
+                    "Kategori",
+                    data['kategori']?.toString() ?? "-",
+                    Colors.indigo,
+                  ),
+                  _buildDetailTile(
+                    Icons.person,
+                    "Nama Pasien",
+                    data['pasien']?.toString() ?? "-",
+                    Colors.teal,
+                  ),
+                  _buildDetailTile(
+                    Icons.badge,
+                    "No. Registrasi",
+                    data['registrasi']?.toString() ?? "-",
+                    Colors.orange,
+                  ),
+                  _buildDetailTile(
+                    Icons.person_outline,
+                    "Petugas Kasir",
+                    data['kasir']?.toString() ?? "-",
+                    Colors.purple,
+                  ),
+                  _buildDetailTile(
+                    Icons.date_range,
+                    "Tanggal",
+                    data['tanggal'] != null
+                        ? DateFormat(
+                          "dd MMMM yyyy",
+                        ).format(data['tanggal'] as DateTime)
+                        : "-",
+                    Colors.green,
+                  ),
+
+                  const SizedBox(height: 16),
+                  const Divider(thickness: 2),
+
+                  Row(
+                    children: [
+                      Icon(Icons.list_alt, color: Colors.blue[700], size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Detail Billing",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.blue[800],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
+                  ...(data["billing"] as List<dynamic>? ?? []).map<Widget>((b) {
+                    final billingItem = b as Map<String, dynamic>;
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: Colors.grey[200] ?? Colors.grey.shade200,
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  billingItem["deskripsi"]?.toString() ?? "-",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.local_hospital,
+                                      size: 14,
+                                      color: Colors.grey[600],
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      billingItem["unit"]?.toString() ?? "-",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.green[100],
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              currency.format(billingItem["nominal"] ?? 0),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green[800],
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+
+                  const SizedBox(height: 8),
+                  const Divider(thickness: 2),
+
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.green[50] ?? Colors.green.shade50,
+                          Colors.green[100] ?? Colors.green.shade100,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.monetization_on,
+                              color: Colors.green[700],
+                              size: 24,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Total Pembayaran",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: Colors.green[800],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          currency.format(data["total"] ?? 0),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green[700],
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton.icon(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.close),
+                label: const Text("Tutup"),
+                style: TextButton.styleFrom(foregroundColor: Colors.grey[700]),
+              ),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _downloadPdf(context, data);
+                },
+                icon: const Icon(Icons.download, size: 18),
+                label: const Text("Download PDF"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue[600],
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ],
+          ),
+    );
+  }
+
+  Widget _buildDetailTile(
+    IconData icon,
+    String title,
+    String subtitle,
+    Color color,
+  ) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        dense: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        tileColor: color.withOpacity(0.1),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: color, size: 20),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: Colors.black54,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text("Tutup"),
-        ),
-      ],
-    ),
-  );
-}
+    );
+  }
+
   Future<void> _downloadPdf(
     BuildContext context,
     Map<String, dynamic> data,
   ) async {
-    final pdf = pw.Document();
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder:
+          (_) => const AlertDialog(
+            content: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(width: 20),
+                Text("Membuat PDF..."),
+              ],
+            ),
+          ),
+    );
 
-    pdf.addPage(
-      pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        margin: const pw.EdgeInsets.all(24),
-        build: (pw.Context ctx) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              // HEADER
-              pw.Center(
-                child: pw.Column(
+    try {
+      final pdf = pw.Document();
+
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          margin: const pw.EdgeInsets.all(32),
+          build: (pw.Context ctx) {
+            return pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                // HEADER
+                pw.Container(
+                  width: double.infinity,
+                  padding: const pw.EdgeInsets.all(20),
+                  decoration: const pw.BoxDecoration(
+                    color: PdfColors.blue50,
+                    borderRadius: pw.BorderRadius.all(pw.Radius.circular(8)),
+                  ),
+                  child: pw.Column(
+                    children: [
+                      pw.Text(
+                        "PEMERINTAH PROVINSI LAMPUNG",
+                        style: pw.TextStyle(
+                          fontSize: 12,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                      pw.SizedBox(height: 4),
+                      pw.Text(
+                        "RSUD Abdul Moeloek",
+                        style: pw.TextStyle(
+                          fontSize: 16,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                      pw.Text(
+                        "TELP 0721-703312 \n BANDAR LAMPUNG",
+                        style: const pw.TextStyle(fontSize: 10),
+                      ),
+                      pw.SizedBox(height: 12),
+                      pw.Container(
+                        padding: const pw.EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: const pw.BoxDecoration(
+                          color: PdfColors.blue,
+                          borderRadius: pw.BorderRadius.all(
+                            pw.Radius.circular(4),
+                          ),
+                        ),
+                        child: pw.Text(
+                          "TANDA BUKTI PEMBAYARAN",
+                          style: pw.TextStyle(
+                            fontSize: 14,
+                            fontWeight: pw.FontWeight.bold,
+                            color: PdfColors.white,
+                          ),
+                        ),
+                      ),
+                      pw.SizedBox(height: 4),
+                      pw.Text(
+                        "PERGUB NOMOR 6 TAHUN 2019",
+                        style: const pw.TextStyle(fontSize: 10),
+                      ),
+                    ],
+                  ),
+                ),
+                pw.SizedBox(height: 24),
+
+                // INFO KUITANSI
+                pw.Container(
+                  width: double.infinity,
+                  padding: const pw.EdgeInsets.all(16),
+                  decoration: pw.BoxDecoration(
+                    border: pw.Border.all(color: PdfColors.grey400),
+                    borderRadius: const pw.BorderRadius.all(
+                      pw.Radius.circular(8),
+                    ),
+                  ),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text(
+                        "INFORMASI KUITANSI",
+                        style: pw.TextStyle(
+                          fontSize: 12,
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.blue800,
+                        ),
+                      ),
+                      pw.SizedBox(height: 8),
+                      _buildPdfInfoRow(
+                        "No. Kuitansi",
+                        data['no']?.toString() ?? "-",
+                      ),
+                      _buildPdfInfoRow(
+                        "No. Registrasi",
+                        data['registrasi']?.toString() ?? "-",
+                      ),
+                      _buildPdfInfoRow(
+                        "Nama Pasien",
+                        data['pasien']?.toString() ?? "-",
+                      ),
+                      _buildPdfInfoRow(
+                        "Petugas Kasir",
+                        data['kasir']?.toString() ?? "-",
+                      ),
+                      _buildPdfInfoRow(
+                        "Kategori Pembayaran",
+                        data['kategori']?.toString() ?? "-",
+                      ),
+                      _buildPdfInfoRow(
+                        "Tanggal Bayar",
+                        data['tanggal'] != null
+                            ? DateFormat(
+                              'dd MMMM yyyy',
+                            ).format(data['tanggal'] as DateTime)
+                            : "-",
+                      ),
+                    ],
+                  ),
+                ),
+                pw.SizedBox(height: 24),
+
+                // TABEL BILLING
+                pw.Text(
+                  "RINCIAN PEMBAYARAN",
+                  style: pw.TextStyle(
+                    fontSize: 14,
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColors.blue800,
+                  ),
+                ),
+                pw.SizedBox(height: 8),
+                pw.Table(
+                  border: pw.TableBorder.all(
+                    width: 1,
+                    color: PdfColors.grey400,
+                  ),
+                  columnWidths: {
+                    0: const pw.FixedColumnWidth(40),
+                    1: const pw.FlexColumnWidth(3),
+                    2: const pw.FlexColumnWidth(1),
+                    3: const pw.FlexColumnWidth(1.5),
+                  },
                   children: [
-                    pw.Text(
-                      "PEMERINTAH PROVINSI LAMPUNG",
-                      style: pw.TextStyle(fontSize: 10),
+                    pw.TableRow(
+                      decoration: const pw.BoxDecoration(color: PdfColors.blue),
+                      children: [
+                        _buildPdfTableHeader("No"),
+                        _buildPdfTableHeader("Deskripsi Layanan"),
+                        _buildPdfTableHeader("Unit"),
+                        _buildPdfTableHeader("Nominal"),
+                      ],
                     ),
-                    pw.Text(
-                      "RSUD Abdul Moeloek",
-                      style: pw.TextStyle(
-                        fontSize: 12,
-                        fontWeight: pw.FontWeight.bold,
+                    ...(data["billing"] as List<dynamic>? ?? [])
+                        .asMap()
+                        .entries
+                        .map((entry) {
+                          final i = entry.key + 1;
+                          final b = entry.value as Map<String, dynamic>;
+                          return pw.TableRow(
+                            decoration: pw.BoxDecoration(
+                              color:
+                                  i % 2 == 0
+                                      ? PdfColors.grey100
+                                      : PdfColors.white,
+                            ),
+                            children: [
+                              _buildPdfTableCell(i.toString(), true),
+                              _buildPdfTableCell(
+                                b["deskripsi"]?.toString() ?? "-",
+                              ),
+                              _buildPdfTableCell(b["unit"]?.toString() ?? "-"),
+                              _buildPdfTableCell(
+                                "Rp ${NumberFormat('#,###').format(b["nominal"] ?? 0)}",
+                                true,
+                              ),
+                            ],
+                          );
+                        }),
+                  ],
+                ),
+                pw.SizedBox(height: 16),
+
+                // TOTAL
+                pw.Container(
+                  width: double.infinity,
+                  padding: const pw.EdgeInsets.all(16),
+                  decoration: pw.BoxDecoration(
+                    color: PdfColors.green50,
+                    border: pw.Border.all(color: PdfColors.green),
+                    borderRadius: const pw.BorderRadius.all(
+                      pw.Radius.circular(8),
+                    ),
+                  ),
+                  child: pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text(
+                        "TOTAL PEMBAYARAN",
+                        style: pw.TextStyle(
+                          fontSize: 14,
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.green800,
+                        ),
                       ),
-                    ),
-                    pw.Text(
-                      "TELP 0721-703312",
-                      style: const pw.TextStyle(fontSize: 10),
-                    ),
-                    pw.Text(
-                      "BANDAR LAMPUNG",
-                      style: const pw.TextStyle(fontSize: 10),
-                    ),
-                    pw.SizedBox(height: 8),
-                    pw.Text(
-                      "TANDA BUKTI PEMBAYARAN",
-                      style: pw.TextStyle(
-                        fontSize: 14,
-                        fontWeight: pw.FontWeight.bold,
+                      pw.Text(
+                        "Rp ${NumberFormat('#,###').format(data["total"] ?? 0)}",
+                        style: pw.TextStyle(
+                          fontSize: 16,
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.green800,
+                        ),
                       ),
+                    ],
+                  ),
+                ),
+                pw.SizedBox(height: 40),
+
+                // TANDA TANGAN
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildPdfSignature(
+                      "Mengetahui",
+                      "Bendahara Penerimaan",
+                      "",
                     ),
-                    pw.Text(
-                      "PERGUB NOMOR 6 TAHUN 2019",
-                      style: const pw.TextStyle(fontSize: 10),
+                    _buildPdfSignature(
+                      "Petugas",
+                      "Kasir",
+                      data['kasir']?.toString() ?? "",
+                    ),
+                    _buildPdfSignature(
+                      "Tanggal diterima",
+                      DateFormat("dd-MM-yyyy").format(DateTime.now()),
+                      "(Penyetor)",
                     ),
                   ],
                 ),
-              ),
-              pw.SizedBox(height: 16),
+              ],
+            );
+          },
+        ),
+      );
 
-              // INFO KUITANSI
-              pw.Text("No. Kuitansi: ${data['no']}"),
-              pw.Text("No. Registrasi: ${data['registrasi']}"),
-              pw.Text("Nama Pasien: ${data['pasien']}"),
-              pw.Text("Petugas Kasir: ${data['kasir']}"),
-              pw.Text(
-                "Tanggal Bayar: ${DateFormat('dd-MM-yyyy').format(data['tanggal'])}",
-              ),
-              pw.SizedBox(height: 16),
+      // Simpan file ke Documents
+      final dir = await getApplicationDocumentsDirectory();
+      final file = File("${dir.path}/kuitansi_${data['no'] ?? 'unknown'}.pdf");
+      await file.writeAsBytes(await pdf.save());
 
-              // TABEL BILLING
-              pw.Table(
-                border: pw.TableBorder.all(width: 0.5),
-                columnWidths: {
-                  0: const pw.FixedColumnWidth(30),
-                  1: const pw.FlexColumnWidth(3),
-                  2: const pw.FlexColumnWidth(1.5),
-                },
-                children: [
-                  pw.TableRow(
-                    decoration: const pw.BoxDecoration(
-                      color: PdfColors.grey300,
-                    ),
+      // Close loading dialog
+      if (context.mounted) Navigator.pop(context);
+
+      // Buka file otomatis
+      await OpenFilex.open(file.path);
+
+      // Kasih notifikasi success
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      pw.Padding(
-                        padding: const pw.EdgeInsets.all(4),
-                        child: pw.Text(
-                          "No",
-                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                        ),
+                      const Text(
+                        "PDF berhasil dibuat!",
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      pw.Padding(
-                        padding: const pw.EdgeInsets.all(4),
-                        child: pw.Text(
-                          "Deskripsi",
-                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                        ),
-                      ),
-                      pw.Padding(
-                        padding: const pw.EdgeInsets.all(4),
-                        child: pw.Text(
-                          "Nominal",
-                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                        ),
+                      Text(
+                        "Disimpan di: ${file.path}",
+                        style: const TextStyle(fontSize: 12),
                       ),
                     ],
                   ),
-                  ...data["billing"].asMap().entries.map((entry) {
-                    final i = entry.key + 1;
-                    final b = entry.value;
-                    return pw.TableRow(
-                      children: [
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(4),
-                          child: pw.Text(i.toString()),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(4),
-                          child: pw.Text(b["deskripsi"]),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(4),
-                          child: pw.Text(
-                            "Rp ${NumberFormat('#,###').format(b["nominal"])}",
-                            textAlign: pw.TextAlign.right,
-                          ),
-                        ),
-                      ],
-                    );
-                  }),
-                ],
-              ),
-              pw.SizedBox(height: 12),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.green[600],
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } catch (e) {
+      // Close loading dialog
+      if (context.mounted) Navigator.pop(context);
 
-              // TOTAL
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.end,
-                children: [
-                  pw.Text(
-                    "Total: Rp ${NumberFormat('#,###').format(data["total"])}",
-                    style: pw.TextStyle(
-                      fontWeight: pw.FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-              pw.SizedBox(height: 40),
+      // Show error
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error, color: Colors.white),
+                const SizedBox(width: 12),
+                Text("Error membuat PDF: $e"),
+              ],
+            ),
+            backgroundColor: Colors.red[600],
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        );
+      }
+    }
+  }
 
-              // TANDA TANGAN
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Column(
-                    children: [
-                      pw.Text(
-                        "Mengetahui",
-                        style: const pw.TextStyle(fontSize: 10),
-                      ),
-                      pw.Text(
-                        "Bendahara Penerimaan",
-                        style: const pw.TextStyle(fontSize: 10),
-                      ),
-                      pw.SizedBox(height: 40),
-                      pw.Text(
-                        "(....................)",
-                        style: const pw.TextStyle(fontSize: 10),
-                      ),
-                    ],
-                  ),
-                  pw.Column(
-                    children: [
-                      pw.Text(
-                        "Petugas",
-                        style: const pw.TextStyle(fontSize: 10),
-                      ),
-                      pw.Text("Kasir", style: const pw.TextStyle(fontSize: 10)),
-                      pw.SizedBox(height: 40),
-                      pw.Text(
-                        "(${data['kasir']})",
-                        style: const pw.TextStyle(fontSize: 10),
-                      ),
-                    ],
-                  ),
-                  pw.Column(
-                    children: [
-                      pw.Text(
-                        "Tanggal diterima",
-                        style: const pw.TextStyle(fontSize: 10),
-                      ),
-                      pw.Text(
-                        DateFormat("dd-MM-yyyy").format(DateTime.now()),
-                        style: const pw.TextStyle(fontSize: 10),
-                      ),
-                      pw.SizedBox(height: 40),
-                      pw.Text(
-                        "(Penyetor)",
-                        style: const pw.TextStyle(fontSize: 10),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          );
-        },
+  pw.Widget _buildPdfInfoRow(String label, String value) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.symmetric(vertical: 2),
+      child: pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.SizedBox(
+            width: 120,
+            child: pw.Text(
+              label,
+              style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+            ),
+          ),
+          pw.Text(
+            ": ",
+            style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+          ),
+          pw.Expanded(
+            child: pw.Text(value, style: const pw.TextStyle(fontSize: 10)),
+          ),
+        ],
       ),
     );
+  }
 
-    // Simpan file ke Documents
-    final dir = await getApplicationDocumentsDirectory();
-    final file = File("${dir.path}/kuitansi_${data['no']}.pdf");
-    await file.writeAsBytes(await pdf.save());
-
-    // Buka file otomatis
-    await OpenFilex.open(file.path);
-
-    // Kasih notifikasi
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("PDF berhasil disimpan dan dibuka di ${file.path}"),
+  pw.Widget _buildPdfTableHeader(String text) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.all(8),
+      child: pw.Text(
+        text,
+        style: pw.TextStyle(
+          fontSize: 10,
+          fontWeight: pw.FontWeight.bold,
+          color: PdfColors.white,
+        ),
+        textAlign: pw.TextAlign.center,
       ),
+    );
+  }
+
+  pw.Widget _buildPdfTableCell(String text, [bool center = false]) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.all(8),
+      child: pw.Text(
+        text,
+        style: const pw.TextStyle(fontSize: 9),
+        textAlign: center ? pw.TextAlign.center : pw.TextAlign.left,
+      ),
+    );
+  }
+
+  pw.Widget _buildPdfSignature(String title, String subtitle, String name) {
+    return pw.Column(
+      children: [
+        pw.Text(
+          title,
+          style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+        ),
+        pw.Text(subtitle, style: const pw.TextStyle(fontSize: 9)),
+        pw.SizedBox(height: 40),
+        pw.Container(width: 100, height: 1, color: PdfColors.black),
+        pw.SizedBox(height: 4),
+        pw.Text(
+          name.isEmpty ? "(.....................)" : "($name)",
+          style: const pw.TextStyle(fontSize: 9),
+        ),
+      ],
     );
   }
 
   Widget _buildFormRow(String label, Widget field) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
-          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+              color: Colors.blue[800],
+            ),
+          ),
+          const SizedBox(height: 8),
           field,
         ],
       ),
