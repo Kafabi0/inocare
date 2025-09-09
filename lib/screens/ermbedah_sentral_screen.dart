@@ -1208,7 +1208,6 @@ class _ErmBedahSentralPageState extends State<ErmBedahSentralPage> {
       currentPage = 1; // Reset to first page when changing items per page
     });
   }
-
   List<Map<String, dynamic>> _applyFilters(List<Map<String, dynamic>> patients) {
   List<Map<String, dynamic>> filtered = patients;
   
@@ -1281,647 +1280,676 @@ class _ErmBedahSentralPageState extends State<ErmBedahSentralPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header with title and patient count
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Pasien Aktif",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1E293B),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        "${filteredPatients.length} Pasien",
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Color(0xFF64748B),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Tabs - Scrollable horizontally
-              Container(
-                height: 56,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      _buildTab("Rawat Jalan", selectedTab == "Rawat Jalan"),
-                      _buildTab("Rawat Inap", selectedTab == "Rawat Inap"),
-                      _buildTab("Unit Penunjang", selectedTab == "Unit Penunjang"),
-                      _buildTab("Konsul", selectedTab == "Konsul"),
-                      _buildTab("Rawat Bersama", selectedTab == "Rawat Bersama"),
-                      _buildTab("Operasi", selectedTab == "Operasi"),
-                    ],
-                  ),
-                ),
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Statistics cards
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildStatCard("Pasien Selesai", statistics["Pasien Selesai"]!, Colors.green),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _buildStatCard("Proses", statistics["Proses"]!, Colors.orange),
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 8),
-              
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildStatCard("Baru", statistics["Baru"]!, Colors.blue),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _buildStatCard("Batal", statistics["Batal"]!, Colors.red),
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Search and filter box
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      // Search box
-                      TextField(
-                        controller: searchController,
-                        decoration: InputDecoration(
-                          hintText: "Cari Nama/No RM/No Reg Pasien",
-                          hintStyle: TextStyle(
-                            color: Colors.grey[500],
-                          ),
-                          prefixIcon: Icon(
-                            Icons.search,
-                            color: Colors.grey[600],
-                          ),
-                          suffixIcon: searchController.text.isNotEmpty
-                              ? IconButton(
-                                  icon: const Icon(
-                                    Icons.clear,
-                                    color: Colors.grey,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      searchController.clear();
-                                    });
-                                  },
-                                )
-                              : null,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: Colors.grey[300]!,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: Colors.grey[300]!,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: Color(0xFF1E40AF),
-                              width: 2,
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            currentPage = 1; // Reset to first page when searching
-                          });
-                        },
-                      ),
-                      
-                      const SizedBox(height: 16),
-                      
-                      // Date and room filters
-                      Row(
-                        children: [
-                          // Start date
-                          Expanded(
-                            child: InkWell(
-                              onTap: () => _selectStartDate(context),
-                              borderRadius: BorderRadius.circular(8),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey[300]!),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.calendar_today, size: 16, color: Color(0xFF64748B)),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        startDate != null 
-                                            ? "${startDate!.day.toString().padLeft(2, '0')}-${startDate!.month.toString().padLeft(2, '0')}-${startDate!.year}"
-                                            : "Start Date",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: startDate != null ? const Color(0xFF1E293B) : const Color(0xFF64748B),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          
-                          const SizedBox(width: 8),
-                          
-                          // End date
-                          Expanded(
-                            child: InkWell(
-                              onTap: () => _selectEndDate(context),
-                              borderRadius: BorderRadius.circular(8),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey[300]!),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.calendar_today, size: 16, color: Color(0xFF64748B)),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        endDate != null 
-                                            ? "${endDate!.day.toString().padLeft(2, '0')}-${endDate!.month.toString().padLeft(2, '0')}-${endDate!.year}"
-                                            : "End Date",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: endDate != null ? const Color(0xFF1E293B) : const Color(0xFF64748B),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      
-                      const SizedBox(height: 8),
-                      
-                      // Room filter
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey[300]!),
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.white, // Background putih untuk dropdown
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: selectedRoom,
-                            isExpanded: true,
-                            icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF64748B)),
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF1E293B),
-                            ),
-                            dropdownColor: Colors.white, // Background putih untuk dropdown menu
-                            items: [
-                              "Semua Ruangan",
-                              "Ruangan",
-                              "Kamar Khusus", 
-                              "Poliklinik",
-                              "Lab",
-                              "Konsul",
-                              "Rawat Bersama",
-                            ]
-                                .map(
-                                  (e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text(
-                                      e,
-                                      style: const TextStyle(
-                                        color: Color(0xFF1E293B), // Warna teks hitam
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                selectedRoom = value!;
-                                currentPage = 1; // Reset to first page when changing room filter
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton.icon(
-                            onPressed: _clearAllFilters,
-                            icon: const Icon(
-                              Icons.clear_all,
-                              size: 16,
-                              color: Color(0xFF64748B),
-                            ),
-                            label: const Text(
-                              "Clear All Filters",
+      body: selectedTab == "Template Farmasi"
+          ? const PharmacyTemplatePage()
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header with title and patient count
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Pasien Aktif",
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF1E293B),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "${filteredPatients.length} Pasien",
+                              style: const TextStyle(
+                                fontSize: 16,
                                 color: Color(0xFF64748B),
                               ),
                             ),
+                          ],
+                        ),
+                        // Tombol Template Farmasi di sebelah kanan
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              selectedTab = "Template Farmasi";
+                            });
+                          },
+                          icon: Icon(
+                            MdiIcons.package,
+                            color: Colors.white,
+                          ),
+                          label: const Text(
+                            "Template Farmasi",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF1E40AF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Tabs - Scrollable horizontally
+                    Container(
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Patient list
-              if (paginatedPatients.isEmpty)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(48),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _buildTab("Rawat Jalan", selectedTab == "Rawat Jalan"),
+                            _buildTab("Rawat Inap", selectedTab == "Rawat Inap"),
+                            _buildTab("Unit Penunjang", selectedTab == "Unit Penunjang"),
+                            _buildTab("Konsul", selectedTab == "Konsul"),
+                            _buildTab("Rawat Bersama", selectedTab == "Rawat Bersama"),
+                            _buildTab("Operasi", selectedTab == "Operasi"),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Statistics cards
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildStatCard("Pasien Selesai", statistics["Pasien Selesai"]!, Colors.green),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _buildStatCard("Proses", statistics["Proses"]!, Colors.orange),
+                        ),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: 8),
+                    
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildStatCard("Baru", statistics["Baru"]!, Colors.blue),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _buildStatCard("Batal", statistics["Batal"]!, Colors.red),
+                        ),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Search and filter box
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            // Search box
+                            TextField(
+                              controller: searchController,
+                              decoration: InputDecoration(
+                                hintText: "Cari Nama/No RM/No Reg Pasien",
+                                hintStyle: TextStyle(
+                                  color: Colors.grey[500],
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.search,
+                                  color: Colors.grey[600],
+                                ),
+                                suffixIcon: searchController.text.isNotEmpty
+                                    ? IconButton(
+                                        icon: const Icon(
+                                          Icons.clear,
+                                          color: Colors.grey,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            searchController.clear();
+                                          });
+                                        },
+                                      )
+                                    : null,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey[300]!,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey[300]!,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: Color(0xFF1E40AF),
+                                    width: 2,
+                                  ),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  currentPage = 1; // Reset to first page when searching
+                                });
+                              },
+                            ),
+                            
+                            const SizedBox(height: 16),
+                            
+                            // Date and room filters
+                            Row(
+                              children: [
+                                // Start date
+                                Expanded(
+                                  child: InkWell(
+                                    onTap: () => _selectStartDate(context),
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey[300]!),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.calendar_today, size: 16, color: Color(0xFF64748B)),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              startDate != null 
+                                                  ? "${startDate!.day.toString().padLeft(2, '0')}-${startDate!.month.toString().padLeft(2, '0')}-${startDate!.year}"
+                                                  : "Start Date",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: startDate != null ? const Color(0xFF1E293B) : const Color(0xFF64748B),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                
+                                const SizedBox(width: 8),
+                                
+                                // End date
+                                Expanded(
+                                  child: InkWell(
+                                    onTap: () => _selectEndDate(context),
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey[300]!),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.calendar_today, size: 16, color: Color(0xFF64748B)),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              endDate != null 
+                                                  ? "${endDate!.day.toString().padLeft(2, '0')}-${endDate!.month.toString().padLeft(2, '0')}-${endDate!.year}"
+                                                  : "End Date",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: endDate != null ? const Color(0xFF1E293B) : const Color(0xFF64748B),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            
+                            const SizedBox(height: 8),
+                            
+                            // Room filter
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(8),
+                                color: Colors.white, // Background putih untuk dropdown
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: selectedRoom,
+                                  isExpanded: true,
+                                  icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF64748B)),
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xFF1E293B),
+                                  ),
+                                  dropdownColor: Colors.white, // Background putih untuk dropdown menu
+                                  items: [
+                                    "Semua Ruangan",
+                                    "Ruangan",
+                                    "Kamar Khusus", 
+                                    "Poliklinik",
+                                    "Lab",
+                                    "Konsul",
+                                    "Rawat Bersama",
+                                  ]
+                                      .map(
+                                        (e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Text(
+                                            e,
+                                            style: const TextStyle(
+                                              color: Color(0xFF1E293B), // Warna teks hitam
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedRoom = value!;
+                                      currentPage = 1; // Reset to first page when changing room filter
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                TextButton.icon(
+                                  onPressed: _clearAllFilters,
+                                  icon: const Icon(
+                                    Icons.clear_all,
+                                    size: 16,
+                                    color: Color(0xFF64748B),
+                                  ),
+                                  label: const Text(
+                                    "Clear All Filters",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Color(0xFF64748B),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Patient list
+                    if (paginatedPatients.isEmpty)
                       Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF1F5F9),
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        child: const Icon(
-                          Icons.search_off,
-                          size: 48,
-                          color: Color(0xFF94A3B8),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        "Tidak ada data pasien",
-                        style: TextStyle(
-                          color: Color(0xFF475569),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        "Coba pilih tab lain",
-                        style: TextStyle(
-                          color: Color(0xFF94A3B8),
-                          fontSize: 14,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              
-              if (paginatedPatients.isNotEmpty)
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: paginatedPatients.length,
-                  itemBuilder: (context, index) {
-                    final patient = paginatedPatients[index];
-                    return PatientCard(patient: patient);
-                  },
-                ),
-              
-              if (paginatedPatients.isNotEmpty)
-                const SizedBox(height: 16),
-              
-              // Pagination
-              if (paginatedPatients.isNotEmpty)
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    // Responsive pagination
-                    if (constraints.maxWidth < 600) {
-                      // Small screen - vertical layout
-                      return Container(
-                        padding: const EdgeInsets.all(16),
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(48),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.05),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
                         child: Column(
                           children: [
-                            // Items per row
-                            Row(
-                              children: [
-                                const Text(
-                                  "Tampilkan ",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: Color(0xFF64748B),
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF1F5F9),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: const Icon(
+                                Icons.search_off,
+                                size: 48,
+                                color: Color(0xFF94A3B8),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            const Text(
+                              "Tidak ada data pasien",
+                              style: TextStyle(
+                                color: Color(0xFF475569),
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              "Coba pilih tab lain",
+                              style: TextStyle(
+                                color: Color(0xFF94A3B8),
+                                fontSize: 14,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    
+                    if (paginatedPatients.isNotEmpty)
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: paginatedPatients.length,
+                        itemBuilder: (context, index) {
+                          final patient = paginatedPatients[index];
+                          return PatientCard(patient: patient);
+                        },
+                      ),
+                    
+                    if (paginatedPatients.isNotEmpty)
+                      const SizedBox(height: 16),
+                    
+                    // Pagination
+                    if (paginatedPatients.isNotEmpty)
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          // Responsive pagination
+                          if (constraints.maxWidth < 600) {
+                            // Small screen - vertical layout
+                            return Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: const Color(0xFFE2E8F0),
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton<int>(
-                                        value: itemsPerPage,
-                                        style: const TextStyle(
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  // Items per row
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        "Tampilkan ",
+                                        style: TextStyle(
                                           fontSize: 13,
-                                          color: Color(0xFF1E293B),
+                                          color: Color(0xFF64748B),
                                         ),
-                                        items: [5, 10, 20, 50]
-                                            .map(
-                                              (e) => DropdownMenuItem(
-                                                value: e,
-                                                child: Text(
-                                                  e.toString(),
-                                                ),
-                                              ),
-                                            )
-                                            .toList(),
-                                        onChanged: (value) {
-                                          if (value != null) {
-                                            _changeItemsPerPage(value);
-                                          }
-                                        },
                                       ),
-                                    ),
-                                  ),
-                                ),
-                                const Text(
-                                  " data",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: Color(0xFF64748B),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            
-                            const SizedBox(height: 12),
-                            
-                            // Page navigation
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                IconButton(
-                                  onPressed: currentPage > 1 ? () => _changePage(currentPage - 1) : null,
-                                  icon: const Icon(
-                                    Icons.chevron_left,
-                                    color: Color(0xFF64748B),
-                                  ),
-                                  iconSize: 20,
-                                  style: IconButton.styleFrom(
-                                    backgroundColor: const Color(0xFFF8FAFC),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  disabledColor: Colors.grey.shade300,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  "Hal. $currentPage dari $totalPages",
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xFF64748B),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                IconButton(
-                                  onPressed: currentPage < totalPages ? () => _changePage(currentPage + 1) : null,
-                                  icon: const Icon(
-                                    Icons.chevron_right,
-                                    color: Color(0xFF64748B),
-                                  ),
-                                  iconSize: 20,
-                                  style: IconButton.styleFrom(
-                                    backgroundColor: const Color(0xFFF8FAFC),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  disabledColor: Colors.grey.shade300,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      // Large screen - horizontal layout
-                      return Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                const Text(
-                                  "Tampilkan ",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: Color(0xFF64748B),
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: const Color(0xFFE2E8F0),
-                                    ),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton<int>(
-                                      value: itemsPerPage,
-                                      style: const TextStyle(
-                                        fontSize: 13,
-                                        color: Color(0xFF1E293B),
-                                      ),
-                                      items: [5, 10, 20, 50]
-                                          .map(
-                                            (e) => DropdownMenuItem(
-                                              value: e,
-                                              child: Text(
-                                                e.toString(),
-                                              ),
+                                      Expanded(
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: const Color(0xFFE2E8F0),
                                             ),
-                                          )
-                                          .toList(),
-                                      onChanged: (value) {
-                                        if (value != null) {
-                                          _changeItemsPerPage(value);
-                                        }
-                                      },
-                                    ),
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<int>(
+                                              value: itemsPerPage,
+                                              dropdownColor: Colors.white,
+                                              style: const TextStyle(
+                                                fontSize: 13,
+                                                color: Color(0xFF1E293B),
+                                              ),
+                                              items: [5, 10, 20, 50]
+                                                  .map(
+                                                    (e) => DropdownMenuItem(
+                                                      value: e,
+                                                      child: Text(
+                                                        e.toString(),
+                                                      ),
+                                                    ),
+                                                  )
+                                                  .toList(),
+                                              onChanged: (value) {
+                                                if (value != null) {
+                                                  _changeItemsPerPage(value);
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const Text(
+                                        " data",
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Color(0xFF64748B),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                const Text(
-                                  " data",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: Color(0xFF64748B),
+                                  
+                                  const SizedBox(height: 12),
+                                  
+                                  // Page navigation
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      IconButton(
+                                        onPressed: currentPage > 1 ? () => _changePage(currentPage - 1) : null,
+                                        icon: const Icon(
+                                          Icons.chevron_left,
+                                          color: Color(0xFF64748B),
+                                        ),
+                                        iconSize: 20,
+                                        style: IconButton.styleFrom(
+                                          backgroundColor: const Color(0xFFF8FAFC),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                        disabledColor: Colors.grey.shade300,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        "Hal. $currentPage dari $totalPages",
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Color(0xFF64748B),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      IconButton(
+                                        onPressed: currentPage < totalPages ? () => _changePage(currentPage + 1) : null,
+                                        icon: const Icon(
+                                          Icons.chevron_right,
+                                          color: Color(0xFF64748B),
+                                        ),
+                                        iconSize: 20,
+                                        style: IconButton.styleFrom(
+                                          backgroundColor: const Color(0xFFF8FAFC),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                        disabledColor: Colors.grey.shade300,
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                IconButton(
-                                  onPressed: currentPage > 1 ? () => _changePage(currentPage - 1) : null,
-                                  icon: const Icon(
-                                    Icons.chevron_left,
-                                    color: Color(0xFF64748B),
+                                ],
+                              ),
+                            );
+                          } else {
+                            // Large screen - horizontal layout
+                            return Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
                                   ),
-                                  iconSize: 20,
-                                  style: IconButton.styleFrom(
-                                    backgroundColor: const Color(0xFFF8FAFC),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        "Tampilkan ",
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Color(0xFF64748B),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: const Color(0xFFE2E8F0),
+                                          ),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<int>(
+                                            value: itemsPerPage,
+                                            dropdownColor: Colors.white,
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                              color: Color(0xFF1E293B),
+                                            ),
+                                            items: [5, 10, 20, 50]
+                                                .map(
+                                                  (e) => DropdownMenuItem(
+                                                    value: e,
+                                                    child: Text(
+                                                      e.toString(),
+                                                    ),
+                                                  ),
+                                                )
+                                                .toList(),
+                                            onChanged: (value) {
+                                              if (value != null) {
+                                                _changeItemsPerPage(value);
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                      const Text(
+                                        " data",
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Color(0xFF64748B),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  disabledColor: Colors.grey.shade300,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  "Hal. $currentPage dari $totalPages",
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xFF64748B),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        onPressed: currentPage > 1 ? () => _changePage(currentPage - 1) : null,
+                                        icon: const Icon(
+                                          Icons.chevron_left,
+                                          color: Color(0xFF64748B),
+                                        ),
+                                        iconSize: 20,
+                                        style: IconButton.styleFrom(
+                                          backgroundColor: const Color(0xFFF8FAFC),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                        disabledColor: Colors.grey.shade300,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        "Hal. $currentPage dari $totalPages",
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Color(0xFF64748B),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      IconButton(
+                                        onPressed: currentPage < totalPages ? () => _changePage(currentPage + 1) : null,
+                                        icon: const Icon(
+                                          Icons.chevron_right,
+                                          color: Color(0xFF64748B),
+                                        ),
+                                        iconSize: 20,
+                                        style: IconButton.styleFrom(
+                                          backgroundColor: const Color(0xFFF8FAFC),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                        disabledColor: Colors.grey.shade300,
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                const SizedBox(width: 8),
-                                IconButton(
-                                  onPressed: currentPage < totalPages ? () => _changePage(currentPage + 1) : null,
-                                  icon: const Icon(
-                                    Icons.chevron_right,
-                                    color: Color(0xFF64748B),
-                                  ),
-                                  iconSize: 20,
-                                  style: IconButton.styleFrom(
-                                    backgroundColor: const Color(0xFFF8FAFC),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  disabledColor: Colors.grey.shade300,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
+                                ],
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                  ],
                 ),
-            ],
-          ),
-        ),
-      ),
+              ),
+            ),
     );
   }
   
@@ -1988,7 +2016,6 @@ class _ErmBedahSentralPageState extends State<ErmBedahSentralPage> {
     });
   }
 }
-
   void _clearAllFilters() {
   setState(() {
     searchController.clear();
@@ -2064,14 +2091,12 @@ class _ErmBedahSentralPageState extends State<ErmBedahSentralPage> {
     );
   }
 }
-
 class PatientCard extends StatelessWidget {
   final Map<String, dynamic> patient;
   const PatientCard({
     super.key,
     required this.patient,
   });
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -2112,7 +2137,6 @@ class PatientCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 16),
-
                 // Center - Patient Info + Blue Tags
                 Expanded(
                   child: Column(
@@ -2151,7 +2175,6 @@ class PatientCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-
                       // Blue tags section (responsive)
                       Wrap(
                         spacing: 8,
@@ -2168,7 +2191,6 @@ class PatientCard extends StatelessWidget {
                     ],
                   ),
                 ),
-
                 // Right side - Status (BPJS/UMUM) + Queue number
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -2223,9 +2245,7 @@ class PatientCard extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 26),
-
             // Menu buttons with checkmark ALL
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -2237,9 +2257,7 @@ class PatientCard extends StatelessWidget {
                 _buildMenuButton("Obat", Colors.orange, true),
               ],
             ),
-
             const SizedBox(height: 16),
-
             // Doctor info and date
             Row(
               children: [
@@ -2269,7 +2287,6 @@ class PatientCard extends StatelessWidget {
       ),
     );
   }
-
   // Function to determine font size based on queue number  
   double _getQueueFontSize(int queueNumber) {
     if (queueNumber < 10) {
@@ -2280,7 +2297,6 @@ class PatientCard extends StatelessWidget {
       return 28.0; // 3+ digits
     }
   }
-
   // Blue Tag Builder
   Widget _buildTag(String text) {
     return Container(
@@ -2312,7 +2328,6 @@ class PatientCard extends StatelessWidget {
       ),
     );
   }
-
   // Menu Button Builder
   Widget _buildMenuButton(String text, Color color, bool hasCheckmark) {
     return Row(
@@ -2343,8 +2358,6 @@ class PatientCard extends StatelessWidget {
     );
   }
 }
-
-
 // Halaman Riwayat Pasien
 class HistoryPage extends StatefulWidget {
   final List<Map<String, dynamic>> historyPatients;
@@ -2352,11 +2365,9 @@ class HistoryPage extends StatefulWidget {
     super.key,
     required this.historyPatients,
   });
-
   @override
   State<HistoryPage> createState() => _HistoryPageState();
 }
-
 class _HistoryPageState extends State<HistoryPage> {
   // Pagination state
   int currentPage = 1;
@@ -2624,6 +2635,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton<int>(
                                         value: itemsPerPage,
+                                        dropdownColor: Colors.white,
                                         style: const TextStyle(
                                           fontSize: 13,
                                           color: Color(0xFF1E293B),
@@ -2748,6 +2760,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton<int>(
                                       value: itemsPerPage,
+                                      dropdownColor: Colors.white,
                                       style: const TextStyle(
                                         fontSize: 13,
                                         color: Color(0xFF1E293B),
@@ -2831,6 +2844,1072 @@ class _HistoryPageState extends State<HistoryPage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+// Halaman Template Farmasi
+class PharmacyTemplatePage extends StatefulWidget {
+  const PharmacyTemplatePage({super.key});
+
+  @override
+  State<PharmacyTemplatePage> createState() => _PharmacyTemplatePageState();
+}
+
+class _PharmacyTemplatePageState extends State<PharmacyTemplatePage> {
+  // Data template farmasi
+  final List<Map<String, dynamic>> templates = [
+    {
+      "no": 1,
+      "namaResep": "Test",
+      "diagnosis": "Testing",
+      "instalasi": "Depo Rawat Inap",
+      "namaUnitPelayanan": "GINJAL - HIPERTENSI",
+      "ruangan": "Ruangan 1",
+      "depo": "Depo Rawat Inap",
+      "keterangan": "Testing",
+    },
+    {
+      "no": 2,
+      "namaResep": "Paracetamol 500mg",
+      "diagnosis": "Demam",
+      "instalasi": "Depo Rawat Jalan",
+      "namaUnitPelayanan": "UMUM",
+      "ruangan": "Poliklinik",
+      "depo": "Depo Rawat Jalan",
+      "keterangan": "3x1 tablet",
+    },
+    {
+      "no": 3,
+      "namaResep": "Amoxicillin 500mg",
+      "diagnosis": "Infeksi Saluran Pernafasan",
+      "instalasi": "Depo Rawat Inap",
+      "namaUnitPelayanan": "PARU",
+      "ruangan": "Ruangan 2",
+      "depo": "Depo Rawat Inap",
+      "keterangan": "3x1 tablet selama 7 hari",
+    },
+  ];
+
+  // Search controller
+  TextEditingController searchController = TextEditingController();
+  
+  // Form controllers untuk tambah template
+  TextEditingController namaResepController = TextEditingController();
+  TextEditingController diagnosisController = TextEditingController();
+  TextEditingController instalasiController = TextEditingController();
+  TextEditingController namaUnitPelayananController = TextEditingController();
+  TextEditingController ruanganController = TextEditingController();
+  TextEditingController depoController = TextEditingController();
+  TextEditingController keteranganController = TextEditingController();
+
+  // Pagination state
+  int currentPage = 1;
+  int itemsPerPage = 10;
+
+  // Get filtered templates based on search
+  List<Map<String, dynamic>> get filteredTemplates {
+    if (searchController.text.isEmpty) {
+      return templates;
+    }
+    
+    String searchText = searchController.text.toLowerCase();
+    return templates.where((template) {
+      return template['namaResep'].toString().toLowerCase().contains(searchText) ||
+             template['diagnosis'].toString().toLowerCase().contains(searchText) ||
+             template['instalasi'].toString().toLowerCase().contains(searchText) ||
+             template['namaUnitPelayanan'].toString().toLowerCase().contains(searchText) ||
+             template['ruangan'].toString().toLowerCase().contains(searchText) ||
+             template['depo'].toString().toLowerCase().contains(searchText) ||
+             template['keterangan'].toString().toLowerCase().contains(searchText);
+    }).toList();
+  }
+
+  // Get paginated templates
+  List<Map<String, dynamic>> get paginatedTemplates {
+    final startIndex = (currentPage - 1) * itemsPerPage;
+    final endIndex = startIndex + itemsPerPage;
+    
+    if (startIndex >= filteredTemplates.length) {
+      return [];
+    }
+    
+    return filteredTemplates.sublist(
+      startIndex,
+      endIndex.clamp(0, filteredTemplates.length),
+    );
+  }
+
+  // Get total pages
+  int get totalPages {
+    return (filteredTemplates.length / itemsPerPage).ceil();
+  }
+
+  // Handle page change
+  void _changePage(int newPage) {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setState(() {
+        currentPage = newPage;
+      });
+    }
+  }
+
+  // Handle items per page change
+  void _changeItemsPerPage(int newValue) {
+    setState(() {
+      itemsPerPage = newValue;
+      currentPage = 1; // Reset to first page when changing items per page
+    });
+  }
+
+  // Reset form fields
+  void _resetForm() {
+    namaResepController.clear();
+    diagnosisController.clear();
+    instalasiController.clear();
+    namaUnitPelayananController.clear();
+    ruanganController.clear();
+    depoController.clear();
+    keteranganController.clear();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header dengan judul
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1E40AF),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    MdiIcons.package,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  "Template Farmasi",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E293B),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            // Search box dan tombol Tambah Template
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      hintText: "Cari Template",
+                      hintStyle: TextStyle(
+                        color: Colors.grey[500],
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Colors.grey[600],
+                      ),
+                      suffixIcon: searchController.text.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(
+                                Icons.clear,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  searchController.clear();
+                                currentPage = 1;
+                                });
+                              },
+                            )
+                          : null,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Colors.grey[300]!,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Colors.grey[300]!,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: Color(0xFF1E40AF),
+                          width: 2,
+                        ),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        currentPage = 1; // Reset to first page when searching
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(width: 16),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    _showAddTemplateDialog(context);
+                  },
+                  icon: const Icon(Icons.add),
+                  label: const Text("Tambah Template"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1E40AF),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            // Tabel template
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: DataTable(
+                  columns: const [
+                    DataColumn(label: Text('No')),
+                    DataColumn(label: Text('Nama Resep')),
+                    DataColumn(label: Text('Diagnosis')),
+                    DataColumn(label: Text('Instalasi')),
+                    DataColumn(label: Text('Nama Unit Pelayanan')),
+                    DataColumn(label: Text('Ruangan')),
+                    DataColumn(label: Text('Depo')),
+                    DataColumn(label: Text('Keterangan')),
+                    DataColumn(label: Text('Aksi')),
+                  ],
+                  rows: paginatedTemplates.map((template) {
+                    return DataRow(
+                      cells: [
+                        DataCell(Text(template['no'].toString())),
+                        DataCell(Text(template['namaResep'])),
+                        DataCell(Text(template['diagnosis'])),
+                        DataCell(Text(template['instalasi'])),
+                        DataCell(Text(template['namaUnitPelayanan'])),
+                        DataCell(Text(template['ruangan'])),
+                        DataCell(Text(template['depo'])),
+                        DataCell(Text(template['keterangan'])),
+                        DataCell(
+                          ElevatedButton(
+                            onPressed: () {
+                              // Aksi untuk deskripsi order
+                              _showOrderDescription(context, template);
+                            },
+                            child: const Text("Deskripsi Order"),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF1E40AF),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              textStyle: const TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Pagination
+            LayoutBuilder(
+              builder: (context, constraints) {
+                // Responsive pagination
+                if (constraints.maxWidth < 600) {
+                  // Small screen - vertical layout
+                  return Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        // Items per row
+                        Row(
+                          children: [
+                            const Text(
+                              "Tampilkan ",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Color(0xFF64748B),
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: const Color(0xFFE2E8F0),
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<int>(
+                                    value: itemsPerPage,
+                                    dropdownColor: Colors.white,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Color(0xFF1E293B),
+                                    ),
+                                    items: [5, 10, 20, 50]
+                                        .map(
+                                          (e) => DropdownMenuItem(
+                                            value: e,
+                                            child: Text(
+                                              e.toString(),
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        _changeItemsPerPage(value);
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const Text(
+                              " data",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Color(0xFF64748B),
+                              ),
+                            ),
+                          ],
+                        ),
+                        
+                        const SizedBox(height: 12),
+                        
+                        // Page navigation
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              onPressed: currentPage > 1 ? () => _changePage(currentPage - 1) : null,
+                              icon: const Icon(
+                                Icons.chevron_left,
+                                color: Color(0xFF64748B),
+                              ),
+                              iconSize: 20,
+                              style: IconButton.styleFrom(
+                                backgroundColor: const Color(0xFFF8FAFC),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              disabledColor: Colors.grey.shade300,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Hal. $currentPage dari $totalPages",
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF64748B),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              onPressed: currentPage < totalPages ? () => _changePage(currentPage + 1) : null,
+                              icon: const Icon(
+                                Icons.chevron_right,
+                                color: Color(0xFF64748B),
+                              ),
+                              iconSize: 20,
+                              style: IconButton.styleFrom(
+                                backgroundColor: const Color(0xFFF8FAFC),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              disabledColor: Colors.grey.shade300,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  // Large screen - horizontal layout
+                  return Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Text(
+                              "Tampilkan ",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Color(0xFF64748B),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: const Color(0xFFE2E8F0),
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<int>(
+                                  value: itemsPerPage,
+                                  dropdownColor: Colors.white,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: Color(0xFF1E293B),
+                                  ),
+                                  items: [5, 10, 20, 50]
+                                      .map(
+                                        (e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Text(
+                                            e.toString(),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      _changeItemsPerPage(value);
+                                    }
+                                  },
+                                ),
+                              ),
+                            ),
+                            const Text(
+                              " data",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Color(0xFF64748B),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            IconButton(
+                              onPressed: currentPage > 1 ? () => _changePage(currentPage - 1) : null,
+                              icon: const Icon(
+                                Icons.chevron_left,
+                                color: Color(0xFF64748B),
+                              ),
+                              iconSize: 20,
+                              style: IconButton.styleFrom(
+                                backgroundColor: const Color(0xFFF8FAFC),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              disabledColor: Colors.grey.shade300,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Hal. $currentPage dari $totalPages",
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF64748B),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              onPressed: currentPage < totalPages ? () => _changePage(currentPage + 1) : null,
+                              icon: const Icon(
+                                Icons.chevron_right,
+                                color: Color(0xFF64748B),
+                              ),
+                              iconSize: 20,
+                              style: IconButton.styleFrom(
+                                backgroundColor: const Color(0xFFF8FAFC),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              disabledColor: Colors.grey.shade300,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Fungsi untuk menampilkan dialog tambah template
+  void _showAddTemplateDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 10,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header dengan warna biru
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF1E40AF),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.medical_services_outlined,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                    const SizedBox(width: 16),
+                    const Expanded(
+                      child: Text(
+                        "Tambah Template Farmasi",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        _resetForm();
+                      },
+                      child: const Icon(
+                        Icons.close,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // Konten form
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildTextField(
+                        controller: namaResepController,
+                        labelText: "Nama Resep",
+                        icon: Icons.medication,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildTextField(
+                        controller: diagnosisController,
+                        labelText: "Diagnosis",
+                        icon: Icons.healing,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildTextField(
+                        controller: instalasiController,
+                        labelText: "Instalasi",
+                        icon: Icons.local_hospital,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildTextField(
+                        controller: namaUnitPelayananController,
+                        labelText: "Nama Unit Pelayanan",
+                        icon: Icons.business,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildTextField(
+                        controller: ruanganController,
+                        labelText: "Ruangan",
+                        icon: Icons.meeting_room,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildTextField(
+                        controller: depoController,
+                        labelText: "Depo",
+                        icon: Icons.inventory_2,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildTextField(
+                        controller: keteranganController,
+                        labelText: "Keterangan",
+                        icon: Icons.description,
+                        maxLines: 3,
+                      ),
+                    ],
+                  ),
+                ),
+              ),              
+              // Tombol aksi dengan warna biru
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _resetForm();
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: const Color(0xFF1E40AF),
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: const BorderSide(color: Color(0xFF1E40AF)),
+                        ),
+                      ),
+                      child: const Text(
+                        "Batal",
+                        style: TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF1E40AF)),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_validateForm()) {
+                          _addTemplate();
+                          Navigator.of(context).pop();
+                          _resetForm();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: const [
+                                  Icon(Icons.check_circle, color: Colors.white),
+                                  SizedBox(width: 8),
+                                  Text('Template farmasi berhasil ditambahkan'),
+                                ],
+                              ),
+                              backgroundColor: const Color(0xFF1E40AF),
+                            ),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1E40AF),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        elevation: 3,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Text(
+                        "Simpan",
+                        style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+// Helper method untuk membangun TextField dengan ikon dan warna biru
+Widget _buildTextField({
+  required TextEditingController controller,
+  required String labelText,
+  required IconData icon,
+  int maxLines = 1,
+}) {
+  return TextFormField(
+    controller: controller,
+    maxLines: maxLines,
+    decoration: InputDecoration(
+      labelText: labelText,
+      prefixIcon: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Icon(
+          icon,
+          color: const Color(0xFF1E40AF),
+        ),
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Colors.grey),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Colors.grey.shade400),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Color(0xFF1E40AF), width: 2),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      labelStyle: TextStyle(
+        color: Colors.grey.shade700,
+        fontWeight: FontWeight.w500,
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Colors.red, width: 2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Colors.red),
+      ),
+    ),
+    style: const TextStyle(fontSize: 16),
+  );
+}
+
+  // Validasi form
+  bool _validateForm() {
+    return namaResepController.text.isNotEmpty &&
+           diagnosisController.text.isNotEmpty &&
+           instalasiController.text.isNotEmpty &&
+           namaUnitPelayananController.text.isNotEmpty &&
+           ruanganController.text.isNotEmpty &&
+           depoController.text.isNotEmpty &&
+           keteranganController.text.isNotEmpty;
+  }
+
+  // Tambah template baru
+  void _addTemplate() {
+    final newTemplate = {
+      "no": templates.length + 1,
+      "namaResep": namaResepController.text,
+      "diagnosis": diagnosisController.text,
+      "instalasi": instalasiController.text,
+      "namaUnitPelayanan": namaUnitPelayananController.text,
+      "ruangan": ruanganController.text,
+      "depo": depoController.text,
+      "keterangan": keteranganController.text,
+    };
+    
+    setState(() {
+      templates.add(newTemplate);
+      currentPage = 1; // Reset to first page to show the new template
+    });
+  }
+
+  // Fungsi untuk menampilkan deskripsi order
+  void _showOrderDescription(BuildContext context, Map<String, dynamic> template) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 10,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header dengan warna biru
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF1E40AF),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.description_outlined,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        "Deskripsi Order - ${template['namaResep']}",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Icon(
+                        Icons.close,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // Konten detail
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildDetailRow(
+                        "Nama Resep", 
+                        template['namaResep'] ?? 'Tidak tersedia',
+                        Icons.medication,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildDetailRow(
+                        "Diagnosis", 
+                        template['diagnosis'] ?? 'Tidak tersedia',
+                        Icons.healing,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildDetailRow(
+                        "Instalasi", 
+                        template['instalasi'] ?? 'Tidak tersedia',
+                        Icons.local_hospital,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildDetailRow(
+                        "Nama Unit Pelayanan", 
+                        template['namaUnitPelayanan'] ?? 'Tidak tersedia',
+                        Icons.business,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildDetailRow(
+                        "Ruangan", 
+                        template['ruangan'] ?? 'Tidak tersedia',
+                        Icons.meeting_room,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildDetailRow(
+                        "Depo", 
+                        template['depo'] ?? 'Tidak tersedia',
+                        Icons.inventory_2,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildDetailRow(
+                        "Keterangan", 
+                        template['keterangan'] ?? 'Tidak tersedia',
+                        Icons.description,
+                        isMultiline: true,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // Tombol aksi
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: const Color(0xFF1E40AF),
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: const BorderSide(color: Color(0xFF1E40AF)),
+                        ),
+                      ),
+                      child: const Text(
+                        "Tutup",
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              children: [
+                                const Icon(Icons.check_circle, color: Colors.white),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text('Template "${template['namaResep']}" telah dipilih'),
+                                ),
+                              ],
+                            ),
+                            backgroundColor: const Color(0xFF1E40AF),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1E40AF),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        elevation: 3,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Text(
+                        "Pilih Template",
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+// Helper method untuk menampilkan baris detail dengan ikon
+  Widget _buildDetailRow(String label, String value, IconData icon, {bool isMultiline = false}) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        crossAxisAlignment: isMultiline ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E40AF).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              color: const Color(0xFF1E40AF),
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: Colors.grey.shade700,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
