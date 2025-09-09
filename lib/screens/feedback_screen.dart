@@ -4,8 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 
-/// Data model class for a single feedback item.
-/// This makes the code more type-safe and readable.
+
 class FeedbackItem {
   final String id;
   final String name;
@@ -74,7 +73,6 @@ class _FeedbackListState extends State<FeedbackList> {
           hasError = true;
           loading = false;
         });
-        // Use a SnackBar for a non-disruptive error message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -143,6 +141,13 @@ class _FeedbackListState extends State<FeedbackList> {
         centerTitle: true,
         backgroundColor: isDarkMode ? const Color(0xFF0F172A) : Colors.white,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         actions: [
           IconButton(
             icon: Icon(
