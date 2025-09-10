@@ -14,7 +14,6 @@ class _PasienSelectionPageState extends State<PasienSelectionPage> {
   List<Pasien> pasienList = [];
   bool isLoading = true;
 
-  // baseUrl server kamu (ubah sesuai backend)
   final String baseUrl = "http://192.168.1.38:8080/";
 
   @override
@@ -25,7 +24,7 @@ class _PasienSelectionPageState extends State<PasienSelectionPage> {
 
   Future<void> _loadPasienList() async {
     try {
-      final data = await PasienService.getAllPasien(); // ✅ ambil semua pasien
+      final data = await PasienService.getAllPasien();
       setState(() {
         pasienList = data;
         isLoading = false;

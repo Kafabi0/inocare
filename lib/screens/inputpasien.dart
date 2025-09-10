@@ -29,8 +29,8 @@ class _InputPasienPageState extends State<InputPasienPage> {
 
   // Options untuk jenis kelamin
   final List<Map<String, dynamic>> jenisKelaminOptions = [
-    {'value': 'L', 'label': 'Laki-laki', 'icon': Icons.male},
-    {'value': 'P', 'label': 'Perempuan', 'icon': Icons.female},
+    {'value': 'Laki-laki', 'label': 'Laki-laki', 'icon': Icons.male},
+    {'value': 'Perempuan', 'label': 'Perempuan', 'icon': Icons.female},
   ];
 
   @override
