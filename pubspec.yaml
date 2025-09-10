@@ -91,6 +91,7 @@ flutter:
     - assets/puskesmas/
     - assets/klinik/
     - assets/fonts/
+    - assets/
     # - assets/images/ppp.png
 
   # The following line ensures that the Material Icons font is

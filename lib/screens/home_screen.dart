@@ -17,6 +17,7 @@ import 'package:inocare/screens/inputpasien.dart';
 import 'package:inocare/screens/kasir_screen.dart';
 import 'package:inocare/screens/manajemen_bed.dart';
 import 'package:inocare/screens/medical_equipment.dart';
+import 'package:inocare/screens/pasien_profile_page.dart';
 import 'package:inocare/screens/patient_records_screen.dart';
 import 'package:inocare/screens/patientmonitoring_screen.dart';
 import 'package:inocare/screens/pegawai_screen.dart';
@@ -31,6 +32,7 @@ import '../screens/appointment_screen.dart';
 import '../screens/prescription_screen.dart';
 import '../data/appointment_data.dart';
 import '../screens/casemix.dart';
+import 'pilihpasien.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -46,8 +48,9 @@ class _HomeScreenState extends State<HomeScreen>
   late AnimationController _fadeController;
 
   String _searchQuery = "";
-  final TextEditingController _searchController = TextEditingController(); 
+  final TextEditingController _searchController = TextEditingController();
 
+  int? selectedPasienId;
 
   @override
   void initState() {
@@ -70,13 +73,14 @@ class _HomeScreenState extends State<HomeScreen>
       vsync: this,
       duration: const Duration(milliseconds: 400),
     );
+    selectedPasienId = 1;
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
     _fadeController.dispose();
-    _searchController.dispose(); 
+    _searchController.dispose();
 
     super.dispose();
   }
@@ -178,18 +182,19 @@ class _HomeScreenState extends State<HomeScreen>
                 decoration: InputDecoration(
                   hintText: "Search menu...",
                   prefixIcon: const Icon(Icons.search, color: Colors.white),
-                  suffixIcon: _searchQuery.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.close, color: Colors.white),
-                          onPressed: () {
-                            setState(() {
-                              _searchQuery = "";
-                              _searchController.clear();
-                            });
-                            FocusScope.of(context).unfocus();
-                          },
-                        )
-                      : null,
+                  suffixIcon:
+                      _searchQuery.isNotEmpty
+                          ? IconButton(
+                            icon: const Icon(Icons.close, color: Colors.white),
+                            onPressed: () {
+                              setState(() {
+                                _searchQuery = "";
+                                _searchController.clear();
+                              });
+                              FocusScope.of(context).unfocus();
+                            },
+                          )
+                          : null,
 
                   filled: true,
                   fillColor: Colors.blue.shade600,
@@ -351,7 +356,7 @@ class _HomeScreenState extends State<HomeScreen>
                               ),
                             );
                             break;
-                            case 'Tugas Transaksi':
+                          case 'Tugas Transaksi':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -359,7 +364,7 @@ class _HomeScreenState extends State<HomeScreen>
                               ),
                             );
                             break;
-                            case 'Tugas Chart':
+                          case 'Tugas Chart':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -367,7 +372,7 @@ class _HomeScreenState extends State<HomeScreen>
                               ),
                             );
                             break;
-                            case 'Tugas Pendaftaran':
+                          case 'Tugas Pendaftaran':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -383,6 +388,15 @@ class _HomeScreenState extends State<HomeScreen>
                               ),
                             );
                             break;
+                          case 'Pengguna Pasien':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const PasienSelectionPage(),
+                              ),
+                            );
+                            break;
+
                           case 'ERM Perawat':
                             Navigator.push(
                               context,
@@ -431,13 +445,13 @@ class _HomeScreenState extends State<HomeScreen>
                               ),
                             );
                           case 'ERM Bedah Sentral':
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const ErmBedahSentralPage(),
-                            ),
-                          );
-                          break;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const ErmBedahSentralPage(),
+                              ),
+                            );
+                            break;
                           case 'Casemix':
                             Navigator.push(
                               context,
@@ -446,7 +460,7 @@ class _HomeScreenState extends State<HomeScreen>
                               ),
                             );
                             break;
-                            case 'Kasir':
+                          case 'Kasir':
                             Navigator.push(
                               context,
                               MaterialPageRoute(
