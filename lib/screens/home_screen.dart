@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inocare/screens/adminlayanan_screen.dart';
 import 'package:inocare/screens/billingpayment_screen.dart';
+import 'package:inocare/screens/chart.dart';
 import 'package:inocare/screens/dashboard.dart';
 import 'package:inocare/screens/diklat_penelitian.dart';
 import 'package:inocare/screens/emergency_protocols_screen.dart';
@@ -11,6 +12,8 @@ import 'package:inocare/screens/farmasi_screen.dart';
 import 'package:inocare/screens/feedback_screen.dart';
 import 'package:inocare/screens/healthanalytics_screen.dart';
 import 'package:inocare/screens/healthfacilities_screen.dart';
+import 'package:inocare/screens/input_transaksi_page.dart';
+import 'package:inocare/screens/inputpasien.dart';
 import 'package:inocare/screens/kasir_screen.dart';
 import 'package:inocare/screens/manajemen_bed.dart';
 import 'package:inocare/screens/medical_equipment.dart';
@@ -345,6 +348,30 @@ class _HomeScreenState extends State<HomeScreen>
                               context,
                               MaterialPageRoute(
                                 builder: (_) => const StaffDirectory(),
+                              ),
+                            );
+                            break;
+                            case 'Tugas Transaksi':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const InputTransaksiPage(),
+                              ),
+                            );
+                            break;
+                            case 'Tugas Chart':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const TransPage(),
+                              ),
+                            );
+                            break;
+                            case 'Tugas Pendaftaran':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const InputPasienPage(),
                               ),
                             );
                             break;

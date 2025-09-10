@@ -58,5 +58,7 @@ final List<Map<String, dynamic>> quickAccessItems = [
   {'label': 'Dashboard & Reporting', 'icon': MdiIcons.chartSankey, 'color': Colors.orange},
   {'label': 'Remunerasi', 'icon': MdiIcons.cash, 'color': Colors.orange},
   {'label': 'Gizi', 'icon': MdiIcons.foodVariant, 'color': Colors.orange},
-  // {'label': 'Farmasi', 'icon': MdiIcons.pillMultiple, 'color': Colors.orange},
+  {'label': 'Tugas Chart', 'icon': MdiIcons.chartDonut, 'color': Colors.orange},
+  {'label': 'Tugas Transaksi', 'icon': MdiIcons.cashRegister, 'color': Colors.orange},
+  {'label': 'Tugas Pendaftaran', 'icon': MdiIcons.fileSign, 'color': Colors.orange},
 ];

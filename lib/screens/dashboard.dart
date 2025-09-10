@@ -973,69 +973,6 @@ class DashboardReporting extends StatelessWidget {
       ),
     ];
   }
-
-  // Widget _buildMenuGrid(List<Map<String, dynamic>> menuItems, bool isDesktop, bool isTablet) {
-  //   return GridView.builder(
-  //     shrinkWrap: true,
-  //     physics: const NeverScrollableScrollPhysics(),
-  //     itemCount: menuItems.length,
-  //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-  //       crossAxisCount: isDesktop ? 2 : isTablet ? 3 : 2,
-  //       crossAxisSpacing: isDesktop ? 20 : 16,
-  //       mainAxisSpacing: isDesktop ? 20 : 16,
-  //       childAspectRatio: isDesktop ? 1.4 : 1.2,
-  //     ),
-  //     itemBuilder: (context, index) {
-  //       final item = menuItems[index];
-  //       return GestureDetector(
-  //         onTap: () {
-  //           Navigator.push(
-  //             context,
-  //             MaterialPageRoute(builder: (_) => item["page"]),
-  //           );
-  //         },
-  //         child: Container(
-  //           decoration: BoxDecoration(
-  //             color: Colors.white,
-  //             borderRadius: BorderRadius.circular(16),
-  //             boxShadow: [
-  //               BoxShadow(
-  //                 color: Colors.black12,
-  //                 blurRadius: 6,
-  //                 offset: const Offset(2, 4),
-  //               ),
-  //             ],
-  //           ),
-  //           child: Column(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             children: [
-  //               CircleAvatar(
-  //                 radius: isDesktop ? 32 : isTablet ? 30 : 28,
-  //                 // backgroundColor: item["color"].withOpacity(0.1),
-  //                 child: Icon(
-  //                   item["icon"],
-  //                   color: item["color"],
-  //                   size: isDesktop ? 36 : isTablet ? 34 : 30
-  //                 ),
-  //               ),
-  //               SizedBox(height: isDesktop ? 16 : 12),
-  //               Text(
-  //                 item["title"],
-  //                 style: TextStyle(
-  //                   fontSize: isDesktop ? 16 : isTablet ? 15 : 14,
-  //                   fontWeight: FontWeight.w600,
-  //                   color: Colors.black87,
-  //                 ),
-  //                 textAlign: TextAlign.center,
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
   Widget _buildLegendItem(String label, Color color, bool isTablet) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: isTablet ? 6 : 4),
