@@ -58,12 +58,9 @@ class _InputPasienPageState extends State<InputPasienPage> {
         });
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Error picking image: $e"),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
+      _showSnackBar(
+        "Error picking image: $e",
+        Colors.red,
       );
     }
   }
@@ -77,81 +74,104 @@ class _InputPasienPageState extends State<InputPasienPage> {
     }
   }
 
+  void _showSnackBar(String message, Color backgroundColor) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: const TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 14,
+          ),
+        ),
+        backgroundColor: backgroundColor,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: const EdgeInsets.all(16),
+      ),
+    );
+  }
+
   void _showImagePickerBottomSheet() {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (BuildContext context) {
         return Container(
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
             ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Handle bar
-              Container(
-                width: 40,
-                height: 4,
-                margin: const EdgeInsets.only(top: 12, bottom: 20),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(2),
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Handle bar
+                Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(top: 12, bottom: 24),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
-              ),
 
-              // Header
-              const Text(
-                "Pilih Foto Pasien",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                // Header
+                const Text(
+                  "Pilih Foto Pasien",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
-              // Options
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _buildImageSourceOption(
-                        icon: Icons.camera_alt,
-                        label: "Kamera",
-                        onTap: () async {
-                          Navigator.pop(context);
-                          await _requestPermission();
-                          _pickImage(ImageSource.camera);
-                        },
-                        color: Colors.blue,
+                // Options
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _buildImageSourceOption(
+                          icon: Icons.camera_alt_rounded,
+                          label: "Kamera",
+                          onTap: () async {
+                            Navigator.pop(context);
+                            await _requestPermission();
+                            _pickImage(ImageSource.camera);
+                          },
+                          color: Colors.blue.shade600,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _buildImageSourceOption(
-                        icon: Icons.photo_library,
-                        label: "Galeri",
-                        onTap: () async {
-                          Navigator.pop(context);
-                          await _requestPermission();
-                          _pickImage(ImageSource.gallery);
-                        },
-                        color: Colors.green,
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildImageSourceOption(
+                          icon: Icons.photo_library_rounded,
+                          label: "Galeri",
+                          onTap: () async {
+                            Navigator.pop(context);
+                            await _requestPermission();
+                            _pickImage(ImageSource.gallery);
+                          },
+                          color: Colors.blue.shade600,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 30),
-            ],
+                const SizedBox(height: 32),
+              ],
+            ),
           ),
         );
       },
@@ -164,33 +184,46 @@ class _InputPasienPageState extends State<InputPasienPage> {
     required VoidCallback onTap,
     required Color color,
   }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.3)),
-        ),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-              child: Icon(icon, color: Colors.white, size: 24),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              label,
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: color.withOpacity(0.2)),
+          ),
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: color.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Icon(icon, color: Colors.white, size: 28),
               ),
-            ),
-          ],
+              const SizedBox(height: 12),
+              Text(
+                label,
+                style: TextStyle(
+                  color: color,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -208,10 +241,15 @@ class _InputPasienPageState extends State<InputPasienPage> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: Colors.purple.shade600,
+              primary: Colors.blue.shade600,
               onPrimary: Colors.white,
               surface: Colors.white,
               onSurface: Colors.black,
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blue.shade600,
+              ),
             ),
           ),
           child: child!,
@@ -234,25 +272,45 @@ class _InputPasienPageState extends State<InputPasienPage> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.05),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
         inputFormatters: inputFormatters,
         maxLines: maxLines,
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        style: const TextStyle(
+          fontSize: 16, 
+          fontWeight: FontWeight.w500,
+          color: Colors.black87,
+        ),
         decoration: InputDecoration(
           labelText: labelText,
-          labelStyle: TextStyle(color: Colors.grey.shade600),
-          prefixIcon: Icon(icon, color: Colors.grey.shade600),
+          labelStyle: TextStyle(
+            color: Colors.grey.shade600,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+          prefixIcon: Icon(
+            icon, 
+            color: Colors.blue.shade600,
+            size: 22,
+          ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 16,
+            horizontal: 20,
+            vertical: 18,
           ),
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
         ),
         validator: validator,
       ),
@@ -261,23 +319,19 @@ class _InputPasienPageState extends State<InputPasienPage> {
 
   Future<void> _submitPasien() async {
     if (!_formKey.currentState!.validate()) return;
+    
     if (selectedJenisKelamin == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Pilih jenis kelamin terlebih dahulu"),
-          backgroundColor: Colors.orange,
-          behavior: SnackBarBehavior.floating,
-        ),
+      _showSnackBar(
+        "Pilih jenis kelamin terlebih dahulu",
+        Colors.orange.shade600,
       );
       return;
     }
+    
     if (selectedTanggalLahir == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Pilih tanggal lahir terlebih dahulu"),
-          backgroundColor: Colors.orange,
-          behavior: SnackBarBehavior.floating,
-        ),
+      _showSnackBar(
+        "Pilih tanggal lahir terlebih dahulu",
+        Colors.orange.shade600,
       );
       return;
     }
@@ -296,12 +350,9 @@ class _InputPasienPageState extends State<InputPasienPage> {
         foto: selectedImage,
       );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Data pasien berhasil ditambahkan"),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-        ),
+      _showSnackBar(
+        "Data pasien berhasil ditambahkan",
+        Colors.green.shade600,
       );
 
       // Reset form
@@ -316,12 +367,9 @@ class _InputPasienPageState extends State<InputPasienPage> {
         selectedImage = null;
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Gagal menambahkan pasien: $e"),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
+      _showSnackBar(
+        "Gagal menambahkan pasien: $e",
+        Colors.red.shade600,
       );
     } finally {
       setState(() => isLoading = false);
@@ -335,11 +383,25 @@ class _InputPasienPageState extends State<InputPasienPage> {
       appBar: AppBar(
         title: const Text(
           "Input Data Pasien",
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+          style: TextStyle(
+            fontWeight: FontWeight.w700, 
+            fontSize: 22,
+            color: Colors.white,
+          ),
         ),
+        centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+        backgroundColor: Colors.blue.shade600,
+        foregroundColor: Colors.white,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blue.shade700, Colors.blue.shade500],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -349,19 +411,19 @@ class _InputPasienPageState extends State<InputPasienPage> {
             // Header Card
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.purple.shade600, Colors.purple.shade400],
+                  colors: [Colors.blue.shade600, Colors.blue.shade400],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.purple.withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+                    color: Colors.blue.withOpacity(0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
                   ),
                 ],
               ),
@@ -371,53 +433,61 @@ class _InputPasienPageState extends State<InputPasienPage> {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Icon(
-                          Icons.person_add,
+                          Icons.person_add_rounded,
                           color: Colors.white,
-                          size: 24,
+                          size: 28,
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      const Text(
-                        "Data Pasien Baru",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                      const SizedBox(width: 16),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Data Pasien Baru",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              "Lengkapi semua informasi dengan benar",
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Lengkapi semua informasi pasien dengan benar",
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
-                      fontSize: 14,
-                    ),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 28),
 
             // Form Card
             Container(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(28),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
+                    color: Colors.grey.withOpacity(0.08),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
                   ),
                 ],
               ),
@@ -427,79 +497,105 @@ class _InputPasienPageState extends State<InputPasienPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Section: Foto Pasien
-                    const Text(
-                      "Foto Profil",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.camera_alt_rounded,
+                          color: Colors.blue.shade600,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          "Foto Profil",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 20),
                     Center(
                       child: GestureDetector(
                         onTap: _showImagePickerBottomSheet,
                         child: Container(
-                          width: 120,
-                          height: 120,
+                          width: 140,
+                          height: 140,
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(60),
+                            color: Colors.blue.shade50,
+                            borderRadius: BorderRadius.circular(70),
                             border: Border.all(
-                              color: Colors.grey.shade300,
-                              width: 2,
+                              color: Colors.blue.shade200,
+                              width: 3,
                             ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.blue.withOpacity(0.1),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                          child:
-                              selectedImage != null
-                                  ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(58),
-                                    child: Image.file(
-                                      selectedImage!,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                                  : Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.camera_alt_outlined,
-                                        size: 32,
-                                        color: Colors.grey.shade600,
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        "Tambah Foto",
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey.shade600,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
+                          child: selectedImage != null
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(67),
+                                  child: Image.file(
+                                    selectedImage!,
+                                    fit: BoxFit.cover,
                                   ),
+                                )
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.camera_alt_rounded,
+                                      size: 36,
+                                      color: Colors.blue.shade400,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      "Tambah Foto",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.blue.shade600,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                         ),
                       ),
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 36),
 
                     // Section: Data Personal
-                    const Text(
-                      "Data Personal",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.person_rounded,
+                          color: Colors.blue.shade600,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          "Data Personal",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
                     // Nama Lengkap
                     _buildTextFormField(
                       controller: _nameController,
                       labelText: "Nama Lengkap",
-                      icon: Icons.person_outline,
+                      icon: Icons.person_outline_rounded,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return "Nama tidak boleh kosong";
@@ -511,7 +607,7 @@ class _InputPasienPageState extends State<InputPasienPage> {
                       },
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
                     // NIK
                     _buildTextFormField(
@@ -534,149 +630,173 @@ class _InputPasienPageState extends State<InputPasienPage> {
                       },
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
                     // Jenis Kelamin
-                    const Text(
+                    Text(
                       "Jenis Kelamin",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: Colors.grey.shade700,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 12),
                     Row(
-                      children:
-                          jenisKelaminOptions.map((option) {
-                            final isSelected =
-                                selectedJenisKelamin == option['value'];
-                            return Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedJenisKelamin = option['value'];
-                                  });
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.only(
-                                    right: option['value'] == 'L' ? 8 : 0,
-                                    left: option['value'] == 'P' ? 8 : 0,
+                      children: jenisKelaminOptions.map((option) {
+                        final isSelected = selectedJenisKelamin == option['value'];
+                        return Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedJenisKelamin = option['value'];
+                              });
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                right: option['value'] == 'Laki-laki' ? 8 : 0,
+                                left: option['value'] == 'Perempuan' ? 8 : 0,
+                              ),
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? Colors.blue.shade50
+                                    : Colors.grey.shade50,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? Colors.blue.shade400
+                                      : Colors.grey.shade200,
+                                  width: isSelected ? 2 : 1,
+                                ),
+                                boxShadow: isSelected
+                                    ? [
+                                        BoxShadow(
+                                          color: Colors.blue.withOpacity(0.1),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ]
+                                    : null,
+                              ),
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    option['icon'],
+                                    color: isSelected
+                                        ? Colors.blue.shade600
+                                        : Colors.grey.shade500,
+                                    size: 28,
                                   ),
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        isSelected
-                                            ? Colors.purple.shade100
-                                            : Colors.grey.shade50,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color:
-                                          isSelected
-                                              ? Colors.purple.shade300
-                                              : Colors.grey.shade300,
-                                      width: isSelected ? 2 : 1,
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    option['label'],
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: isSelected
+                                          ? Colors.blue.shade700
+                                          : Colors.grey.shade600,
                                     ),
                                   ),
-                                  child: Column(
-                                    children: [
-                                      Icon(
-                                        option['icon'],
-                                        color:
-                                            isSelected
-                                                ? Colors.purple.shade600
-                                                : Colors.grey.shade500,
-                                        size: 24,
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        option['label'],
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          color:
-                                              isSelected
-                                                  ? Colors.purple.shade700
-                                                  : Colors.grey.shade600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                ],
                               ),
-                            );
-                          }).toList(),
+                            ),
+                          ),
+                        );
+                      }).toList(),
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
                     // Tanggal Lahir
-                    const Text(
+                    Text(
                       "Tanggal Lahir",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: Colors.grey.shade700,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 12),
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey.shade300),
-                        color: Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.grey.shade200),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.05),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      child: GestureDetector(
-                        onTap: _pickDate,
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.calendar_today_outlined,
-                              color: Colors.grey.shade600,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                selectedTanggalLahir != null
-                                    ? DateFormat(
-                                      'dd MMMM yyyy',
-                                      'id_ID',
-                                    ).format(selectedTanggalLahir!)
-                                    : "Pilih Tanggal Lahir",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color:
-                                      selectedTanggalLahir != null
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: _pickDate,
+                          borderRadius: BorderRadius.circular(16),
+                          child: Padding(
+                            padding: const EdgeInsets.all(18),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.calendar_today_rounded,
+                                  color: Colors.blue.shade600,
+                                  size: 22,
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Text(
+                                    selectedTanggalLahir != null
+                                        ? DateFormat('dd MMMM yyyy', 'id_ID')
+                                            .format(selectedTanggalLahir!)
+                                        : "Pilih Tanggal Lahir",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: selectedTanggalLahir != null
                                           ? Colors.black87
                                           : Colors.grey.shade600,
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                Icon(
+                                  Icons.arrow_drop_down_rounded,
+                                  color: Colors.grey.shade600,
+                                  size: 24,
+                                ),
+                              ],
                             ),
-                            Icon(
-                              Icons.arrow_drop_down,
-                              color: Colors.grey.shade600,
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 32),
 
                     // Section: Informasi Kontak
-                    const Text(
-                      "Informasi Kontak",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.contact_phone_rounded,
+                          color: Colors.blue.shade600,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          "Informasi Kontak",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
                     // Alamat
                     _buildTextFormField(
@@ -695,7 +815,7 @@ class _InputPasienPageState extends State<InputPasienPage> {
                       },
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
                     // No Telepon
                     _buildTextFormField(
@@ -718,7 +838,7 @@ class _InputPasienPageState extends State<InputPasienPage> {
                       },
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
                     // Email
                     _buildTextFormField(
@@ -730,36 +850,35 @@ class _InputPasienPageState extends State<InputPasienPage> {
                         if (value == null || value.trim().isEmpty) {
                           return "Email tidak boleh kosong";
                         }
-                        if (!RegExp(
-                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                        ).hasMatch(value)) {
+                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                            .hasMatch(value)) {
                           return "Format email tidak valid";
                         }
                         return null;
                       },
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 36),
 
                     // Submit Button
                     Container(
                       width: double.infinity,
-                      height: 56,
+                      height: 60,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Colors.purple.shade600,
-                            Colors.purple.shade400,
+                            Colors.blue.shade600,
+                            Colors.blue.shade400,
                           ],
                           begin: Alignment.centerLeft,
                           end: Alignment.centerRight,
                         ),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.purple.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
+                            color: Colors.blue.withOpacity(0.3),
+                            blurRadius: 10,
+                            offset: const Offset(0, 6),
                           ),
                         ],
                       ),
@@ -769,40 +888,39 @@ class _InputPasienPageState extends State<InputPasienPage> {
                           backgroundColor: Colors.transparent,
                           shadowColor: Colors.transparent,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child:
-                            isLoading
-                                ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
+                        child: isLoading
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              )
+                            : const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.save_rounded,
+                                    color: Colors.white,
+                                    size: 22,
+                                  ),
+                                  SizedBox(width: 12),
+                                  Text(
+                                    "Simpan Data Pasien",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w700,
                                     ),
                                   ),
-                                )
-                                : const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.person_add_outlined,
-                                      color: Colors.white,
-                                      size: 20,
-                                    ),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      "Simpan Data Pasien",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                ],
+                              ),
                       ),
                     ),
                   ],

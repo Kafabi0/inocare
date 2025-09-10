@@ -13,42 +13,17 @@ class TransPage extends StatefulWidget {
 
 class _TransPageState extends State<TransPage> with TickerProviderStateMixin {
   List<Pasien> pasienList = [];
+  List<ChartData> allBarChartData = [];
   List<ChartData> barChartData = [];
   List<ChartData> pieChartData = [];
-  List<ChartData> allBarChartData = [];
   bool loading = true;
   int? selectedPasienId;
-  String? selectedMonth;
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
+  String selectedMonth = 'Semua';
 
-  // ===================== MONTH FORMAT =====================
-  String formatMonth(String ym) {
-    final parts = ym.split('-'); // contoh: ["2025", "08"]
-    if (parts.length != 2) return ym;
+  late final AnimationController _animationController;
+  late final Animation<double> _fadeAnimation;
+  late final Animation<Offset> _slideAnimation;
 
-    final year = parts[0];
-    final month = parts[1];
-
-    const monthNames = {
-      "01": "Januari",
-      "02": "Februari",
-      "03": "Maret",
-      "04": "April",
-      "05": "Mei",
-      "06": "Juni",
-      "07": "Juli",
-      "08": "Agustus",
-      "09": "September",
-      "10": "Oktober",
-      "11": "November",
-      "12": "Desember",
-    };
-
-    return "${monthNames[month] ?? ym} $year";
-  }
-
-  // ===================== MONTH LIST =====================
   final List<String> monthList = [
     'Semua',
     'Januari',
@@ -65,32 +40,36 @@ class _TransPageState extends State<TransPage> with TickerProviderStateMixin {
     'Desember',
   ];
 
-  // ===================== MONTH COLORS =====================
   final List<Color> monthColors = [
-    Colors.blue.shade600,
-    Colors.green.shade600,
-    Colors.orange.shade600,
-    Colors.purple.shade600,
-    Colors.red.shade600,
-    Colors.teal.shade600,
-    Colors.amber.shade600,
-    Colors.indigo.shade600,
-    Colors.pink.shade600,
-    Colors.cyan.shade600,
-    Colors.lime.shade600,
-    Colors.brown.shade600,
+    const Color(0xFF6366F1), // Indigo
+    const Color(0xFF10B981), // Emerald
+    const Color(0xFFF59E0B), // Amber
+    const Color(0xFF8B5CF6), // Violet
+    const Color(0xFFEF4444), // Red
+    const Color(0xFF14B8A6), // Teal
+    const Color(0xFFF97316), // Orange
+    const Color(0xFF3B82F6), // Blue
+    const Color(0xFFEC4899), // Pink
+    const Color(0xFF06B6D4), // Cyan
+    const Color(0xFF84CC16), // Lime
+    const Color(0xFFA855F7), // Purple
   ];
 
   @override
   void initState() {
     super.initState();
-    selectedMonth = 'Semua';
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
       vsync: this,
+      duration: const Duration(milliseconds: 1200),
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
     );
     fetchData();
   }
@@ -105,54 +84,37 @@ class _TransPageState extends State<TransPage> with TickerProviderStateMixin {
     setState(() => loading = true);
     try {
       pasienList = await PasienService.getAllPasien();
-
-      final firstValidPasien = pasienList.firstWhere(
-        (p) => p.id > 0,
-        orElse: () => pasienList.isNotEmpty ? pasienList.first : throw Exception("Tidak ada pasien valid"),
-      );
-      selectedPasienId = firstValidPasien.id;
-
-      if (selectedPasienId != null && selectedPasienId! > 0) {
-        await loadChart(selectedPasienId!);
-      }
+      if (pasienList.isNotEmpty) selectedPasienId = pasienList.first.id;
+      if (selectedPasienId != null) await loadChart(selectedPasienId!);
     } catch (e) {
-      debugPrint("Error fetching data: $e");
+      debugPrint("Error: $e");
     }
     setState(() => loading = false);
     _animationController.forward();
   }
 
   Future<void> loadChart(int pasienId) async {
-    try {
-      allBarChartData = await TransaksiService.getBarChart(pasienId);
-      pieChartData = await TransaksiService.getPieChart(pasienId);
-      filterBarChart();
-    } catch (e) {
-      debugPrint("Error fetching chart data: $e");
-    }
+    allBarChartData = await TransaksiService.getBarChart(pasienId);
+    pieChartData = await TransaksiService.getPieChart(pasienId);
+    filterBarChart();
   }
 
-  // ===================== FILTER BAR CHART =====================
   void filterBarChart() {
-    setState(() {
-      if (selectedMonth == null || selectedMonth == 'Semua') {
-        barChartData = allBarChartData;
-      } else {
-        barChartData = allBarChartData.where((data) {
-          final formatted = formatMonth(data.bulan); // contoh: "Agustus 2025"
-          return formatted.startsWith(selectedMonth!);
-        }).toList();
-      }
-    });
+    barChartData =
+        selectedMonth == 'Semua'
+            ? allBarChartData
+            : allBarChartData
+                .where((e) => formatMonth(e.bulan).startsWith(selectedMonth))
+                .toList();
   }
 
-  Future<void> changePasien(int pasienId) async {
+  void changePasien(int pasienId) async {
     setState(() {
       selectedPasienId = pasienId;
+      loading = true;
       barChartData = [];
       pieChartData = [];
       allBarChartData = [];
-      loading = true;
     });
     await loadChart(pasienId);
     setState(() => loading = false);
@@ -161,30 +123,53 @@ class _TransPageState extends State<TransPage> with TickerProviderStateMixin {
   }
 
   void changeMonth(String? month) {
-    if (month != null) {
-      setState(() => selectedMonth = month);
+    if (month == null) return;
+    setState(() {
+      selectedMonth = month;
       filterBarChart();
-      _animationController.reset();
-      _animationController.forward();
-    }
+    });
+    _animationController.reset();
+    _animationController.forward();
   }
 
-  // ===================== GET COLOR =====================
+  String formatMonth(String ym) {
+    final parts = ym.split('-');
+    if (parts.length != 2) return ym;
+    const monthNames = {
+      "01": "Januari",
+      "02": "Februari",
+      "03": "Maret",
+      "04": "April",
+      "05": "Mei",
+      "06": "Juni",
+      "07": "Juli",
+      "08": "Agustus",
+      "09": "September",
+      "10": "Oktober",
+      "11": "November",
+      "12": "Desember",
+    };
+    return "${monthNames[parts[1]] ?? ym} ${parts[0]}";
+  }
+
   Color getMonthColor(String ym) {
     final parts = ym.split('-');
-    if (parts.length != 2) return Colors.blue.shade600;
-    final month = parts[1];
-    int index = int.tryParse(month) ?? 1;
+    if (parts.length != 2) return monthColors[0];
+    int index = int.tryParse(parts[1]) ?? 1;
     return monthColors[(index - 1) % monthColors.length];
   }
 
-  // ===================== WIDGETS =====================
-  Widget _buildStatsCard(String title, String value, IconData icon, Color color) {
+  Widget _buildStatCard({
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color color,
+  }) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [color.withOpacity(0.8), color.withOpacity(0.6)],
+          colors: [color.withOpacity(0.8), color],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -192,7 +177,7 @@ class _TransPageState extends State<TransPage> with TickerProviderStateMixin {
         boxShadow: [
           BoxShadow(
             color: color.withOpacity(0.3),
-            blurRadius: 10,
+            blurRadius: 8,
             offset: const Offset(0, 4),
           ),
         ],
@@ -200,35 +185,22 @@ class _TransPageState extends State<TransPage> with TickerProviderStateMixin {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(icon, color: Colors.white, size: 20),
-              ),
-              Icon(Icons.trending_up, color: Colors.white.withOpacity(0.7), size: 16),
-            ],
-          ),
+          Icon(icon, color: Colors.white, size: 28),
           const SizedBox(height: 12),
           Text(
             value,
             style: const TextStyle(
-              color: Colors.white,
               fontSize: 24,
               fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             title,
             style: TextStyle(
+              fontSize: 14,
               color: Colors.white.withOpacity(0.9),
-              fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -237,30 +209,48 @@ class _TransPageState extends State<TransPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildLegendItem(String month, Color color, int value) {
+  Widget _buildDropdown({
+    required String label,
+    required dynamic value,
+    required List<DropdownMenuItem> items,
+    required ValueChanged onChanged,
+  }) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 12, 
-            height: 12, 
-            decoration: BoxDecoration(
-              color: color, 
-              borderRadius: BorderRadius.circular(2)
-            )
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Text(
-              '${formatMonth(month)} ($value)',
-              style: const TextStyle(
-                fontSize: 12, 
-                fontWeight: FontWeight.w500, 
-                color: Colors.black87
-              ),
-              overflow: TextOverflow.ellipsis,
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey.shade600,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          DropdownButton(
+            value: value,
+            onChanged: onChanged,
+            items: items,
+            isExpanded: true,
+            underline: const SizedBox(),
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.black87,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -270,233 +260,177 @@ class _TransPageState extends State<TransPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    // Calculate statistics
+    final totalTransaksi = barChartData.fold<int>(
+      0,
+      (sum, item) => sum + item.total,
+    );
+    final rataRata =
+        barChartData.isNotEmpty
+            ? (totalTransaksi / barChartData.length).round()
+            : 0;
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         title: const Text(
-          "Dashboard Transaksi", 
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20)
+          "Dashboard Transaksi",
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black87,
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.blue.shade100, 
-              borderRadius: BorderRadius.circular(8)
-            ),
-            child: Icon(Icons.analytics_outlined, color: Colors.blue.shade700, size: 20),
-          ),
-        ],
+        elevation: 0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: Colors.grey.shade200),
+        ),
       ),
-      body: loading
-          ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue)
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    "Memuat data...",
-                    style: TextStyle(color: Colors.grey, fontSize: 14),
-                  ),
-                ],
-              ),
-            )
-          : pasienList.isEmpty
+      body:
+          loading
               ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.person_off_outlined,
-                          size: 48,
-                          color: Colors.grey.shade400,
-                        ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(monthColors[0]),
+                      strokeWidth: 3,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      "Memuat data...",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w500,
                       ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        "Tidak ada data pasien",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black87,
-                        ),
+                    ),
+                  ],
+                ),
+              )
+              : pasienList.isEmpty
+              ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.person_off_outlined,
+                      size: 64,
+                      color: Colors.grey.shade400,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      "Tidak ada data pasien",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.grey.shade600,
+                        fontWeight: FontWeight.w500,
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "Tambahkan pasien terlebih dahulu",
-                        style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-                      ),
-                    ],
-                  ),
-                )
-              : FadeTransition(
+                    ),
+                  ],
+                ),
+              )
+              : SlideTransition(
+                position: _slideAnimation,
+                child: FadeTransition(
                   opacity: _fadeAnimation,
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.all(20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // ==================== HEADER SECTION ====================
+                        // Filter Section
                         Container(
-                          width: double.infinity,
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Colors.blue.shade600, Colors.blue.shade400],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.blue.withOpacity(0.3),
+                                color: Colors.grey.withOpacity(0.1),
                                 blurRadius: 10,
-                                offset: const Offset(0, 4),
+                                offset: const Offset(0, 2),
                               ),
                             ],
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              const Text(
+                                "Filter Data",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
                               Row(
                                 children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: const Icon(
-                                      Icons.dashboard_outlined,
-                                      color: Colors.white,
-                                      size: 24,
+                                  Expanded(
+                                    child: _buildDropdown(
+                                      label: "Pilih Pasien",
+                                      value: selectedPasienId,
+                                      items:
+                                          pasienList.map<DropdownMenuItem<int>>(
+                                            (p) {
+                                              return DropdownMenuItem<int>(
+                                                value: p.id,
+                                                child: Text(p.name),
+                                              );
+                                            },
+                                          ).toList(),
+                                      onChanged: (v) {
+                                        if (v != null) changePasien(v);
+                                      },
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
-                                  const Text(
-                                    "Analytics Dashboard",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: _buildDropdown(
+                                      label: "Filter Bulan",
+                                      value: selectedMonth,
+                                      items:
+                                          monthList
+                                              .map<DropdownMenuItem<String>>((
+                                                m,
+                                              ) {
+                                                return DropdownMenuItem<String>(
+                                                  value: m,
+                                                  child: Text(m),
+                                                );
+                                              })
+                                              .toList(),
+                                      onChanged: (v) {
+                                        if (v != null) changeMonth(v);
+                                      },
                                     ),
                                   ),
                                 ],
-                              ),
-                              const SizedBox(height: 16),
-                              // Dropdown Pasien
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.15),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: Colors.white.withOpacity(0.3)),
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<int>(
-                                    value: selectedPasienId,
-                                    onChanged: (value) {
-                                      if (value != null) changePasien(value);
-                                    },
-                                    dropdownColor: Colors.white,
-                                    icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
-                                    isExpanded: true,
-                                    hint: const Text(
-                                      "Pilih Pasien",
-                                      style: TextStyle(color: Colors.white70),
-                                    ),
-                                    items: pasienList
-                                        .where((p) => p.id > 0)
-                                        .map((p) => DropdownMenuItem(
-                                              value: p.id,
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    width: 8,
-                                                    height: 8,
-                                                    decoration: const BoxDecoration(
-                                                      color: Colors.green,
-                                                      shape: BoxShape.circle,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 12),
-                                                  Expanded(
-                                                    child: Text(
-                                                      p.name,
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight.w500,
-                                                        color: Colors.black87,
-                                                      ),
-                                                      overflow: TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ))
-                                        .toList(),
-                                    selectedItemBuilder: (context) {
-                                      return pasienList
-                                          .where((p) => p.id > 0)
-                                          .map((p) => Row(
-                                                children: [
-                                                  const Icon(Icons.person, color: Colors.white, size: 16),
-                                                  const SizedBox(width: 8),
-                                                  Expanded(
-                                                    child: Text(
-                                                      p.name,
-                                                      style: const TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 16,
-                                                        fontWeight: FontWeight.w500,
-                                                      ),
-                                                      overflow: TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ))
-                                          .toList();
-                                    },
-                                  ),
-                                ),
                               ),
                             ],
                           ),
                         ),
 
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 20),
 
-                        // ==================== STATS CARDS ====================
+                        // Statistics Cards
                         Row(
                           children: [
                             Expanded(
-                              child: _buildStatsCard(
-                                "Total Data",
-                                barChartData.length.toString(),
-                                Icons.bar_chart,
-                                Colors.orange,
+                              child: _buildStatCard(
+                                title: "Total Transaksi",
+                                value: totalTransaksi.toString(),
+                                icon: Icons.receipt_long,
+                                color: monthColors[0],
                               ),
                             ),
-                            const SizedBox(width: 12),
+                            const SizedBox(width: 16),
                             Expanded(
-                              child: _buildStatsCard(
-                                "Periode",
-                                pieChartData.length.toString(),
-                                Icons.pie_chart_outline,
-                                Colors.green,
+                              child: _buildStatCard(
+                                title: "Rata-rata",
+                                value: rataRata.toString(),
+                                icon: Icons.trending_up,
+                                color: monthColors[1],
                               ),
                             ),
                           ],
@@ -504,355 +438,31 @@ class _TransPageState extends State<TransPage> with TickerProviderStateMixin {
 
                         const SizedBox(height: 24),
 
-                        // ==================== BAR CHART SECTION ====================
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.1),
-                                blurRadius: 10,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+                        // Chart Section
+                        const Text(
+                          "Analisis Data",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Header Bar Chart
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue.shade100,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Icon(
-                                      Icons.bar_chart,
-                                      color: Colors.blue.shade700,
-                                      size: 20,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  const Text(
-                                    "Transaksi per Bulan",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              // Dropdown Filter Bulan
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade50,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: Colors.grey.shade300),
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<String>(
-                                    value: selectedMonth,
-                                    onChanged: changeMonth,
-                                    isExpanded: true,
-                                    icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey.shade600),
-                                    hint: const Text("Pilih Bulan"),
-                                    items: monthList.map((month) => DropdownMenuItem(
-                                      value: month,
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            month == 'Semua' ? Icons.calendar_view_month : Icons.calendar_today,
-                                            size: 16,
-                                            color: month == 'Semua' 
-                                              ? Colors.blue.shade600 
-                                              : monthColors[monthList.indexOf(month) - 1],
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            month,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )).toList(),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              // Bar Chart
-                              SizedBox(
-                                height: 280,
-                                child: barChartData.isEmpty
-                                    ? Center(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.bar_chart_outlined,
-                                              size: 48,
-                                              color: Colors.grey.shade400,
-                                            ),
-                                            const SizedBox(height: 12),
-                                            Text(
-                                              selectedMonth == 'Semua' 
-                                                ? "Tidak ada data transaksi"
-                                                : "Tidak ada data untuk bulan $selectedMonth",
-                                              style: TextStyle(
-                                                color: Colors.grey.shade600,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    : BarChart(
-                                        BarChartData(
-                                          alignment: BarChartAlignment.spaceAround,
-                                          maxY: barChartData.isNotEmpty 
-                                            ? (barChartData.map((e) => e.total).reduce((a, b) => a > b ? a : b)).toDouble() + 10
-                                            : 10,
-                                          barGroups: barChartData
-                                              .asMap()
-                                              .map((i, e) => MapEntry(
-                                                    i,
-                                                    BarChartGroupData(
-                                                      x: i,
-                                                      barRods: [
-                                                        BarChartRodData(
-                                                          toY: e.total.toDouble(),
-                                                          gradient: LinearGradient(
-                                                            colors: selectedMonth == 'Semua' 
-                                                              ? [Colors.blue.shade400, Colors.blue.shade600]
-                                                              : [
-                                                                  getMonthColor(e.bulan).withOpacity(0.7), 
-                                                                  getMonthColor(e.bulan)
-                                                                ],
-                                                            begin: Alignment.bottomCenter,
-                                                            end: Alignment.topCenter,
-                                                          ),
-                                                          width: 24,
-                                                          borderRadius: const BorderRadius.only(
-                                                            topLeft: Radius.circular(6),
-                                                            topRight: Radius.circular(6),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ))
-                                              .values
-                                              .toList(),
-                                          titlesData: FlTitlesData(
-                                            bottomTitles: AxisTitles(
-                                              sideTitles: SideTitles(
-                                                showTitles: true,
-                                                reservedSize: 40,
-                                                getTitlesWidget: (value, meta) {
-                                                  if (value.toInt() >= barChartData.length) return Container();
-                                                  return Padding(
-                                                    padding: const EdgeInsets.only(top: 8),
-                                                    child: Text(
-                                                      formatMonth(barChartData[value.toInt()].bulan),
-                                                      style: TextStyle(
-                                                        fontSize: 10,
-                                                        color: Colors.grey.shade600,
-                                                        fontWeight: FontWeight.w500,
-                                                      ),
-                                                      textAlign: TextAlign.center,
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            ),
-                                            leftTitles: AxisTitles(
-                                              sideTitles: SideTitles(
-                                                showTitles: true,
-                                                reservedSize: 50,
-                                                getTitlesWidget: (value, meta) {
-                                                  return Text(
-                                                    value.toInt().toString(),
-                                                    style: TextStyle(
-                                                      fontSize: 10,
-                                                      color: Colors.grey.shade600,
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            ),
-                                            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                                            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                                          ),
-                                          borderData: FlBorderData(show: false),
-                                          gridData: FlGridData(
-                                            show: true,
-                                            drawVerticalLine: false,
-                                            horizontalInterval: 10,
-                                            getDrawingHorizontalLine: (value) {
-                                              return FlLine(
-                                                color: Colors.grey.shade200,
-                                                strokeWidth: 1,
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                              ),
-                            ],
-                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Bar Chart
+                        BarChartWidget(
+                          data: barChartData,
+                          getColor: getMonthColor,
+                          formatMonth: formatMonth,
                         ),
 
                         const SizedBox(height: 24),
 
-                        // ==================== PIE CHART SECTION ====================
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.1),
-                                blurRadius: 10,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Header Pie Chart
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.green.shade100,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Icon(
-                                      Icons.pie_chart_outline,
-                                      color: Colors.green.shade700,
-                                      size: 20,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  const Text(
-                                    "Distribusi Transaksi per Bulan",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-                              pieChartData.isEmpty
-                                  ? SizedBox(
-                                      height: 250,
-                                      child: Center(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.pie_chart_outline,
-                                              size: 48,
-                                              color: Colors.grey.shade400,
-                                            ),
-                                            const SizedBox(height: 12),
-                                            Text(
-                                              "Tidak ada data distribusi",
-                                              style: TextStyle(
-                                                color: Colors.grey.shade600,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                  : Column(
-                                      children: [
-                                        // Pie Chart
-                                        SizedBox(
-                                          height: 280,
-                                          child: PieChart(
-                                            PieChartData(
-                                              sections: pieChartData
-                                                  .asMap()
-                                                  .map((i, e) => MapEntry(
-                                                        i,
-                                                        PieChartSectionData(
-                                                          value: e.total.toDouble(),
-                                                          title: "${e.total}",
-                                                          color: getMonthColor(e.bulan),
-                                                          radius: 65,
-                                                          titleStyle: const TextStyle(
-                                                            fontSize: 12,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white,
-                                                          ),
-                                                          titlePositionPercentageOffset: 0.6,
-                                                        ),
-                                                      ))
-                                                  .values
-                                                  .toList(),
-                                              sectionsSpace: 3,
-                                              centerSpaceRadius: 50,
-                                              startDegreeOffset: -90,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 20),
-                                        // Legend
-                                        Container(
-                                          width: double.infinity,
-                                          padding: const EdgeInsets.all(16),
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey.shade50,
-                                            borderRadius: BorderRadius.circular(12),
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                "Legend:",
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14,
-                                                  color: Colors.black87,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 12),
-                                              Wrap(
-                                                alignment: WrapAlignment.start,
-                                                children: pieChartData
-                                                    .map((data) => _buildLegendItem(
-                                                          data.bulan,
-                                                          getMonthColor(data.bulan),
-                                                          data.total,
-                                                        ))
-                                                    .toList(),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                            ],
-                          ),
+                        // Pie Chart
+                        PieChartWidget(
+                          data: pieChartData,
+                          getColor: getMonthColor,
+                          formatMonth: formatMonth,
                         ),
 
                         const SizedBox(height: 20),
@@ -860,6 +470,319 @@ class _TransPageState extends State<TransPage> with TickerProviderStateMixin {
                     ),
                   ),
                 ),
+              ),
+    );
+  }
+}
+
+// ================= BAR CHART WIDGET =================
+class BarChartWidget extends StatelessWidget {
+  final List<ChartData> data;
+  final Color Function(String) getColor;
+  final String Function(String) formatMonth;
+
+  const BarChartWidget({
+    required this.data,
+    required this.getColor,
+    required this.formatMonth,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.bar_chart, color: Colors.grey.shade600, size: 24),
+              const SizedBox(width: 8),
+              const Text(
+                "Grafik Transaksi per Bulan",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            height: 280,
+            child:
+                data.isEmpty
+                    ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.insert_chart_outlined,
+                            size: 48,
+                            color: Colors.grey.shade400,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            "Tidak ada data untuk ditampilkan",
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                    : BarChart(
+                      BarChartData(
+                        maxY:
+                            data
+                                .map((e) => e.total)
+                                .reduce((a, b) => a > b ? a : b)
+                                .toDouble() +
+                            10,
+                        barGroups:
+                            data
+                                .asMap()
+                                .map(
+                                  (i, e) => MapEntry(
+                                    i,
+                                    BarChartGroupData(
+                                      x: i,
+                                      barRods: [
+                                        BarChartRodData(
+                                          toY: e.total.toDouble(),
+                                          color: getColor(e.bulan),
+                                          width: 22,
+                                          borderRadius:
+                                              const BorderRadius.vertical(
+                                                top: Radius.circular(6),
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                                .values
+                                .toList(),
+                        titlesData: FlTitlesData(
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              getTitlesWidget: (value, meta) {
+                                if (value.toInt() >= data.length)
+                                  return const SizedBox();
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Text(
+                                    formatMonth(data[value.toInt()].bulan),
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 40,
+                              getTitlesWidget: (value, meta) {
+                                return Text(
+                                  value.toInt().toString(),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.black54,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          topTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          rightTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                        ),
+                        gridData: FlGridData(
+                          show: true,
+                          drawVerticalLine: false,
+                          horizontalInterval: 10,
+                          getDrawingHorizontalLine: (value) {
+                            return FlLine(
+                              color: Colors.grey.shade200,
+                              strokeWidth: 1,
+                            );
+                          },
+                        ),
+                        borderData: FlBorderData(show: false),
+                      ),
+                    ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ================= PIE CHART WIDGET =================
+class PieChartWidget extends StatelessWidget {
+  final List<ChartData> data;
+  final Color Function(String) getColor;
+  final String Function(String) formatMonth;
+
+  const PieChartWidget({
+    required this.data,
+    required this.getColor,
+    required this.formatMonth,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.pie_chart, color: Colors.grey.shade600, size: 24),
+              const SizedBox(width: 8),
+              const Text(
+                "Distribusi Transaksi",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            height: 280,
+            child:
+                data.isEmpty
+                    ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.pie_chart_outline,
+                            size: 48,
+                            color: Colors.grey.shade400,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            "Tidak ada data untuk ditampilkan",
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                    : Row(
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: PieChart(
+                            PieChartData(
+                              sections:
+                                  data
+                                      .map(
+                                        (e) => PieChartSectionData(
+                                          value: e.total.toDouble(),
+                                          color: getColor(e.bulan),
+                                          title: "${e.total}",
+                                          radius: 70,
+                                          titleStyle: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                              centerSpaceRadius: 50,
+                              sectionsSpace: 2,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children:
+                                data
+                                    .map(
+                                      (e) => Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 4,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              width: 12,
+                                              height: 12,
+                                              decoration: BoxDecoration(
+                                                color: getColor(e.bulan),
+                                                borderRadius:
+                                                    BorderRadius.circular(2),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                formatMonth(e.bulan),
+                                                style: const TextStyle(
+                                                  fontSize: 11,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                          ),
+                        ),
+                      ],
+                    ),
+          ),
+        ],
+      ),
     );
   }
 }
