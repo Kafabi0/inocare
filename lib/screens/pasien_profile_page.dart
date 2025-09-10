@@ -10,6 +10,9 @@ import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
 import 'package:http/http.dart' as http;
 import 'dart:typed_data';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_filex/open_filex.dart';
+import 'dart:io';
 
 class PasienProfilePage extends StatefulWidget {
   final int pasienId;
@@ -111,155 +114,164 @@ class _PasienProfilePageState extends State<PasienProfilePage> {
     }
   }
 
-  Future<void> _printProfile() async {
-    if (pasienData == null) return;
 
-    setState(() {
-      isPrinting = true;
-    });
 
-    try {
-      final pdf = pw.Document();
+Future<void> _printProfile() async {
+  if (pasienData == null) return;
 
-      // Load logo
-      final logoBytes =
-          (await rootBundle.load('assets/images/inotal.png')).buffer.asUint8List();
+  setState(() {
+    isPrinting = true;
+  });
 
-      // Load profile image jika ada
-      Uint8List? profileImageBytes;
-      if (pasienData!.foto.isNotEmpty) {
-        final fotoUrl =
-            pasienData!.foto.startsWith("http")
-                ? pasienData!.foto
-                : "http://192.168.1.38:8080/${pasienData!.foto.replaceAll("\\", "/")}";
-        profileImageBytes = await networkImageBytes(fotoUrl);
-      }
+  try {
+    final pdf = pw.Document();
 
-      pdf.addPage(
-        pw.Page(
-          pageFormat: PdfPageFormat.a4,
-          build: (context) {
-            return pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text(
-                      "Profil Pasien",
-                      style: pw.TextStyle(
-                        fontSize: 24,
-                        fontWeight: pw.FontWeight.bold,
-                      ),
-                    ),
-                    pw.Image(pw.MemoryImage(logoBytes), width: 80, height: 80),
-                  ],
-                ),
-                pw.SizedBox(height: 20),
+    // Load logo
+    final logoBytes =
+        (await rootBundle.load('assets/images/inotal.png')).buffer.asUint8List();
 
-                // Foto profil
-                if (profileImageBytes != null)
-                  pw.Center(
-                    child: pw.Container(
-                      width: 100,
-                      height: 100,
-                      decoration: pw.BoxDecoration(
-                        shape: pw.BoxShape.circle,
-                        image: pw.DecorationImage(
-                          image: pw.MemoryImage(profileImageBytes),
-                          fit: pw.BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                pw.SizedBox(height: 16),
-
-                // Nama & NIK
-                pw.Text(
-                  "Nama: ${pasienData!.name}",
-                  style: pw.TextStyle(
-                    fontSize: 18,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-                pw.Text(
-                  "NIK: ${pasienData!.nik}",
-                  style: pw.TextStyle(fontSize: 14),
-                ),
-                pw.SizedBox(height: 20),
-
-                // Info detail
-                pw.Text(
-                  "Informasi Pasien",
-                  style: pw.TextStyle(
-                    fontSize: 16,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-                pw.SizedBox(height: 8),
-                pw.Text("Jenis Kelamin: ${pasienData!.jenisKelamin}"),
-                pw.Text("Tanggal Lahir: ${pasienData!.tanggalLahir}"),
-                pw.Text("Alamat: ${pasienData!.alamat}"),
-                pw.Text("No. Telepon: ${pasienData!.noTelp}"),
-                pw.Text("Email: ${pasienData!.email}"),
-                pw.SizedBox(height: 20),
-
-                // Riwayat Transaksi
-                pw.Text(
-                  "Riwayat Transaksi",
-                  style: pw.TextStyle(
-                    fontSize: 16,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-                pw.SizedBox(height: 8),
-                if (transaksiList.isNotEmpty) ...[
-                  pw.Text(
-                    "Total: ${_formatCurrency(_getTotalTransaksi())} (${transaksiList.length} transaksi)",
-                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                  ),
-                  pw.SizedBox(height: 8),
-                  pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children:
-                        transaksiList.map((t) {
-                          return pw.Padding(
-                            padding: const pw.EdgeInsets.only(bottom: 4),
-                            child: pw.Text(
-                              "${_formatDate(t.tanggalTransaksi)} - ${_formatCurrency(t.total)}",
-                            ),
-                          );
-                        }).toList(),
-                  ),
-                ] else
-                  pw.Text("Belum ada transaksi"),
-              ],
-            );
-          },
-        ),
-      );
-
-      await Printing.layoutPdf(onLayout: (format) async => pdf.save());
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("PDF berhasil dibuat"),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Gagal membuat PDF: $e"),
-          backgroundColor: Colors.red,
-        ),
-      );
-    } finally {
-      setState(() {
-        isPrinting = false;
-      });
+    // Load profile image jika ada
+    Uint8List? profileImageBytes;
+    if (pasienData!.foto.isNotEmpty) {
+      final fotoUrl =
+          pasienData!.foto.startsWith("http")
+              ? pasienData!.foto
+              : "http://192.168.1.38:8080/${pasienData!.foto.replaceAll("\\", "/")}";
+      profileImageBytes = await networkImageBytes(fotoUrl);
     }
+
+    // Tambahkan halaman PDF
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text(
+                    "Profil Pasien",
+                    style: pw.TextStyle(
+                      fontSize: 24,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                  pw.Image(pw.MemoryImage(logoBytes), width: 80, height: 80),
+                ],
+              ),
+              pw.SizedBox(height: 20),
+
+              // Foto profil
+              if (profileImageBytes != null)
+                pw.Center(
+                  child: pw.Container(
+                    width: 100,
+                    height: 100,
+                    decoration: pw.BoxDecoration(
+                      shape: pw.BoxShape.circle,
+                      image: pw.DecorationImage(
+                        image: pw.MemoryImage(profileImageBytes),
+                        fit: pw.BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+              pw.SizedBox(height: 16),
+
+              // Nama & NIK
+              pw.Text(
+                "Nama: ${pasienData!.name}",
+                style: pw.TextStyle(
+                  fontSize: 18,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+              pw.Text(
+                "NIK: ${pasienData!.nik}",
+                style: pw.TextStyle(fontSize: 14),
+              ),
+              pw.SizedBox(height: 20),
+
+              // Info detail
+              pw.Text(
+                "Informasi Pasien",
+                style: pw.TextStyle(
+                  fontSize: 16,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+              pw.SizedBox(height: 8),
+              pw.Text("Jenis Kelamin: ${pasienData!.jenisKelamin}"),
+              pw.Text("Tanggal Lahir: ${pasienData!.tanggalLahir}"),
+              pw.Text("Alamat: ${pasienData!.alamat}"),
+              pw.Text("No. Telepon: ${pasienData!.noTelp}"),
+              pw.Text("Email: ${pasienData!.email}"),
+              pw.SizedBox(height: 20),
+
+              // Riwayat Transaksi
+              pw.Text(
+                "Riwayat Transaksi",
+                style: pw.TextStyle(
+                  fontSize: 16,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+              pw.SizedBox(height: 8),
+              if (transaksiList.isNotEmpty) ...[
+                pw.Text(
+                  "Total: ${_formatCurrency(_getTotalTransaksi())} (${transaksiList.length} transaksi)",
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                ),
+                pw.SizedBox(height: 8),
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: transaksiList.map((t) {
+                    return pw.Padding(
+                      padding: const pw.EdgeInsets.only(bottom: 4),
+                      child: pw.Text(
+                        "${_formatDate(t.tanggalTransaksi)} - ${_formatCurrency(t.total)}",
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ] else
+                pw.Text("Belum ada transaksi"),
+            ],
+          );
+        },
+      ),
+    );
+
+    // Simpan PDF ke temporary folder
+    final tempDir = await getTemporaryDirectory();
+    final file = File('${tempDir.path}/profil_pasien_${pasienData!.id}.pdf');
+    await file.writeAsBytes(await pdf.save());
+
+    // Buka PDF secara langsung
+    await OpenFilex.open(file.path);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("PDF berhasil dibuat dan dibuka"),
+        backgroundColor: Colors.green,
+      ),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Gagal membuat PDF: $e"),
+        backgroundColor: Colors.red,
+      ),
+    );
+  } finally {
+    setState(() {
+      isPrinting = false;
+    });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -270,14 +282,8 @@ class _PasienProfilePageState extends State<PasienProfilePage> {
           backgroundColor: Colors.blue[600],
           foregroundColor: Colors.white,
           actions: [
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: null, 
-            ),
-            IconButton(
-              icon: const Icon(Icons.print),
-              onPressed: null,
-            ),
+            IconButton(icon: const Icon(Icons.edit), onPressed: null),
+            IconButton(icon: const Icon(Icons.print), onPressed: null),
           ],
         ),
         body: const Center(child: CircularProgressIndicator()),
@@ -317,31 +323,36 @@ class _PasienProfilePageState extends State<PasienProfilePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
-            onPressed: isPrinting ? null : () async {
-              final updated = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => PasienEditPage(pasienId: pasienData!.id),
-                ),
-              );
+            onPressed:
+                isPrinting
+                    ? null
+                    : () async {
+                      final updated = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => PasienEditPage(pasienId: pasienData!.id),
+                        ),
+                      );
 
-              if (updated == true) {
-                _loadPasien();
-              }
-            },
+                      if (updated == true) {
+                        _loadPasien();
+                      }
+                    },
             tooltip: "Edit Profil",
           ),
           IconButton(
-            icon: isPrinting 
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  )
-                : const Icon(Icons.print),
+            icon:
+                isPrinting
+                    ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                    : const Icon(Icons.print),
             onPressed: isPrinting ? null : _printProfile,
             tooltip: isPrinting ? "Mencetak..." : "Cetak PDF",
           ),
@@ -465,7 +476,6 @@ class _PasienProfilePageState extends State<PasienProfilePage> {
                         ),
                       ),
                       if (!isLoadingTransaksi && transaksiList.isNotEmpty)
-                      
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
