@@ -4,6 +4,12 @@ import 'package:inocare/screens/pasien_edit_page.dart';
 import '../models/pasien_transaksi.dart';
 import '../widgets/pasien_service.dart';
 import '../widgets/transaksi_service.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:flutter/services.dart';
+import 'package:printing/printing.dart';
+import 'package:pdf/pdf.dart';
+import 'package:http/http.dart' as http;
+import 'dart:typed_data';
 
 class PasienProfilePage extends StatefulWidget {
   final int pasienId;
@@ -19,6 +25,7 @@ class _PasienProfilePageState extends State<PasienProfilePage> {
   List<Transaksi> transaksiList = [];
   bool isLoading = true;
   bool isLoadingTransaksi = true;
+  bool isPrinting = false; // Status untuk loading cetak PDF
 
   @override
   void initState() {
@@ -38,9 +45,9 @@ class _PasienProfilePageState extends State<PasienProfilePage> {
       setState(() {
         isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Gagal memuat data pasien: $e")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Gagal memuat data pasien: $e")));
     }
   }
 
@@ -48,14 +55,18 @@ class _PasienProfilePageState extends State<PasienProfilePage> {
     try {
       // Ambil semua transaksi dan filter berdasarkan pasienId
       final allTransaksi = await TransaksiService.getTransaksi();
-      final filteredTransaksi = allTransaksi
-          .where((transaksi) => transaksi.pasienId == widget.pasienId)
-          .toList();
-      
+      final filteredTransaksi =
+          allTransaksi
+              .where((transaksi) => transaksi.pasienId == widget.pasienId)
+              .toList();
+
       // Urutkan berdasarkan tanggal terbaru
-      filteredTransaksi.sort((a, b) => 
-          DateTime.parse(b.tanggalTransaksi).compareTo(DateTime.parse(a.tanggalTransaksi)));
-      
+      filteredTransaksi.sort(
+        (a, b) => DateTime.parse(
+          b.tanggalTransaksi,
+        ).compareTo(DateTime.parse(a.tanggalTransaksi)),
+      );
+
       setState(() {
         transaksiList = filteredTransaksi;
         isLoadingTransaksi = false;
@@ -91,6 +102,165 @@ class _PasienProfilePageState extends State<PasienProfilePage> {
     return transaksiList.fold(0, (sum, transaksi) => sum + transaksi.total);
   }
 
+  Future<Uint8List> networkImageBytes(String url) async {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      return response.bodyBytes;
+    } else {
+      throw Exception('Gagal memuat gambar dari $url');
+    }
+  }
+
+  Future<void> _printProfile() async {
+    if (pasienData == null) return;
+
+    setState(() {
+      isPrinting = true;
+    });
+
+    try {
+      final pdf = pw.Document();
+
+      // Load logo
+      final logoBytes =
+          (await rootBundle.load('assets/images/inotal.png')).buffer.asUint8List();
+
+      // Load profile image jika ada
+      Uint8List? profileImageBytes;
+      if (pasienData!.foto.isNotEmpty) {
+        final fotoUrl =
+            pasienData!.foto.startsWith("http")
+                ? pasienData!.foto
+                : "http://192.168.1.38:8080/${pasienData!.foto.replaceAll("\\", "/")}";
+        profileImageBytes = await networkImageBytes(fotoUrl);
+      }
+
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          build: (context) {
+            return pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text(
+                      "Profil Pasien",
+                      style: pw.TextStyle(
+                        fontSize: 24,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                    pw.Image(pw.MemoryImage(logoBytes), width: 80, height: 80),
+                  ],
+                ),
+                pw.SizedBox(height: 20),
+
+                // Foto profil
+                if (profileImageBytes != null)
+                  pw.Center(
+                    child: pw.Container(
+                      width: 100,
+                      height: 100,
+                      decoration: pw.BoxDecoration(
+                        shape: pw.BoxShape.circle,
+                        image: pw.DecorationImage(
+                          image: pw.MemoryImage(profileImageBytes),
+                          fit: pw.BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                pw.SizedBox(height: 16),
+
+                // Nama & NIK
+                pw.Text(
+                  "Nama: ${pasienData!.name}",
+                  style: pw.TextStyle(
+                    fontSize: 18,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.Text(
+                  "NIK: ${pasienData!.nik}",
+                  style: pw.TextStyle(fontSize: 14),
+                ),
+                pw.SizedBox(height: 20),
+
+                // Info detail
+                pw.Text(
+                  "Informasi Pasien",
+                  style: pw.TextStyle(
+                    fontSize: 16,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.SizedBox(height: 8),
+                pw.Text("Jenis Kelamin: ${pasienData!.jenisKelamin}"),
+                pw.Text("Tanggal Lahir: ${pasienData!.tanggalLahir}"),
+                pw.Text("Alamat: ${pasienData!.alamat}"),
+                pw.Text("No. Telepon: ${pasienData!.noTelp}"),
+                pw.Text("Email: ${pasienData!.email}"),
+                pw.SizedBox(height: 20),
+
+                // Riwayat Transaksi
+                pw.Text(
+                  "Riwayat Transaksi",
+                  style: pw.TextStyle(
+                    fontSize: 16,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.SizedBox(height: 8),
+                if (transaksiList.isNotEmpty) ...[
+                  pw.Text(
+                    "Total: ${_formatCurrency(_getTotalTransaksi())} (${transaksiList.length} transaksi)",
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  ),
+                  pw.SizedBox(height: 8),
+                  pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children:
+                        transaksiList.map((t) {
+                          return pw.Padding(
+                            padding: const pw.EdgeInsets.only(bottom: 4),
+                            child: pw.Text(
+                              "${_formatDate(t.tanggalTransaksi)} - ${_formatCurrency(t.total)}",
+                            ),
+                          );
+                        }).toList(),
+                  ),
+                ] else
+                  pw.Text("Belum ada transaksi"),
+              ],
+            );
+          },
+        ),
+      );
+
+      await Printing.layoutPdf(onLayout: (format) async => pdf.save());
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("PDF berhasil dibuat"),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Gagal membuat PDF: $e"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() {
+        isPrinting = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -99,10 +269,18 @@ class _PasienProfilePageState extends State<PasienProfilePage> {
           title: const Text("Profil Pasien"),
           backgroundColor: Colors.blue[600],
           foregroundColor: Colors.white,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: null, 
+            ),
+            IconButton(
+              icon: const Icon(Icons.print),
+              onPressed: null,
+            ),
+          ],
         ),
-        body: const Center(
-          child: CircularProgressIndicator(),
-        ),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -139,7 +317,7 @@ class _PasienProfilePageState extends State<PasienProfilePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
-            onPressed: () async {
+            onPressed: isPrinting ? null : () async {
               final updated = await Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -151,6 +329,21 @@ class _PasienProfilePageState extends State<PasienProfilePage> {
                 _loadPasien();
               }
             },
+            tooltip: "Edit Profil",
+          ),
+          IconButton(
+            icon: isPrinting 
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : const Icon(Icons.print),
+            onPressed: isPrinting ? null : _printProfile,
+            tooltip: isPrinting ? "Mencetak..." : "Cetak PDF",
           ),
         ],
       ),
@@ -186,19 +379,19 @@ class _PasienProfilePageState extends State<PasienProfilePage> {
                     ),
                     child: CircleAvatar(
                       radius: 60,
-                      backgroundImage: pasienData!.foto.isNotEmpty
-                          ? NetworkImage(
-                              pasienData!.foto.startsWith("http")
-                                  ? pasienData!.foto
-                                  : "http://192.168.1.40:8080/${pasienData!.foto.replaceAll("\\", "/")}",
-                            )
-                          : const AssetImage("assets/nailong.png")
-                              as ImageProvider,
+                      backgroundImage:
+                          pasienData!.foto.isNotEmpty
+                              ? NetworkImage(
+                                pasienData!.foto.startsWith("http")
+                                    ? pasienData!.foto
+                                    : "http://192.168.1.38:8080/${pasienData!.foto.replaceAll("\\", "/")}",
+                              )
+                              : const AssetImage("assets/nailong.png")
+                                  as ImageProvider,
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
-                  // Nama pasien
+
                   Text(
                     pasienData!.name,
                     style: const TextStyle(
@@ -209,14 +402,11 @@ class _PasienProfilePageState extends State<PasienProfilePage> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 4),
-                  
+
                   // NIK sebagai subtitle
                   Text(
                     "NIK: ${pasienData!.nik}",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.white70,
-                    ),
+                    style: const TextStyle(fontSize: 16, color: Colors.white70),
                   ),
                 ],
               ),
@@ -237,11 +427,27 @@ class _PasienProfilePageState extends State<PasienProfilePage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
-                  _buildInfoCard("Jenis Kelamin", pasienData!.jenisKelamin, Icons.people),
-                  _buildInfoCard("Tanggal Lahir", pasienData!.tanggalLahir, Icons.cake),
-                  _buildInfoCard("Alamat", pasienData!.alamat, Icons.location_on),
-                  _buildInfoCard("No. Telepon", pasienData!.noTelp, Icons.phone),
+
+                  _buildInfoCard(
+                    "Jenis Kelamin",
+                    pasienData!.jenisKelamin,
+                    Icons.people,
+                  ),
+                  _buildInfoCard(
+                    "Tanggal Lahir",
+                    pasienData!.tanggalLahir,
+                    Icons.cake,
+                  ),
+                  _buildInfoCard(
+                    "Alamat",
+                    pasienData!.alamat,
+                    Icons.location_on,
+                  ),
+                  _buildInfoCard(
+                    "No. Telepon",
+                    pasienData!.noTelp,
+                    Icons.phone,
+                  ),
                   _buildInfoCard("Email", pasienData!.email, Icons.email),
 
                   const SizedBox(height: 32),
@@ -259,8 +465,12 @@ class _PasienProfilePageState extends State<PasienProfilePage> {
                         ),
                       ),
                       if (!isLoadingTransaksi && transaksiList.isNotEmpty)
+                      
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.blue[100],
                             borderRadius: BorderRadius.circular(20),
@@ -391,10 +601,7 @@ class _PasienProfilePageState extends State<PasienProfilePage> {
                           SizedBox(height: 8),
                           Text(
                             "Transaksi akan muncul di sini setelah ditambahkan",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -402,87 +609,102 @@ class _PasienProfilePageState extends State<PasienProfilePage> {
                     )
                   else
                     Column(
-                      children: transaksiList.map((transaksi) => 
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.1),
-                                spreadRadius: 1,
-                                blurRadius: 5,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(12),
+                      children:
+                          transaksiList
+                              .map(
+                                (transaksi) => Container(
+                                  margin: const EdgeInsets.only(bottom: 12),
                                   decoration: BoxDecoration(
-                                    color: Colors.blue[50],
+                                    color: Colors.white,
                                     borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Icon(
-                                    Icons.receipt,
-                                    color: Colors.blue[600],
-                                    size: 24,
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            _formatCurrency(transaksi.total),
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 8,
-                                              vertical: 4,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.calendar_today,
-                                            size: 16,
-                                            color: Colors.grey[600],
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Text(
-                                            _formatDate(transaksi.tanggalTransaksi),
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.grey[600],
-                                            ),
-                                          ),
-                                        ],
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.1),
+                                        spreadRadius: 1,
+                                        blurRadius: 5,
+                                        offset: const Offset(0, 2),
                                       ),
                                     ],
                                   ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(12),
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue[50],
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                          ),
+                                          child: Icon(
+                                            Icons.receipt,
+                                            color: Colors.blue[600],
+                                            size: 24,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 16),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    _formatCurrency(
+                                                      transaksi.total,
+                                                    ),
+                                                    style: const TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black87,
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          horizontal: 8,
+                                                          vertical: 4,
+                                                        ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.calendar_today,
+                                                    size: 16,
+                                                    color: Colors.grey[600],
+                                                  ),
+                                                  const SizedBox(width: 6),
+                                                  Text(
+                                                    _formatDate(
+                                                      transaksi
+                                                          .tanggalTransaksi,
+                                                    ),
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.grey[600],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ).toList(),
+                              )
+                              .toList(),
                     ),
                 ],
               ),
@@ -518,11 +740,7 @@ class _PasienProfilePageState extends State<PasienProfilePage> {
                 color: Colors.blue[50],
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(
-                icon,
-                color: Colors.blue[600],
-                size: 24,
-              ),
+              child: Icon(icon, color: Colors.blue[600], size: 24),
             ),
             const SizedBox(width: 16),
             Expanded(
