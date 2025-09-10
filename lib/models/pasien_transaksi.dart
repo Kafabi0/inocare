@@ -25,9 +25,10 @@ class Pasien {
 
   factory Pasien.fromJson(Map<String, dynamic> json) {
     return Pasien(
-      id: json['ID'] is int
-          ? json['ID']
-          : int.tryParse(json['ID'].toString()) ?? 0,
+      id:
+          json['ID'] is int
+              ? json['ID']
+              : int.tryParse(json['ID'].toString()) ?? 0,
       name: json['name'] ?? '',
       jenisKelamin: json['jenis_kelamin'] ?? '',
       nik: json['nik'] ?? '',
@@ -36,7 +37,8 @@ class Pasien {
       email: json['email'] ?? '',
       foto: json['foto'] ?? '',
       tanggalLahir: json['tanggal_lahir'] ?? '',
-      transaksi: (json['transaksi'] as List<dynamic>?)
+      transaksi:
+          (json['transaksi'] as List<dynamic>?)
               ?.map((e) => Transaksi.fromJson(e))
               .toList() ??
           [],
@@ -59,16 +61,13 @@ class Transaksi {
 
   factory Transaksi.fromJson(Map<String, dynamic> json) {
     return Transaksi(
-      id: json['ID'] is int
-          ? json['ID']
-          : int.tryParse(json['ID'].toString()) ?? 0,
+      id: json['id'] ?? 0,
       pasienId: json['pasien_id'] ?? 0,
       total: json['total'] ?? 0,
       tanggalTransaksi: json['tanggal_transaksi'] ?? '',
     );
   }
 }
-
 
 class ChartData {
   final String bulan;
